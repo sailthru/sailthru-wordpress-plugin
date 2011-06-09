@@ -38,7 +38,8 @@ if(!class_exists('Sailthru')) {
 			//filters
 			add_filter('the_content', array(&$this, 'content_filter'));
 			add_filter('get_footer', array(&$this, 'footer_filter'));
-			
+			add_filter('widget_text', array(&$this, 'content_filter'));
+
 			$sailthru_forms = sailthru_form::get_forms();
 			
 		}
