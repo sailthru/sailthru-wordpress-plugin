@@ -109,7 +109,7 @@ EOT;
 		}
 		
 		function create_options_menu() {
-			add_options_page('Sailthru Options', 'Sailthru', 8, 'sailthru', array(&$this, 'options_page'));
+			add_options_page('Sailthru Options', 'Sailthru', 'edit_pages', 'sailthru', array(&$this, 'options_page'));
 		}
 		
 		function options_page() {
