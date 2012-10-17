@@ -18,7 +18,7 @@ if(!file_exists($wp_load)) {
   require_once($wp_load);
 }
 
-switch(@$_GET['action']) {
+switch($_GET['action']) {
 	case 'subscribe':
 		
 		try {
@@ -83,6 +83,12 @@ switch(@$_GET['action']) {
                                         );
                                 
 				$client->apiPost('email', $data);
+                                
+                                /*
+                                echo '<pre>';
+                                print_r($form->get_forms());
+                                echo '</pre>';
+                                */
                                 
 				if ((bool)get_option('sailthru_welcome') && $template = get_option('sailthru_welcome_template')) {
 
