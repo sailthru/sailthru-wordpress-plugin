@@ -18,7 +18,7 @@ if(!file_exists($wp_load)) {
   require_once($wp_load);
 }
 
-switch(@$_GET['action']) {
+switch($_GET['action']) {
 	case 'subscribe':
 		
 		try {
@@ -58,29 +58,43 @@ switch(@$_GET['action']) {
 				require_once('client/requires.php');
 				$client = new Sailthru_Client(get_option('sailthru_api_key'), get_option('sailthru_secret'));
 				
-				$replacement_fields = array();
+				$vars = array();
 				if(isset($_POST['fname'])) {
-					$replacement_fields['first_name'] = $_POST['fname'];
+					$vars['first_name'] = $_POST['fname'];
 				}
 				if(isset($_POST['lname'])) {
-					$replacement_fields['last_name'] = $_POST['lname'];
+					$vars['last_name'] = $_POST['lname'];
 				}
 
 				$all_lists = $form->get_all_lists();
 				$lists = array();
 				if($has_lists) {
 					foreach($all_lists as $id => $list_name) {
-						$lists[$list_name] = in_array($id, $_POST['lists']) ? '1' : '0';
-					}
-				}
-				
-				$client->setEmail($_POST['email'], $replacement_fields, $lists);
-				
+                                                if(in_array($id, $_POST['lists'])) {
+                                                    $lists[$list_name] = 1;
+                                                }
+                                        }
+                                }
+                                
+                                $data = array(
+                                            'email' => $_POST['email'],
+                                            'vars' => $vars,
+                                            'lists' => $lists
+                                        );
+                                
+				$client->apiPost('email', $data);
+                                
+                                /*
+                                echo '<pre>';
+                                print_r($form->get_forms());
+                                echo '</pre>';
+                                */
+                                
 				if ((bool)get_option('sailthru_welcome') && $template = get_option('sailthru_welcome_template')) {
 
 					require_once('client/requires.php');
 					$client = new Sailthru_Client(get_option('sailthru_api_key'), get_option('sailthru_secret'));
-					$r = $client->send($template, $_POST['email'], $replacement_fields, array());
+					$r = $client->send($template, $_POST['email'], $vars, array());
 				}
 				
 				echo '{}';
