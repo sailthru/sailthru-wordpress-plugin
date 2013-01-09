@@ -2,7 +2,6 @@
 /**
  * @package Sailthru
  * @author Jon Tascher
- * @version 1.1
  */
 
 

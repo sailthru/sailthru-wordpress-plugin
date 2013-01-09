@@ -3,7 +3,7 @@ Contributors: sailthru-wp
 Tags: sailthru, email, api
 Requires at least: 1.00
 Tested up to: 1.02
-Stable tag: 1.02
+Stable tag: 2.1
 
 Wordpress widget for Sailthru API
 

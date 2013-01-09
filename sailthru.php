@@ -2,14 +2,13 @@
 /**
  * @package Sailthru
  * @author Jon Tascher
- * @version 1.1
  */
 /*
 Plugin Name: Sailthru
 Plugin URI: http://www.sailthru.com
 Description: Intergrate Sailthru API functionality into your WordPress blog.
 Author: Jon Tascher
-Version: 1.1
+Version: 2.1
 Author URI: http://www.jontascher.com
 */
 ob_start();
