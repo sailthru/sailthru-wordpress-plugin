@@ -1,16 +1,16 @@
 <?php
 /**
- * @package sailthru
- * @author Sailthru
- * @version 1.00
+ * @package Sailthru
+ * @author Jon Tascher
+ * @version 1.1
  */
 /*
-Plugin Name: sailthru-widget
-Plugin URI: https://www.sailthru.com
+Plugin Name: Sailthru
+Plugin URI: http://www.sailthru.com
 Description: Intergrate Sailthru API functionality into your WordPress blog.
-Author: Sailthru
-Version: 1.00
-Author URI: https://www.sailthru.com
+Author: Jon Tascher
+Version: 1.1
+Author URI: http://www.jontascher.com
 */
 ob_start();
 
@@ -109,7 +109,7 @@ EOT;
 		}
 		
 		function create_options_menu() {
-			add_options_page('Sailthru Options', 'Sailthru', 8, 'sailthru', array(&$this, 'options_page'));
+			add_options_page('Sailthru Options', 'Sailthru', 'edit_pages', 'sailthru', array(&$this, 'options_page'));
 		}
 		
 		function options_page() {

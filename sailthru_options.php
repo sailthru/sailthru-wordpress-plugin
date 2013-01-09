@@ -119,7 +119,7 @@
 						$_POST['subject'],
 						$_POST['content'],
 						$_POST['plaintext_body'],
-					    array()
+					    array("report_email" => $_POST['report_email'])
 					);
 
 					if($r['status'] == 'scheduled') {
@@ -197,6 +197,14 @@
 											</td>
 											<td style="border: 0px;">
 												<input type="text" id="from_email" name="from_email" style="width: 250px;" value="<?php echo $_POST['from_email'] ?>">
+											</td>
+										</tr>
+										<tr>
+											<td style="border: 0px;">
+												Report Email: 
+											</td>
+											<td style="border: 0px;">
+												<input type="text" id="report_email" name="report_email" style="width: 250px;" value="<?php echo $_POST['report_email'] ?>">
 											</td>
 										</tr>
 										<tr>

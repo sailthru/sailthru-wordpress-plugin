@@ -70,7 +70,9 @@ switch(@$_GET['action']) {
 				$lists = array();
 				if($has_lists) {
 					foreach($all_lists as $id => $list_name) {
-						$lists[$list_name] = in_array($id, $_POST['lists']) ? '1' : '0';
+						if(in_array($id, $_POST['lists'])){
+							$lists[$list_name]='1';
+						}
 					}
 				}
 				

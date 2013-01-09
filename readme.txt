@@ -9,4 +9,5 @@ Wordpress widget for Sailthru API
 
 == Description ==
 
-Wordpress widget for Sailthru API (http://docs.sailthru.com/api).
+For installation instructions, documentation, and examples please visit:
+http://getstarted.sailthru.com/developers/api-libraries/wordpress

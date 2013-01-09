@@ -1,4 +1,5 @@
 <?php
+
 class Sailthru_Util {
     /**
      * Returns an MD5 hash of the signature string for an API call.
@@ -12,6 +13,7 @@ class Sailthru_Util {
     public static function getSignatureHash($params, $secret) {
         return md5(self::getSignatureString($params, $secret));
     }
+
 
     /**
      * Returns the unhashed signature string (secret + sorted list of param values) for an API call.
@@ -30,6 +32,7 @@ class Sailthru_Util {
         return $string;
     }
 
+
     /**
      * Extracts the values of a set of parameters, recursing into nested assoc arrays.
      *
@@ -41,39 +44,13 @@ class Sailthru_Util {
             if (is_array($v) || is_object($v)) {
                 self::extractParamValues($v, $values);
             } else {
+                if (is_bool($v))  {
+                    //if a value is set as false, invalid hash will generate
+                    //https://github.com/sailthru/sailthru-php5-client/issues/4
+                    $v = intval($v);
+                }
                 $values[] = $v;
             }
         }
     }
-
-
-    /**
-     * verify that purchase item has all required fields
-     * @param array $items
-     * @return boolean 
-     */
-    public static function verifyPurchaseItems(array $items) {
-        $required_item_fields = array('id', 'price', 'qty', 'title', 'url');    //Need to maintain order
-        $verified = true;
-        if (!empty($items)) {
-            foreach ($items as $item) {
-                if (is_array($item)) {
-                    $keys = array_keys($item);
-                    sort($keys);
-                    if ($keys !== $required_item_fields) {
-                        $verified = false;
-                        break;
-                    }
-                }
-                else {
-                    $verified = false;
-                }
-            }
-        }
-        else {
-            $verified = false;
-        }        
-        return $verified;
-    }
 }
-?>

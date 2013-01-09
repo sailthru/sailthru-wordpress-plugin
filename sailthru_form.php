@@ -97,7 +97,7 @@ class sailthru_form {
 	        //return array('426' => 'test');
 		//return array('pheonix', 'seed');
 
-		$lists = $client->apiGet('list',false);
+		$lists = $client->apiGet('list',array());
 		$list_names = array();
 		
 		foreach ($lists as $list) {
