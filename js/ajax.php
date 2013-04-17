@@ -8,7 +8,7 @@
 $wp_load = realpath("../../../../wp-load.php");
 
 if(!file_exists($wp_load)) {
-	
+
 	$wp_config = realpath("../../../../wp-config.php");
 
 	if (!file_exists($wp_config)) {
@@ -33,42 +33,6 @@ $return = array();
 switch( $_POST['sailthru_action'] )
 {
 
-	case "add_datafeed":
-		if( false == get_option( 'sailthru_datafeeds' ) ) {	
-			add_option( 'sailthru_datafeeds' );
-		} // end if
-
-		$datafeeds = get_option('sailthru_datafeeds');
-
-		if( is_string( $datafeeds) ) {
-			unserialize( $datafeeds );
-		}
-
-		// validate datafeed name
-		$datafeed_name = filter_var(trim($_POST['datafeed_name']), FILTER_SANITIZE_STRING); 
-
-		// validate datafeed url
-		$datafeed_url = filter_var(trim($_POST['datafeed_url']), FILTER_SANITIZE_URL); 
-
-		$datafeeds[] = array( 
-			'datafeed_url' => $datafeed_url,
-			'datafeed_name' => $datafeed_name 
-		);
-
-		$added = update_option( 'sailthru_datafeeds', $datafeeds );
-
-		if( $added ) {
-			$return['error'] = false;
-			$return['message'] = "Datafeed added.";
-		} else {
-			$return['error'] = false;
-			$return['message'] = "There was an error adding the datafeed.";			
-		}
-
-		break;
-
-		
-
 	case "add_subscriber":
 		$email = trim( $_POST['email'] );
 		if( ! filter_var($email , FILTER_VALIDATE_EMAIL) || empty($email) ) {
@@ -83,7 +47,7 @@ switch( $_POST['sailthru_action'] )
 		} else {
 			$first_name = '';
 		}
-				
+
 		if( isset($_POST['last_name']) && !empty($_POST['last_name'] ) ){
 			$last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
 		} else {
@@ -92,7 +56,7 @@ switch( $_POST['sailthru_action'] )
 
 		if( $first_name || $last_name ) {
 
-			$options = array( 
+			$options = array(
 				'vars' => array(
 					'first_name'	=> $first_name,
 					'last_name'		=> $last_name,
@@ -113,12 +77,12 @@ switch( $_POST['sailthru_action'] )
 				}
 
 				$options['lists'] = $subscribe_to_lists;
-			
+
 			} else {
 
 				$options['lists'] = array('Sailthru Subscribe Widget' => 1);	// subscriber is an orphan
 
-			}	
+			}
 
 
 		$options['vars']['source'] = get_bloginfo('url');
@@ -135,7 +99,7 @@ switch( $_POST['sailthru_action'] )
 			$api_key = $sailthru['sailthru_api_key'];
 			$api_secret = $sailthru['sailthru_api_secret'];
 
-			$client = new Sailthru_Client( $api_key, $api_secret );		
+			$client = new Sailthru_Client( $api_key, $api_secret );
 				$res = $client->saveUser($email, $options);
 
 			if( $res['ok'] != true ) {

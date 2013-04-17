@@ -20,7 +20,7 @@ class Sailthru_Scout  extends WP_Widget {
 
 		// Attempt to register the sidebar widget for Scout
 		//register_sidebar_widget('Sailthru Recommends', array($this, 'widget') );
-		
+
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
 
@@ -61,13 +61,13 @@ class Sailthru_Scout  extends WP_Widget {
 
 		// is scout turned on?
 		if( isset($params['sailthru_scout_is_on']) &&  $params['sailthru_scout_is_on']) {
-		
+
 			// Check first, otherwise js could throw errors
 			if( get_option('sailthru_setup_complete') ) {
-			
+
 				wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon', 'sailthru-horizon-params') );
-				
-				wp_enqueue_script( 'sailthru-scout-params', plugins_url( 'sailthru-for-wordpress/js/scout.params.js' ), array('sailthru-scout') );
+
+				wp_enqueue_script( 'sailthru-scout-params', SAILTHRU_PLUGIN_PATH .'/js/scout.params.js' , array('sailthru-scout') );
 
 				// if conceirge is on, we want noPageView to be set to true
 				// see
@@ -77,7 +77,7 @@ class Sailthru_Scout  extends WP_Widget {
 					}
 
 				wp_localize_script( 'sailthru-scout-params', 'Scout', $params );
-				
+
 			} // end if sailthru setup is done
 
 		} // end if scout is on
@@ -86,7 +86,7 @@ class Sailthru_Scout  extends WP_Widget {
 
 	/*-------------------------------------------
 	 * Utility Functions
-	 *------------------------------------------*/	
+	 *------------------------------------------*/
 
 	/**
 	 * A function used to programmatically create a page needed for Scout. The slug, author ID, and title
@@ -133,7 +133,7 @@ class Sailthru_Scout  extends WP_Widget {
 		} // end if
 
 		return $post_id;
-	
+
 	}
 
 
@@ -149,7 +149,7 @@ class Sailthru_Scout  extends WP_Widget {
 	 * @param	array	instance	The current instance of the widget
 	 */
 	function widget($args, $instance) {
-	
+
 		extract( $args, EXTR_SKIP );
 
 		echo $before_widget;

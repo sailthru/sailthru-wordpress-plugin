@@ -151,7 +151,7 @@ class Sailthru_Horizon {
 		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 
 		// our own magic
-		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', plugins_url( 'sailthru-for-wordpress/css/admin.css' ) );
+		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . '/css/admin.css'  );
 
 	} // end register_admin_styles
 
@@ -169,11 +169,11 @@ class Sailthru_Horizon {
 
 
 		// date/time picker add on for the email blast screen
-		wp_enqueue_script( 'jquery-date-time-picker-addon', plugins_url( 'sailthru-for-wordpress/js/jquery-ui-timepicker-addon.js' ), array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider') );
-		wp_enqueue_script( 'jquery-date-time-picker-slider', plugins_url( 'sailthru-for-wordpress/js/jquery-ui-sliderAccess.js' ), array('jquery-date-time-picker-addon') );
+		wp_enqueue_script( 'jquery-date-time-picker-addon', SAILTHRU_PLUGIN_URL . '/js/jquery-ui-timepicker-addon.js' , array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider') );
+		wp_enqueue_script( 'jquery-date-time-picker-slider', SAILTHRU_PLUGIN_URL . '/js/jquery-ui-sliderAccess.js' , array('jquery-date-time-picker-addon') );
 
 		// our own magic
-		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', plugins_url( 'sailthru-for-wordpress/js/admin.js' ), array('jquery') );
+		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . '/js/admin.js' , array('jquery') );
 
 
 
@@ -214,7 +214,7 @@ class Sailthru_Horizon {
 		if( get_option('sailthru_setup_complete') ) {
 
 
-			wp_register_script( 'sailthru-horizon-params', plugins_url( 'sailthru-for-wordpress/js/horizon.params.js' ), array('jquery', 'sailthru-horizon'), '', true );
+			wp_register_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('jquery', 'sailthru-horizon'), '', true );
 
 			// Horizon itself
 			wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
@@ -271,7 +271,7 @@ class Sailthru_Horizon {
 			'administrator',									// What roles are able to access the menu
 			'sailthru_configuration_page',						// The ID used to bind submenu items to this menu
 			array( &$this, 'load_sailthru_admin_display'),		// The callback function used to render this menu
-			plugins_url( 'sailthru-for-wordpress/img/sailthru-menu-icon.png' )	// The icon to represent the menu item
+			SAILTHRU_PLUGIN_URL . '/img/sailthru-menu-icon.png' 	// The icon to represent the menu item
 		);
 		$this->admin_views[$sailthru_menu] = 'sailthru_configuration_page';
 

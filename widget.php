@@ -37,6 +37,9 @@ is availlable in the document lib/MIT-LICENSE.txt
 if( ! defined('SAILTHRU_PLUGIN_PATH') )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
+if( ! defined('SAILTHRU_PLUGIN_URL') )
+	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+
 
 class Sailthru_Subscribe extends WP_Widget {
 
@@ -194,7 +197,7 @@ class Sailthru_Subscribe extends WP_Widget {
 	 */
 	public function register_admin_styles() {
 
-		wp_enqueue_style( 'sailthru-subscribe-admin-styles', plugins_url( 'sailthru-for-wordpress/css/admin.widget.css' ) );
+		wp_enqueue_style( 'sailthru-subscribe-admin-styles', SAILTHRU_PLUGIN_URL . '/css/admin.widget.css' );
 
 	} // end register_admin_styles
 
@@ -203,7 +206,7 @@ class Sailthru_Subscribe extends WP_Widget {
 	 */
 	public function register_admin_scripts() {
 
-		wp_enqueue_script( 'sailthru-subscribe-admin-script', plugins_url( 'sailthru-for-wordpress/js/admin.widget.js' ), array('jquery') );
+		wp_enqueue_script( 'sailthru-subscribe-admin-script', SAILTHRU_PLUGIN_URL .'/js/admin.widget.js' , array('jquery') );
 
 	} // end register_admin_scripts
 
@@ -212,7 +215,7 @@ class Sailthru_Subscribe extends WP_Widget {
 	 */
 	public function register_widget_styles() {
 
-		wp_enqueue_style( 'sailthru-subscribe-widget-styles', plugins_url( 'sailthru-for-wordpress/css/widget.css' ) );
+		wp_enqueue_style( 'sailthru-subscribe-widget-styles', SAILTHRU_PLUGIN_URL . '/css/widget.css' );
 
 	} // end register_widget_styles
 
@@ -221,7 +224,7 @@ class Sailthru_Subscribe extends WP_Widget {
 	 */
 	public function register_widget_scripts() {
 
-		wp_enqueue_script( 'sailthru-subscribe-script', plugins_url( 'sailthru-for-wordpress/js/widget.js' ), array('jquery') );
+		wp_enqueue_script( 'sailthru-subscribe-script', SAILTHRU_PLUGIN_URL . '/js/widget.js' , array('jquery') );
 
 	} // end register_widget_scripts
 

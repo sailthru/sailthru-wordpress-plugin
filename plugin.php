@@ -28,6 +28,9 @@ License:
 if( ! defined('SAILTHRU_PLUGIN_PATH') )
   define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
+if( ! defined('SAILTHRU_PLUGIN_URL') )
+  define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+
 /*
  * Sailthru PHP5 Developer Library
  * Source: http://getstarted.sailthru.com/developers/client-libraries/set-config-file/php5

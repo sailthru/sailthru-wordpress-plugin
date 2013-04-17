@@ -1,10 +1,10 @@
 
  		<!-- Create a header in the default WordPress 'wrap' container -->
 		<div class="wrap" id="sailthru-admin">
-		
+
 			<div id="icon-sailthru" class="icon32"></div>
 			<h2><?php _e( 'Sailthru for Wordpress', 'sailthru-for-wordpress' ); ?></h2>
-			<?php 
+			<?php
 
 
 				if( isset( $_GET[ 'page' ] ) ) {
@@ -17,12 +17,12 @@
 					$active_tab = 'settings_configuration_page';
 				} else {
 					$active_tab = 'settings_configuration_page';
-				} // end if/else			
+				} // end if/else
 
 
 
 				// display errors from form submissions at the top
-				settings_errors(); 
+				settings_errors();
 
 				// Sailthru setup options.
 				$sailthru = get_option('sailthru_setup_options');
@@ -31,36 +31,36 @@
 				$setup = get_option('sailthru_setup_options');
 
 
-				// we have an api key, secret, and sitewide template		
-				if( !empty( $sailthru['sailthru_api_key'] )  
+				// we have an api key, secret, and sitewide template
+				if( !empty( $sailthru['sailthru_api_key'] )
 						&& !empty( $sailthru['sailthru_api_secret'] ) ){
 
 
 					// sitewide template is picked
-					if( !empty($setup['sailthru_setup_email_template']) )	{  
+					if( !empty($setup['sailthru_setup_email_template']) )	{
 
 						/*
 						 *
 						 * This is pretty important.
-						 * If we're done setting up the user. Set this flag so 
+						 * If we're done setting up the user. Set this flag so
 						 * we can start injecting our js to the public side.
-						 * 
+						 *
 						 * This also indicates that sitewide options have
 						 * been chosen. So that means it's ok to start
 						 * overriding WP email.
 						 *
 						 */
-						if( false == get_option( 'sailthru_setup_complete' ) ) {	
+						if( false == get_option( 'sailthru_setup_complete' ) ) {
 							add_option( 'sailthru_setup_complete', 1 );
-						} // end if					
+						} // end if
  						?>
-						
-						<h2 class="nav-tab-wrapper">					
+
+						<h2 class="nav-tab-wrapper">
 							<a href="?page=sailthru_configuration_page" class="nav-tab <?php echo $active_tab == 'sailthru_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=settings_configuration_page" class="nav-tab <?php echo $active_tab == 'settings_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Settings', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=concierge_configuration_page" class="nav-tab <?php echo $active_tab == 'concierge_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Concierge', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=scout_configuration_page" class="nav-tab <?php echo $active_tab == 'scout_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Scout', 'sailthru-for-wordpress' ); ?></a>
-							
+
 						</h2>
 
 						<form method="post" action="options.php">
@@ -71,12 +71,12 @@
 
 								// general settings
 								}elseif( $active_tab == 'settings_configuration_page' ) {
-								
+
 									require( SAILTHRU_PLUGIN_PATH . '/views/settings.html.php' );
-									
+
 								// concierge settings
 								} elseif( $active_tab == 'concierge_configuration_page' ) {
-								
+
 									settings_fields( 'sailthru_concierge_options' );
 									do_settings_sections( 'sailthru_concierge_options' );
 
@@ -85,24 +85,24 @@
 
 									settings_fields( 'sailthru_scout_options' );
 									do_settings_sections( 'sailthru_scout_options' );
-									
+
 								// show welcome page
 								} else {
-								
+
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
-									
+
 								} // end if/else
-								
-								
+
+
 								submit_button();
-							
+
 							?>
 						</form>
 
 					<?php } else { /* if no sitewide template is chosen */ ?>
 
 
-						<h2 class="nav-tab-wrapper">					
+						<h2 class="nav-tab-wrapper">
 							<a href="?page=sailthru_configuration_page" class="nav-tab <?php echo $active_tab == 'sailthru_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=settings_configuration_page" class="nav-tab <?php echo $active_tab == 'settings_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Settings', 'sailthru-for-wordpress' ); ?></a>
 						</h2>
@@ -115,20 +115,20 @@
 
 								// site wide settings
 								}elseif( $active_tab == 'settings_configuration_page' ) {
-								
+
 									require( SAILTHRU_PLUGIN_PATH . '/views/settings.html.php' );
-						
+
 								// scout settings
 								} else {
-								
+
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
-									
+
 								} // end if/else
-								
+
 								submit_button();
-							
+
 							?>
-						</form>	
+						</form>
 
 
 					<?php } /* end if no sitewide template is chosen */ ?>
@@ -138,7 +138,7 @@
 
 					<div id="sailthru-welcome-panel" class="welcome-panel">
 						<div class="welcome-panel-content">
-						<h3><img src="<?php echo plugins_url(); ?>/sailthru-for-wordpress/img/sailthru-logo.png" /> &nbsp;Sailthru Configuration</h3>
+						<h3><img src="<?php echo SAILTHRU_PLUGIN_URL ?>/img/sailthru-logo.png" /> &nbsp;Sailthru Configuration</h3>
 						<p class="about-description">Before we get started, let's make sure you've got everything set up.</p>
 							<div class="welcome-panel-column-container">
 								<div class="welcome-panel-column">
@@ -154,35 +154,19 @@
 											submit_button();
 
 										?>
-									</form>									
+									</form>
 								</div>
 								<div class="welcome-panel-column welcome-panel-last">
 									<h4>Next Steps</h4>
 									<ul>
 										<li>Once you've added your key, you'll need to select a default email template to use.</li>
-										<li>For more information, read our Wordpress plugin documentation.</li>
+										<li>For more information, read our <a href="http://getstarted.sailthru.com/developers/client-libraries/wordpress-plugin">Wordpress plugin documentation.</a></li>
 									</ul>
 								</div>
 							</div>
 						</div>
 					</div><!-- /.welcome-panel -->
 
-				<?php } /* end if no api key */ ?>								
-			
+				<?php } /* end if no api key */ ?>
+
 		</div><!-- /.wrap -->
-
-
-<div id="sailthru-add-datafeed-form" title="Add a Datafeed">
-  <p class="validateTips">All form fields are required.</p>
- 
-  <form>
-  <fieldset>
-    <label for="datafeed_name">Datafeed Name</label>
-    <input type="text" name="datafeed_name" id="datafeed_name" class="text ui-widget-content ui-corner-all" />
-    <br />
-    <label for="datafeed_url">Datafeed Url</label>
-    <input type="text" name="datafeed_url" id="datafeed_url" value="" class="text ui-widget-content ui-corner-all" />
-    <input type="hidden" name="sailthru_action" id="sailthru_action" value="add_datafeed" />
-  </fieldset>
-  </form>
-</div>			

@@ -1,4 +1,4 @@
- <?php 
+ <?php
 
     /*
      * Grab the settings from $instance and fill out default
@@ -34,8 +34,8 @@
                     $after_title = '';
                 }
                 echo $before_title . trim($title) . $after_title;
-            }  
-        ?>  
+            }
+        ?>
          <form method="post" action="#" id="sailthru-add-subscriber-form">
             <div id="sailthru-add-subscriber-errors"></div>
             <?php if( $show_first_name ) { ?>
@@ -44,7 +44,7 @@
                 <input type="text" name="first_name" id="sailthru_first_name" value="" />
             </div>
             <?php } ?>
-            
+
             <?php if( $show_last_name ) { ?>
             <div class="sailthru_form_input">
                 <label for="sailthru_last_name">Last Name:</label>
@@ -59,7 +59,7 @@
 
             <div class="sailthru_form_input">
                 <input type="hidden" name="sailthru_email_list" value="<?php echo $sailthru_list; ?>" />
-                <input type="hidden" name="sailthru_ajax_php" id="sailthru_ajax_php" value="<?php echo plugins_url(); ?>/sailthru-for-wordpress/js/ajax.php" />
+                <input type="hidden" name="sailthru_ajax_php" id="sailthru_ajax_php" value="<?php echo SAILTHRU_PLUGIN_URL  ?>/js/ajax.php" />
                 <input type="hidden" name="sailthru_action" value="add_subscriber" />
                 <input type="hidden" name="vars[source]" value="<?php bloginfo('url'); ?>" />
                 <input type="submit" value="Subscribe" />
