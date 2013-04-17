@@ -1,0 +1,49 @@
+/* general */
+.error-highlight {
+	border-color: #b94a48 !important;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	-moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+}
+
+/* admin icon */
+#icon-sailthru {
+	background-image: url('../img/sailthru-header-icon.png');
+}
+
+
+/* welcome screen */
+#sailthru-admin .welcome-panel-column {
+	width: 49.5%;
+}
+
+	#sailthru-admin #dashboard-widgets-wrap {
+		margin-top:30px;
+	}
+
+	#sailthru-admin #dashboard-widgets-wrap .postbox h3 {
+		cursor: default;
+	}
+
+		#sailthru-admin  #dashboard-widgets-wrap .postbox-container { 
+			width: 49.5%; 
+			margin-right:8px;
+			float:left;
+		}
+
+		#sailthru-admin #dashboard-widgets-wrap .postbox-container.last {
+			margin-right:0;
+		}
+
+
+/* setup screen */
+#sailthru-add-api-key-form { display:none; }	
+
+
+/* meta box width */
+table.cmb_metabox input.cmb_text_small{
+	width: 200px;
+}
+
+/* simple gray border */
+.grayBorder { border: 1px solid #CCCCCC;}
