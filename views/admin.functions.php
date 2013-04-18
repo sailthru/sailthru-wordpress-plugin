@@ -16,6 +16,31 @@ function sailthru_initialize_setup_options() {
 		'sailthru_setup_options'			// Page on which to add this section of options
 	);
 
+	/*
+		 * Add a new field for selecting the email template to use,
+		 * but don't do this until we have an API key & secret to use.
+		 */
+		$setup = get_option('sailthru_setup_options');
+
+		if( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
+				isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
+
+			add_settings_field(
+				'sailthru_setup_email_template',
+				__( 'Wordpress template', 'sailthru-for-wordpress' ),
+				'sailthru_setup_email_template_callback',
+				'sailthru_setup_options',
+				'sailthru_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_setup_email_template',
+					'',
+					'sailthru_setup_email_template',
+				)
+			);
+
+		}
+
 
 		add_settings_field(
 			'sailthru_api_key',					// ID used to identify the field throughout the theme
@@ -74,30 +99,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		/*
-		 * Add a new field for selecting the email template to use,
-		 * but don't do this until we have an API key & secret to use.
-		 */
-		$setup = get_option('sailthru_setup_options');
 
-		if( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
-				isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
-
-			add_settings_field(
-				'sailthru_setup_email_template',
-				__( 'Wordpress template', 'sailthru-for-wordpress' ),
-				'sailthru_setup_email_template_callback',
-				'sailthru_setup_options',
-				'sailthru_setup_section',
-				array(
-					'sailthru_setup_options',
-					'sailthru_setup_email_template',
-					'',
-					'sailthru_setup_email_template',
-				)
-			);
-
-		}
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -555,13 +557,21 @@ function sailthru_setup_email_template_callback( $args ) {
 		$api_secret = $sailthru['sailthru_api_secret'];
 
 	$client = new Sailthru_Client( $api_key, $api_secret );
-		$res = $client->getTemplates();
+	$res = $client->getTemplates();
 
-	$html = create_dropdown( $args, $res['templates'] );
+	if (isset($res['error']) ){
+		$tpl =  array();
+	} else {
+		$tpl = $res['templates'] ;
+	}
+
+	$html = create_dropdown( $args, $tpl);
 
 	echo $html;
 
 }
+
+
 
 
 /* ------------------------------------------------------------------------ *
@@ -659,9 +669,6 @@ function sailthru_setup_handler( $input ) {
 
 
 
-
-
-
 /* ------------------------------------------------------------------------ *
  * Utility Functions
  * ------------------------------------------------------------------------ */
@@ -718,6 +725,77 @@ function create_dropdown( $args, $values ) {
 	$html .= '</select>';
 
 	return $html;
+
+}
+
+/**
+ * This function verifies Sailthru is working by making an API Call to Sailthru
+ *
+ */
+function sailthru_verify_setup() {
+
+  $sailthru = get_option('sailthru_setup_options');
+  $api_key = $sailthru['sailthru_api_key'];
+  $api_secret = $sailthru['sailthru_api_secret'];
+  $template = isset($sailthru['sailthru_setup_email_template']) ? $sailthru['sailthru_setup_email_template'] : '';
+  $res = array();
+
+  if ($template == '') {
+
+  	$res['error'] = true;
+  	$res['errormessage'] = 'select a template';
+
+  } else {
+
+  	// now check to see if we can make an API call
+  	$client = new Sailthru_Client( $api_key, $api_secret );
+  	$res = $client->getTemplates();
+
+  	if ( !isset($res['error'] ) ) {
+  		// we can make a call, now check the template is configured
+  		$tpl = $client->getTemplate($template);
+  		$tpl_errors = sailthru_verify_template($tpl);
+
+  		if(count($tpl_errors) > 0) {
+  			// add errors to the error message
+  			$res['error'] = true;
+  			$res['errormessage'] = 'template not configured';
+  		} else {
+  			$res['error'] = false;
+  		}
+
+  	} else {
+  		$res['error'] = true;
+  		$res['errormessage'] = 'not configured';
+  	}
+  }
+
+  return $res;
+}
+// end sailthru_verify_setup
+
+
+/**
+ * This function verifies that the template is coded correctly
+ *
+ */
+function sailthru_verify_template($tpl) {
+
+	$errors = array();
+
+	if ($tpl['subject'] != '{subject}') {
+		$errors = 'Your template needs to have {subject} as the subject line.';
+	}
+
+	if (!strstr($tpl['content_html'], '{body}')) {
+		$errors = 'Your template needs to have {body} variable.';
+	}
+
+	if (!strstr($tpl['content_text'], '{body}') ) {
+		$errors = 'Your template needs to have {body} variable.';
+	}
+
+	return $errors;
 
 }
 
