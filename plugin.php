@@ -78,6 +78,44 @@ register_activation_hook( __FILE__, array( 'Sailthru_Horizon', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Sailthru_Horizon', 'deactivate' ) );
 register_uninstall_hook(  __FILE__, array( 'Sailthru_Horizon', 'uninstall' ) );
 
+// Add and action to handle when a user logs in
+add_action('wp_login', 'sailthru_user_login', 10, 2);
+
+
+function sailthru_user_login($user_login, $user) {
+
+  if (get_option('sailthru_setup_complete')) {
+
+    $sailthru = get_option('sailthru_setup_options');
+    $api_key = $sailthru['sailthru_api_key'];
+    $api_secret = $sailthru['sailthru_api_secret'];
+
+    $client = new Sailthru_Client( $api_key, $api_secret );
+
+    $id = $user->user_email;
+    $options = array(
+      'login' => array(
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+        'key' => 'email',
+        'ip' => $_SERVER['SERVER_ADDR'],
+        'site' => $_SERVER['HTTP_HOST'],
+      ),
+      'fields' => array('keys' => 1),
+    );
+
+    try {
+      if ($client) {
+        $st = $client->saveUser($id, $options);
+      }
+    }
+    catch (Sailthru_Client_Exception $e) {
+      //silently fail
+      return;
+    }
+
+  }
+
+}
 
 
 /*
