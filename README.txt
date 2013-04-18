@@ -9,6 +9,8 @@ This plugin  provides fast and easy integration of the core Sailthru features in
 
 == Description ==
 
+UNDER DEVELOPMENT
+
 * Automatically adds Horizon Javascript to pages
 * Automatically adds Sailthru Meta Tags to all posts
 * Admin area to configure Sailthru Scout and the Sailthru Concierge Slider
