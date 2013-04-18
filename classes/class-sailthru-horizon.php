@@ -187,10 +187,15 @@ class Sailthru_Horizon {
 			$api_secret = $sailthru['sailthru_api_secret'];
 
 			$client = new Sailthru_Client( $api_key, $api_secret );
-				$res = $client->apiPost('settings', array() );
+			$res = $client->apiPost('settings', array() );
 
-				$timezone = new DateTime( $res['timezone'] );
-					$timezoneOffset = ( $timezone->getOffset() ) / 60 / 60 * 100;
+			// if the Sailthru client hasn't been initialized return
+			if (isset($res['error'] ) ) {
+				return;
+			}
+
+			$timezone = new DateTime( $res['timezone'] );
+			$timezoneOffset = ( $timezone->getOffset() ) / 60 / 60 * 100;
 
 
 			$params = array('timezone' => $timezoneOffset);
@@ -329,7 +334,7 @@ class Sailthru_Horizon {
 	 */
 	function load_sailthru_admin_display( ) {
 
-		$active_tab = $this->views[current_filter()];
+		$active_tab = empty($this->views[current_filter()]) ? '' : $this->views[current_filter()] ;
 		// display html
 		include( SAILTHRU_PLUGIN_PATH . 'views/admin.php' );
 
