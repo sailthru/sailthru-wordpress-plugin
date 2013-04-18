@@ -25,8 +25,8 @@
 		cursor: default;
 	}
 
-		#sailthru-admin  #dashboard-widgets-wrap .postbox-container { 
-			width: 49.5%; 
+		#sailthru-admin  #dashboard-widgets-wrap .postbox-container {
+			width: 49.5%;
 			margin-right:8px;
 			float:left;
 		}
@@ -37,12 +37,32 @@
 
 
 /* setup screen */
-#sailthru-add-api-key-form { display:none; }	
+#sailthru-add-api-key-form { display:none; }
 
 
 /* meta box width */
 table.cmb_metabox input.cmb_text_small{
 	width: 200px;
+}
+
+.option-box {
+	float:left;
+	margin:-left:10px;
+	margin-right:10px;
+	width:30%;
+	border:1px solid #CCCCCC;
+	padding:10px;
+}
+.option-box h3 {
+	margin:0;
+	padding:0;
+}
+
+#welcome-screen-header {
+	background: #f0f0f0 url(http://media.sailthru.com/1wi/1jx/4/h/516f4bbf83832.png) no-repeat top center;
+	text-indent:-9999px;
+	height:251px;
+	min-width:965px;
 }
 
 /* simple gray border */
