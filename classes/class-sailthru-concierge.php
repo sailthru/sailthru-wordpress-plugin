@@ -31,8 +31,8 @@ class Sailthru_Concierge {
 			if( get_option('sailthru_setup_complete') ) {
 
 				wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
-				wp_enqueue_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('sailthru-horizon') );
-				wp_localize_script( 'sailthru-horizon-params', 'Concierge', $params );
+				//wp_enqueue_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('sailthru-horizon') );
+				//wp_localize_script( 'sailthru-horizon-params', 'Concierge', $params );
 
 			}
 

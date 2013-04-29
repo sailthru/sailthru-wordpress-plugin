@@ -19,7 +19,7 @@ class Sailthru_Scout  extends WP_Widget {
 		$post_id = $this->create_scout_page();
 
 		// Attempt to register the sidebar widget for Scout
-		//register_sidebar_widget('Sailthru Recommends', array($this, 'widget') );
+		register_sidebar_widget('Sailthru Recommends', array($this, 'widget') );
 
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
@@ -65,9 +65,9 @@ class Sailthru_Scout  extends WP_Widget {
 			// Check first, otherwise js could throw errors
 			if( get_option('sailthru_setup_complete') ) {
 
-				wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon', 'sailthru-horizon-params') );
+				wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon') );
 
-				wp_enqueue_script( 'sailthru-scout-params', SAILTHRU_PLUGIN_PATH .'/js/scout.params.js' , array('sailthru-scout') );
+				//wp_enqueue_script( 'sailthru-scout-params', SAILTHRU_PLUGIN_URL .'/js/scout.params.js' , array('sailthru-scout') );
 
 				// if conceirge is on, we want noPageView to be set to true
 				// see
@@ -76,7 +76,9 @@ class Sailthru_Scout  extends WP_Widget {
 						$params['sailthru_scout_noPageview'] = 'true';
 					}
 
-				wp_localize_script( 'sailthru-scout-params', 'Scout', $params );
+				add_action('wp_footer', array( $this, 'scout_js' ), 10);
+
+				//wp_localize_script( 'sailthru-scout-params', 'Scout', $params );
 
 			} // end if sailthru setup is done
 
@@ -87,6 +89,39 @@ class Sailthru_Scout  extends WP_Widget {
 	/*-------------------------------------------
 	 * Utility Functions
 	 *------------------------------------------*/
+
+	/**
+	 * A function used to render the Scout JS f
+	 *
+	 * @returns  string
+	 */
+	 function scout_js() {
+
+	 	$options = get_option('sailthru_setup_options');
+		$horizon_domain = $options['sailthru_horizon_domain'];
+		$scout = get_option('sailthru_scout_options');
+
+		var_dump($scout);
+
+		$scout_params[] = strlen($scout['sailthru_scout_includeConsumed']) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
+		$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
+		$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
+
+		if ($scout['sailthru_scout_is_on'] == 1) {
+		 	echo "<script type=\"text/javascript\">\n";
+	           echo "SailthruScout.setup({\n";
+	           echo "domain: '".$options['sailthru_horizon_domain']."',\n";
+
+	           foreach ($scout_params as $key => $val) {
+	           	if (strlen($val) >0)  {
+	           		echo $val.",\n";
+	           	}
+	           }
+	           echo "});\n";
+			echo "</script>\n";
+		}
+
+	 }
 
 	/**
 	 * A function used to programmatically create a page needed for Scout. The slug, author ID, and title

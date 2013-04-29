@@ -127,7 +127,14 @@ if( get_option('sailthru_override_wp_mail')
 
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
 
-        extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
+      echo $message;
+      die();
+
+      extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
+
+      echo '<hr />';
+      echo $message;
+      die();
 
         // recipients
         $recipients = is_array($to) ? implode(',', $to) : $to;

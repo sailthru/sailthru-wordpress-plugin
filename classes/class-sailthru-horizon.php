@@ -175,8 +175,6 @@ class Sailthru_Horizon {
 		// our own magic
 		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . '/js/admin.js' , array('jquery') );
 
-
-
 		// get some user specific info to pass to the timepicker
 		$sailthru = get_option('sailthru_setup_options');
 
@@ -219,10 +217,10 @@ class Sailthru_Horizon {
 		if( get_option('sailthru_setup_complete') ) {
 
 
-			wp_register_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('jquery', 'sailthru-horizon'), '', true );
+			//wp_register_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('jquery', 'sailthru-horizon'), '', true );
 
-			// Horizon itself
-			wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
+			// Horizon itself put this in the footer
+			//wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery'), false, true);
 
 
 			// we're not going to pass the enitre set of options
@@ -234,18 +232,77 @@ class Sailthru_Horizon {
 			$params = array();
 			$params['sailthru_horizon_domain'] = $horizon_domain;
 
+			add_action('wp_footer', array( $this, 'sailthru_client_horizon' ), 10);
+
 			// A handy trick to update the parameters in js files
 			wp_localize_script( 'sailthru-horizon-params', 'Horizon', $params );
-
 
 			// Horizon paramters.
 			wp_enqueue_script( 'sailthru-horizon-params' );
 
 
-
 		} // end if sailthru setup is complete
 
 	} // end register_plugin_scripts
+
+
+	/*-------------------------------------------
+	 * Create the Horizon Script for the page footer
+	 *------------------------------------------*/
+	 function sailthru_client_horizon() {
+
+	 	// get the client's horizon domain
+	 	$options = get_option('sailthru_setup_options');
+
+	 	$concierge = get_option('sailthru_concierge_options');
+	 		$concierge_from = isset($concierge['sailthru_concierge_from']) ? $concierge['sailthru_concierge_from'] : 'bottom';
+	 		$concierge_threshold= strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".$concierge['sailthru_concierge_threshold'] .",": 'threshold: 500,';
+	 		$concierge_delay = isset($concierge['sailthru_concierge_delay']) ? $concierge['sailthru_concierge_delay'] : '500';
+	 		$concierge_offset = isset($concierge['sailthru_concierge_offsetBottom']) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
+	 		$concierge_css = strlen($concierge['sailthru_concierge_cssPath']) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
+	 		$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '".$concierge['sailthru_concierge_filter'] ."'" : '';
+
+
+	 	// check if concierge is on
+	 	if ($concierge['sailthru_concierge_is_on'] == 1) {
+	 		$horizon_params = "domain: '".$options['sailthru_horizon_domain']."',concierge: {
+	 			from: '".$concierge_from."',
+	 			".$concierge_threshold."
+	 			delay: ".$concierge_delay." ,
+	 			offsetBottom: ".$concierge_offset." ,
+	 			cssPath: '".$concierge_css."',
+	 			$concierge_filter
+	 		}";
+	 		//$horizon_params = $options['sailthru_horizon_domain'];
+		} else {
+			$horizon_params = $options['sailthru_horizon_domain'];
+		}
+
+	 	echo "<!-- Sailthru Horizon -->\n";
+		echo "<script type=\"text/javascript\">\n";
+		echo "(function() {\n";
+		echo  "     function loadHorizon() {\n";
+		echo  "           var s = document.createElement('script');\n";
+		echo  "           s.type = 'text/javascript';\n";
+		echo  "          s.async = true;\n";
+		echo  "          s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';\n";
+		echo  "         var x = document.getElementsByTagName('script')[0];\n";
+		echo  "         x.parentNode.insertBefore(s, x);\n";
+		echo  "      }\n";
+		echo  "     loadHorizon();\n";
+		echo  "      var oldOnLoad = window.onload;\n";
+		echo  "      window.onload = function() {\n";
+		echo  "          if (typeof oldOnLoad === 'function') {\n";
+		echo  "            oldOnLoad();\n";
+		echo  "         }\n";
+		echo  "           Sailthru.setup({\n";
+		echo  "              ".$horizon_params."\n";
+		echo  "         });\n";
+		echo  "     };\n";
+		echo  "  })();\n";
+		echo  " </script>\n";
+
+	 } // end sailthru_client_horizon
 
 
 	/**
@@ -468,8 +525,6 @@ class Sailthru_Horizon {
 	function reverse_strrchr($haystack, $needle, $trail) {
 	    return strrpos($haystack, $needle) ? substr($haystack, 0, strrpos($haystack, $needle) + $trail) : false;
 	}
-
-
 
 	/*-------------------------------------------
 	 * Custom Metaboxes and Fields for WordPress
