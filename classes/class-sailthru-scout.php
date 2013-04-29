@@ -101,8 +101,6 @@ class Sailthru_Scout  extends WP_Widget {
 		$horizon_domain = $options['sailthru_horizon_domain'];
 		$scout = get_option('sailthru_scout_options');
 
-		var_dump($scout);
-
 		$scout_params[] = strlen($scout['sailthru_scout_includeConsumed']) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
 		$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
 		$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
