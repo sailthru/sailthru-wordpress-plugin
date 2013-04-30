@@ -19,7 +19,7 @@ class Sailthru_Scout  extends WP_Widget {
 		$post_id = $this->create_scout_page();
 
 		// Attempt to register the sidebar widget for Scout
-		register_sidebar_widget('Sailthru Recommends', array($this, 'widget') );
+		wp_register_sidebar_widget('sailthru-recommend-widget', 'Sailthru Recommends', array($this, 'widget'));
 
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
