@@ -413,10 +413,11 @@ function sailthru_html_text_input_callback( $args ) {
 function sailthru_scout_items_callback( $args ) {
 
 	$scout = get_option('sailthru_concierge_options');
-	$saved_value = $scout['sailthru_concierge_number'] !='' ? $scout['sailthru_concierge_number'] : 5 ;
+	$saved_value = isset($scout['sailthru_concierge_number'])  ? $scout['sailthru_concierge_number'] : 5 ;
 
 	$html = '<select name="sailthru_concierge_options[sailthru_concierge_number]">';
 
+	$i = 0;
 	while ($i <= 40) {
 		$html .= '<option value="'.$i.'" ' . selected( $saved_value, $i, false) . '>'.$i.'</option>';
 		$i++;
@@ -433,7 +434,7 @@ function sailthru_scout_items_callback( $args ) {
 function sailthru_scout_includeConsumed_callback( $args ) {
 
 	$scout = get_option('sailthru_scout_options');
-		$saved_value = $scout['sailthru_scout_includeConsumed'];
+		$saved_value = isset($scout['sailthru_scout_includeConsumed']) ? $scout['sailthru_scout_includeConsumed'] : '';
 
 	$html = '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
 		$html .= '<option value="false" ' . selected( $saved_value, "false", false) . '>No</option>';
@@ -452,7 +453,7 @@ function sailthru_scout_includeConsumed_callback( $args ) {
 function sailthru_scout_renderItem_callback( $args ) {
 
 	$scout = get_option('sailthru_scout_options');
-		$saved_value = $scout['sailthru_scout_renderItem'];
+		$saved_value = isset($scout['sailthru_scout_renderItem']) ? $scout['sailthru_scout_renderItem'] : '';
 
 	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . $saved_value . '</textarea>';
 
@@ -467,7 +468,7 @@ function sailthru_scout_renderItem_callback( $args ) {
 function sailthru_concierge_from_callback( $args ) {
 
 	$scout = get_option('sailthru_concierge_options');
-	$saved_value = $scout['sailthru_concierge_from'];
+	$saved_value = isset($scout['sailthru_concierge_from']) ? $scout['sailthru_concierge_from'] : '' ;
 
 	$html = '<select name="sailthru_concierge_options[sailthru_concierge_from]">';
 		$html .= '<option value="top" ' . selected( $saved_value, "top", false) . '>Top</option>';
@@ -484,7 +485,7 @@ function sailthru_concierge_from_callback( $args ) {
 function sailthru_concierge_delay_callback( $args ) {
 
 	$scout = get_option('sailthru_concierge_options');
-	$saved_value = $scout['sailthru_concierge_delay'];
+	$saved_value = isset($scout['sailthru_concierge_delay']) ? $scout['sailthru_concierge_delay'] : '';
 
 	$html = '<select name="sailthru_concierge_options[sailthru_concierge_delay]">';
 		$html .= '<option value="100" ' . selected( $saved_value, "100", false) . '>1 sec</option>';
