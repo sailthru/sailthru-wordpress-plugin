@@ -160,12 +160,3 @@ if( get_option('sailthru_override_wp_mail')
 
     }
 }
-
-
-/*
- * Set the content type of the email to HTML
- */
-function set_html_content_type()
-{
-  return 'text/html';
-}
