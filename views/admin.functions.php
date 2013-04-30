@@ -292,7 +292,7 @@ function sailthru_intialize_scout_options() {
 		if( isset($scout['sailthru_scout_is_on']) &&  $scout['sailthru_scout_is_on']) {
 
 			add_settings_field(
-				'sailthru_concierge_numVisible',
+				'sailthru_scout_numVisible',
 				__( 'The number of items to render at a time', 'sailthru-for-wordpress' ),
 				'sailthru_scout_items_callback',
 				'sailthru_scout_options',
@@ -412,10 +412,11 @@ function sailthru_html_text_input_callback( $args ) {
  */
 function sailthru_scout_items_callback( $args ) {
 
-	$scout = get_option('sailthru_concierge_options');
-	$saved_value = isset($scout['sailthru_concierge_number'])  ? $scout['sailthru_concierge_number'] : 5 ;
+	$scout = get_option('sailthru_scout_options');
+	$saved_value = isset($scout['sailthru_scout_numVisible'])  ? $scout['sailthru_scout_numVisible'] : 5 ;
 
-	$html = '<select name="sailthru_concierge_options[sailthru_concierge_number]">';
+
+	$html = '<select name="sailthru_scout_options[sailthru_scout_numVisible]">';
 
 	$i = 0;
 	while ($i <= 40) {
