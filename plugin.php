@@ -127,14 +127,12 @@ if( get_option('sailthru_override_wp_mail')
 
     function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
 
-      echo $message;
-      die();
+      // we'll be going through Sailthru so we'll handle text/html emails there already
+      // replace the <> in the reset password message link to allow the link to display.
+      // in HTML emails
+      $message = preg_replace( '#<(https?://[^*]+)>#', '$1', $message );
 
       extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
-
-      echo '<hr />';
-      echo $message;
-      die();
 
         // recipients
         $recipients = is_array($to) ? implode(',', $to) : $to;
@@ -161,4 +159,13 @@ if( get_option('sailthru_override_wp_mail')
         return true;
 
     }
+}
+
+
+/*
+ * Set the content type of the email to HTML
+ */
+function set_html_content_type()
+{
+  return 'text/html';
 }
