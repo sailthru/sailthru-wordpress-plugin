@@ -424,16 +424,8 @@
 					</thead>
 					<tr>
 						<td style="width: 500px;">
-							<p style="margin-left: 7px;">Form Name:  <input type="text" name="form_name" style="width: 300px;" value="
-								<?php
-									if(isset($errors) && count($errors)) {
-										echo $_POST['form_name'];
-									}
-									else {
-										echo $form->name;
-									}
-								?>	
-							"></p>
+							<p style="margin-left: 7px;">Form Name:  <input type="text" name="form_name" style="width: 300px;" value="<?php echo (isset($errors) && count($errors)) ? $_POST['form_name'] : $form->name; ?>">
+							</p>
 							<table border="0">
 								<tr>
 									<td colspan="4" style="border: 0px;">
