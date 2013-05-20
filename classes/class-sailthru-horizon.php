@@ -5,6 +5,10 @@ class Sailthru_Horizon {
 
 	protected $admin_views = array();
 
+	 // Represents the nonce value used to save the post media
+	 private $nonce = 'wp_sailthru_nonce';
+
+
 	/*--------------------------------------------*
 	 * Constructor
 	 *--------------------------------------------*/
@@ -18,7 +22,7 @@ class Sailthru_Horizon {
 		add_action( 'init', array( $this, 'plugin_textdomain' ) );
 
 		// Register admin styles and scripts
-		add_action( 'admin_print_styles', array( $this, 'register_admin_styles' ) );
+		// Documentation says: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 
 		// Register Horizon Javascripts
@@ -31,12 +35,9 @@ class Sailthru_Horizon {
 	    add_action( 'wp_head', array( $this, 'sailthru_horizon_meta_tags' ) );
 
 
-
-		// Initialize the metabox class.
-		add_action( 'init', array( $this, 'cmb_initialize_cmb_meta_boxes' ), 9999 );
-
-		// Register the Horizon metabox for posts
-		add_filter( 'cmb_meta_boxes', array( $this, 'sailthru_post_metabox' )  );
+	 	// Setup the meta box hooks
+	 	add_action( 'add_meta_boxes', array( $this, 'sailthru_post_metabox' ) );
+	 	add_action( 'save_post', array( $this, 'save_custom_meta_data' ) );
 
 
 	} // end constructor
@@ -111,12 +112,6 @@ class Sailthru_Horizon {
 		}
 
 
-		// try to deactivate the Sailthru Subscribe Widget
-		$dependent = 'sailthru-for-wordpress/widget.php';
-	    if( is_plugin_active($dependent) ){
-	         add_action('update_option_active_plugins', array( 'Sailthru_Horizon', 'sailthru_deactivate_dependent_widget') );
-	    }
-
 	} // end deactivate
 
 	/**
@@ -137,72 +132,38 @@ class Sailthru_Horizon {
 
 		$domain = 'sailthru-for-wordpress-locale';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-        load_textdomain( $domain, WP_LANG_DIR.'/'.$domain.'/'.$domain.'-'.$locale.'.mo' );
+        load_textdomain( $domain, SAILTHRU_PLUGIN_PATH . $domain . '-' . $locale . '.mo' );
         load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
 	} // end plugin_textdomain
 
-	/**
-	 * Registers and enqueues admin-specific styles.
-	 */
-	public function register_admin_styles() {
 
-		// jquery ui
-		wp_enqueue_style('jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
-
-		// our own magic
-		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . '/css/admin.css'  );
-
-	} // end register_admin_styles
 
 	/**
 	 * Registers and enqueues admin-specific JavaScript.
 	 */
-	public function register_admin_scripts() {
-
-		// jQuery UI
-		wp_enqueue_script( 'jquery-ui-core' );
-		wp_enqueue_script( 'jquery-ui-widget' );
-		wp_enqueue_script( 'jquery-ui-slider' );
-		wp_enqueue_script( 'jquery-ui-datepicker' );
-		wp_enqueue_script( 'jquery-ui-dialog' );
+	public function register_admin_scripts( $hook ) {
 
 
-		// date/time picker add on for the email blast screen
-		wp_enqueue_script( 'jquery-date-time-picker-addon', SAILTHRU_PLUGIN_URL . '/js/jquery-ui-timepicker-addon.js' , array('jquery', 'jquery-ui-core', 'jquery-ui-datepicker', 'jquery-ui-slider') );
-		wp_enqueue_script( 'jquery-date-time-picker-slider', SAILTHRU_PLUGIN_URL . '/js/jquery-ui-sliderAccess.js' , array('jquery-date-time-picker-addon') );
+		// datepicker for the meta box on post pages
+		wp_enqueue_script('jquery-ui-datepicker', array('jquery'));
+		wp_enqueue_style( 'jquery-style', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css');
 
 		// our own magic
-		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . '/js/admin.js' , array('jquery') );
-
-		// get some user specific info to pass to the timepicker
-		$sailthru = get_option('sailthru_setup_options');
-
-		// set up is not complete yet
-		if( is_array($sailthru) ) {
-
-			$api_key = $sailthru['sailthru_api_key'];
-			$api_secret = $sailthru['sailthru_api_secret'];
-
-			$client = new Sailthru_Client( $api_key, $api_secret );
-			$res = $client->apiPost('settings', array() );
-
-			// if the Sailthru client hasn't been initialized return
-			if (isset($res['error'] ) ) {
-				return;
-			}
-
-			$timezone = new DateTime( $res['timezone'] );
-			$timezoneOffset = ( $timezone->getOffset() ) / 60 / 60 * 100;
+		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array('jquery') );
 
 
-			$params = array('timezone' => $timezoneOffset);
+		// abandon if we're not on our own pages.
+		if( !stristr( $hook, 'sailthru' ) &&
+				!stristr( $hook, 'horizon' ) &&
+					!stristr( $hook, 'scout' ) &&
+						!stristr( $hook, 'concierge' ) &&
+							!stristr( $hook, 'settings_configuration_page' ) ) {
+			return;
+		}
 
-
-			// A handy trick to update the parameters in js files
-			wp_localize_script( 'sailthru-for-wordpress-admin-script', 'UserSettingsAPI', $params );
-
-		}	// if $sailthru is not an array
+		// our own magic
+		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . 'css/admin.css'  );
 
 	} // end register_admin_scripts
 
@@ -215,12 +176,6 @@ class Sailthru_Horizon {
 
 		// Check first, otherwise js could throw errors
 		if( get_option('sailthru_setup_complete') ) {
-
-
-			//wp_register_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('jquery', 'sailthru-horizon'), '', true );
-
-			// Horizon itself put this in the footer
-			//wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery'), false, true);
 
 
 			// we're not going to pass the enitre set of options
@@ -247,7 +202,7 @@ class Sailthru_Horizon {
 
 
 	/*-------------------------------------------
-	 * Create the Horizon Script for the page footer
+	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
 	 *------------------------------------------*/
 	 function sailthru_client_horizon() {
 
@@ -256,67 +211,80 @@ class Sailthru_Horizon {
 
 	 	$concierge = get_option('sailthru_concierge_options');
 	 		$concierge_from = isset($concierge['sailthru_concierge_from']) ? $concierge['sailthru_concierge_from'] : 'bottom';
-	 		$concierge_threshold= strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".$concierge['sailthru_concierge_threshold'] .",": 'threshold: 500,';
+
+	 		// threshold
+	 		if( !isset($concierge['sailthru_concierge_threshold']) ) {
+	 			$concierge_threshold = 'threshold: 500,';
+	 		} else {
+	 			$concierge_threshold =  strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".$concierge['sailthru_concierge_threshold'] .",": 'threshold: 500,';
+	 		}
+
+	 		// delay
 	 		$concierge_delay = isset($concierge['sailthru_concierge_delay']) ? $concierge['sailthru_concierge_delay'] : '500';
+
+	 		// offset
 	 		$concierge_offset = isset($concierge['sailthru_concierge_offsetBottom']) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
-	 		$concierge_css = strlen($concierge['sailthru_concierge_cssPath']) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
-	 		$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '".$concierge['sailthru_concierge_filter'] ."'" : '';
+
+	 		// cssPath
+	 		if( !isset($concierge['sailthru_concierge_cssPath']) ) {
+	 			$concierge_css = 'https://ak.sail-horizon.com/horizon/recommendation.css';
+	 		} else {
+				$concierge_css = strlen($concierge['sailthru_concierge_cssPath']) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
+	 		}
+
+	 		// filter
+	 		if( !isset($concierge['sailthru_concierge_filter']) ) {
+	 			$concierge_filter = '';
+	 		} else {
+	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '".$concierge['sailthru_concierge_filter'] ."'" : '';
+	 		}
 
 
 	 	// check if concierge is on
-	 	if ($concierge['sailthru_concierge_is_on'] == 1) {
+	 	if ( isset($concierge['sailthru_concierge_is_on']) && $concierge['sailthru_concierge_is_on'] == 1 ) {
 	 		$horizon_params = "domain: '".$options['sailthru_horizon_domain']."',concierge: {
-	 			from: '".$concierge_from."',
-	 			".$concierge_threshold."
-	 			delay: ".$concierge_delay." ,
-	 			offsetBottom: ".$concierge_offset." ,
-	 			cssPath: '".$concierge_css."',
+	 			from: '". esc_js( $concierge_from ) ."',
+	 			". esc_js( $concierge_threshold ) ."
+	 			delay: ". esc_js( $concierge_delay ) .",
+	 			offsetBottom: ". esc_js( $concierge_offset ) .",
+	 			cssPath: '". esc_js( $concierge_css ) ."',
 	 			$concierge_filter
 	 		}";
-	 		//$horizon_params = $options['sailthru_horizon_domain'];
+
 		} else {
-			$horizon_params = $options['sailthru_horizon_domain'];
+			$horizon_params =   "domain: '" . $options['sailthru_horizon_domain'] . "'";
 		}
 
-	 	echo "<!-- Sailthru Horizon -->\n";
-		echo "<script type=\"text/javascript\">\n";
-		echo "(function() {\n";
-		echo  "     function loadHorizon() {\n";
-		echo  "           var s = document.createElement('script');\n";
-		echo  "           s.type = 'text/javascript';\n";
-		echo  "          s.async = true;\n";
-		echo  "          s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';\n";
-		echo  "         var x = document.getElementsByTagName('script')[0];\n";
-		echo  "         x.parentNode.insertBefore(s, x);\n";
-		echo  "      }\n";
-		echo  "     loadHorizon();\n";
-		echo  "      var oldOnLoad = window.onload;\n";
-		echo  "      window.onload = function() {\n";
-		echo  "          if (typeof oldOnLoad === 'function') {\n";
-		echo  "            oldOnLoad();\n";
-		echo  "         }\n";
-		echo  "           Sailthru.setup({\n";
-		echo  "              ".$horizon_params."\n";
-		echo  "         });\n";
-		echo  "     };\n";
-		echo  "  })();\n";
-		echo  " </script>\n";
+	 	$horizon_js  = "<!-- Sailthru Horizon -->\n";
+		$horizon_js .= "<script type=\"text/javascript\">\n";
+		$horizon_js .= "(function() {\n";
+		$horizon_js .= "     function loadHorizon() {\n";
+		$horizon_js .= "           var s = document.createElement('script');\n";
+		$horizon_js .= "           s.type = 'text/javascript';\n";
+		$horizon_js .= "          s.async = true;\n";
+		$horizon_js .= "          s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';\n";
+		$horizon_js .= "         var x = document.getElementsByTagName('script')[0];\n";
+		$horizon_js .= "         x.parentNode.insertBefore(s, x);\n";
+		$horizon_js .= "      }\n";
+		$horizon_js .= "     loadHorizon();\n";
+		$horizon_js .= "      var oldOnLoad = window.onload;\n";
+		$horizon_js .= "      window.onload = function() {\n";
+		$horizon_js .= "          if (typeof oldOnLoad === 'function') {\n";
+		$horizon_js .= "            oldOnLoad();\n";
+		$horizon_js .= "         }\n";
+		$horizon_js .= "           Sailthru.setup({\n";
+		$horizon_js .= "              ". $horizon_params ."\n";
+		$horizon_js .= "         });\n";
+		$horizon_js .= "     };\n";
+		$horizon_js .= "  })();\n";
+		$horizon_js .= " </script>\n";
+
+		echo $horizon_js;
+
+
 
 	 } // end sailthru_client_horizon
 
-
-	/**
-	 * Deactivate the Sailthru Subscribe Widget when the Horizon
-	 * Plugin is deactivated.
-	 *
-	 * TODO: abstract $dependent into an argument
-	 */
-	function sailthru_deactivate_dependent_widget() {
-
-		$dependent = 'sailthru-for-wordpress/widget.php';
-		deactivate_plugins($dependent);
-
-	}
 
 
 	/*--------------------------------------------*
@@ -329,11 +297,11 @@ class Sailthru_Horizon {
 
 		$sailthru_menu = add_menu_page(
 			'Sailthru',											// The value used to populate the browser's title bar when the menu page is active
-			__( 'Sailthru', 'sailthru-for-wordpress' ),	// The text of the menu in the administrator's sidebar
-			'administrator',									// What roles are able to access the menu
+			__( 'Sailthru', 'sailthru-for-wordpress' ),			// The text of the menu in the administrator's sidebar
+			'manage_options',									// What roles are able to access the menu
 			'sailthru_configuration_page',						// The ID used to bind submenu items to this menu
 			array( &$this, 'load_sailthru_admin_display'),		// The callback function used to render this menu
-			SAILTHRU_PLUGIN_URL . '/img/sailthru-menu-icon.png' 	// The icon to represent the menu item
+			SAILTHRU_PLUGIN_URL . 'img/sailthru-menu-icon.png' 	// The icon to represent the menu item
 		);
 		$this->admin_views[$sailthru_menu] = 'sailthru_configuration_page';
 
@@ -341,7 +309,7 @@ class Sailthru_Horizon {
 				'sailthru_configuration_page',
 				__( 'Welcome', 'sailthru-for-wordpress' ),
 				__( 'Welcome', 'sailthru-for-wordpress' ),
-				'administrator',
+				'manage_options',
 				'sailthru_configuration_page',
 				array( &$this, 'load_sailthru_admin_display')
 			);
@@ -352,7 +320,7 @@ class Sailthru_Horizon {
 				'sailthru_configuration_page',
 				__( 'Settings', 'sailthru-for-wordpress' ),
 				__( 'Settings', 'sailthru-for-wordpress' ),
-				'administrator',
+				'manage_options',
 				'settings_configuration_page',
 				array( &$this, 'load_sailthru_admin_display')
 			);
@@ -365,7 +333,7 @@ class Sailthru_Horizon {
 				'sailthru_configuration_page',							// The ID of the top-level menu page to which this submenu item belongs
 				__( 'Concierge Options', 'sailthru-for-wordpress' ),	// The value used to populate the browser's title bar when the menu page is active
 				__( 'Concierge Options', 'sailthru-for-wordpress' ),	// The label of this submenu item displayed in the menu
-				'administrator',										// What roles are able to access this submenu item
+				'manage_options',										// What roles are able to access this submenu item
 				'concierge_configuration_page',							// The ID used to represent this submenu item
 				array( &$this, 'load_sailthru_admin_display')			// The callback function used to render the options for this submenu item
 			);
@@ -377,7 +345,7 @@ class Sailthru_Horizon {
 				'sailthru_configuration_page',
 				__( 'Scout Options', 'sailthru-for-wordpress' ),
 				__( 'Scout Options', 'sailthru-for-wordpress' ),
-				'administrator',
+				'manage_options',
 				'scout_configuration_page',
 				array( &$this, 'load_sailthru_admin_display')
 			);
@@ -402,6 +370,15 @@ class Sailthru_Horizon {
 	 */
 	function sailthru_horizon_meta_tags() {
 
+		// only do this on pages and posts
+		if( ! is_single() ) {
+			return;
+		}
+
+
+
+		global $post;
+
     	$post_object = get_post();
 
     	$horizon_tags = array();
@@ -410,11 +387,11 @@ class Sailthru_Horizon {
 
     		// date
     		$post_date = get_the_date( 'Y-m-d H:i:s' );
-    			$horizon_tags[] = "<meta name='sailthru.date' content='" . $post_date . "' />";
+    			$horizon_tags[] = "<meta name='sailthru.date' content='" . esc_attr( $post_date ) . "' />";
 
     		// title
     		$post_title = get_the_title();
-    			$horizon_tags[] = "<meta name='sailthru.title' content='" . $post_title . "' />";
+    			$horizon_tags[] = "<meta name='sailthru.title' content='" . esc_attr( $post_title ) . "' />";
 
     		// tags
     		$tags = get_the_tags();
@@ -426,13 +403,13 @@ class Sailthru_Horizon {
 				}
 				$post_tags = rtrim( $post_tags, ", " );
 
-				$horizon_tags[] = "<meta name='sailthru.tags' content='" . $post_tags . "' />";
+				$horizon_tags[] = "<meta name='sailthru.tags' content='" . esc_attr( $post_tags ) . "' />";
 			}
 
     		// author << works on display name. best option?
     		$post_author = get_the_author();
     			if( !empty($post_author) ) {
-    				$horizon_tags[] = "<meta name='sailthru.author' content='" . $post_author . "' />";
+    				$horizon_tags[] = "<meta name='sailthru.author' content='" . esc_attr( $post_author ) . "' />";
     			}
 
     		// description
@@ -448,7 +425,7 @@ class Sailthru_Horizon {
 				$text = substr( $text, 0, $excerpt_length );
 				$post_description = $this->reverse_strrchr( $text, '.', 1 );
     		}
-    			$horizon_tags[] = "<meta name='sailthru.description' content='" . $post_description . "' />";
+    			$horizon_tags[] = "<meta name='sailthru.description' content='" . esc_attr( $post_description ) . "' />";
 
     		// image & thumbnail
 			if(has_post_thumbnail( $post_object->ID ) ) {
@@ -456,19 +433,19 @@ class Sailthru_Horizon {
 				$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'thumbnail' );
 
 	    		$post_image = $image[0];
-	    			$horizon_tags[] = "<meta name='sailthru.image.full' content='" . $post_image . "' /> ";
+	    			$horizon_tags[] = "<meta name='sailthru.image.full' content='" . esc_attr( $post_image ) . "' /> ";
 	    		$post_thumbnail = $thumb[0];
-	    			$horizon_tags[] = "<meta name='sailthru.image.thumb' content='" . $post_thumbnail . "' />";
+	    			$horizon_tags[] = "<meta name='sailthru.image.thumb' content='" . esc_attr( $post_thumbnail ) . "' />";
 			}
 
 			// expiration date
-			$post_expiration = get_post_meta($post_object->ID, '_wpb_sailthru_expiry_date_metabox', true);
+			$post_expiration = get_post_meta($post_object->ID, 'sailthru_post_expiration', true);
 
 			if( !empty( $post_expiration ) ) {
 
-				$post_expiration = date( 'Y-m-d', strtotime( $post_expiration) );
+				//$post_expiration = date( 'Y-m-d', strtotime( $post_expiration) );
 
-				$horizon_tags[] = "<meta name='sailthru.expire_date' content='" . $post_expiration . "' />";
+				$horizon_tags[] = "<meta name='sailthru.expire_date' content='" . esc_attr( $post_expiration ) . "' />";
 			}
 
 
@@ -479,39 +456,6 @@ class Sailthru_Horizon {
     	echo implode("\n", $horizon_tags);
 
 	} // sailthru_horizon_meta_tags
-
-
-	/*-------------------------------------------
-	 * Filter Methods
-	 *------------------------------------------*/
-
-	/**
-	 * Add a meta box to posts.
-	 */
-	function sailthru_post_metabox() {
-
-		$prefix = '_wpb_'; // Prefix for all fields
-
-		$meta_boxes[] = array(
-			'id' => 'sailthru_expiry_date_metabox',
-			'title' => 'Sailthru Expiration Date',
-			'pages' => array('post'), // post type
-			'context' => 'side',
-			'priority' => 'high',
-			'show_names' => false, // Show field names on the left
-			'fields' => array(
-				array(
-					'name' => 'Sailthru Expiration Date',
-					'desc' => '<br />Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.',
-					'id' => $prefix . 'sailthru_expiry_date_metabox',
-					'type' => 'text_date'
-				),
-			),
-		);
-
-		return $meta_boxes;
-
-	}
 
 
 	/*-------------------------------------------
@@ -526,15 +470,93 @@ class Sailthru_Horizon {
 	    return strrpos($haystack, $needle) ? substr($haystack, 0, strrpos($haystack, $needle) + $trail) : false;
 	}
 
-	/*-------------------------------------------
-	 * Custom Metaboxes and Fields for WordPress
-	 *------------------------------------------*/
-	function cmb_initialize_cmb_meta_boxes() {
 
-	  if ( ! class_exists( 'cmb_Meta_Box' ) )
-	    require_once ( SAILTHRU_PLUGIN_PATH . 'lib/metabox/init.php');
+	/*--------------------------------------------*
+	 * Hooks
+	 *--------------------------------------------*/
 
-	}
+	/**
+	 * Introduces the meta box for expiring content.
+	 */
+	public function sailthru_post_metabox() {
+
+		add_meta_box(
+			'sailthru-expiration-date',
+			__( 'Sailthru Expiration Date', 'sailthru' ),
+			array( $this, 'post_metabox_display' ),
+			'post',
+			'side',
+			'high'
+		);
+
+	} // sailthru_post_metabox
+
+	/**
+	 * Adds the input box for the post meta data.
+	 *
+	 * @param		object	$post	The post to which this information is going to be saved.
+	 */
+	public function post_metabox_display( $post ) {
+
+
+		$sailthru_post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true);
+
+		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
+		$html  = '<input id="sailthru_post_expiration" type="text" name="sailthru_post_expiration" value="' . esc_attr($sailthru_post_expiration) . '" size="25" class="datepicker" />';
+
+		$html .= '<p class="description">';
+		$html .= '<br>Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
+		$html .= '</p><!-- /.description -->';
+
+		echo $html;
+
+	} // end post_media
+
+	/**
+	 * Determines whether or not the current user has the ability to save meta data associated with this post.
+	 *
+	 * @param		int		$post_id	The ID of the post being save
+	 * @param		bool				Whether or not the user has the ability to save this post.
+	 */
+	public function save_custom_meta_data( $post_id ) {
+
+		// First, make sure the user can save the post
+		if( $this->user_can_save( $post_id, $this->nonce ) ) {
+
+			// Did the user set an expiry date?
+			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) ) {
+
+				// Save the date. hehe.
+				update_post_meta( $post_id, 'sailthru_post_expiration', $_POST['sailthru_post_expiration'] );
+
+
+			} // end if
+
+		} // end if
+
+	} // end save_custom_meta_data
+
+	/*--------------------------------------------*
+	 * Helper Functions
+	 *--------------------------------------------*/
+
+	/**
+	 * FROM: https://github.com/tommcfarlin/WordPress-Upload-Meta-Box
+	 * Determines whether or not the current user has the ability to save meta data associated with this post.
+	 *
+	 * @param		int		$post_id	The ID of the post being save
+	 * @param		bool				Whether or not the user has the ability to save this post.
+	 */
+	function user_can_save( $post_id, $nonce ) {
+
+	    $is_autosave = wp_is_post_autosave( $post_id );
+	    $is_revision = wp_is_post_revision( $post_id );
+	    $is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], plugin_basename( __FILE__ ) ) );
+
+	    // Return true if the user is able to save; otherwise, false.
+	    return ! ( $is_autosave || $is_revision ) && $is_valid_nonce;
+
+	} // end user_can_save
 
 
 } // end class

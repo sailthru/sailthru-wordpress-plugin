@@ -402,7 +402,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . $value . '" />';
+	echo '<input type="text" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . esc_attr( $value ) . '" />';
 
 } // end sandbox_twitter_callback
 
@@ -456,7 +456,7 @@ function sailthru_scout_renderItem_callback( $args ) {
 	$scout = get_option('sailthru_scout_options');
 		$saved_value = isset($scout['sailthru_scout_renderItem']) ? $scout['sailthru_scout_renderItem'] : '';
 
-	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . $saved_value . '</textarea>';
+	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_attr($saved_value) . '</textarea>';
 
 	echo $html;
 
@@ -558,8 +558,19 @@ function sailthru_setup_email_template_callback( $args ) {
 		$api_key = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
 
-	$client = new Sailthru_Client( $api_key, $api_secret );
-	$res = $client->getTemplates();
+	//$client = new Sailthru_Client( $api_key, $api_secret );
+	$client = new WP_Sailthru_Client( $api_key, $api_secret);
+
+		try {
+			if ($client) {
+				$res = $client->getTemplates();
+			}
+		}
+		catch (Sailthru_Client_Exception $e) {
+			//silently fail			
+			return;
+		}
+
 
 	if (isset($res['error']) ){
 		$tpl =  array();
@@ -567,7 +578,7 @@ function sailthru_setup_email_template_callback( $args ) {
 		$tpl = $res['templates'] ;
 	}
 
-	$html = create_dropdown( $args, $tpl);
+	$html = sailthru_create_dropdown( $args, $tpl);
 
 	echo $html;
 
@@ -600,7 +611,7 @@ function sailthru_sanitize_text_input( $input ) {
 		foreach( $input as $key => $val ) {
 
 			if( isset ( $input[$key] ) ) {
-				$output[$key] = strip_tags( stripslashes( $input[$key] ) );
+				$output[$key] = sanitize_text_field( stripslashes( $input[$key] ) );
 			} // end if
 
 		} // end foreach
@@ -695,7 +706,7 @@ function sailthru_setup_handler( $input ) {
  *	0 	=> array('thing' => 'value')
  *)
  */
-function create_dropdown( $args, $values ) {
+function sailthru_create_dropdown( $args, $values ) {
 
 	$collection = $args[0];
 	$option_name = $args[1];
@@ -719,7 +730,7 @@ function create_dropdown( $args, $values ) {
 	if( is_array($values) ) {
 		foreach( $values as $key => $value ) {
 
-			$html .= '<option value="' . $value['name'] . '" ' . selected( $saved_value, $value['name'], false) . '>' . $value['name'] . '</option>';
+			$html .= '<option value="' . $value['name'] . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
 
 		}
 	}
@@ -737,8 +748,8 @@ function create_dropdown( $args, $values ) {
 function sailthru_verify_setup() {
 
   $sailthru = get_option('sailthru_setup_options');
-  $api_key = $sailthru['sailthru_api_key'];
-  $api_secret = $sailthru['sailthru_api_secret'];
+  	$api_key = $sailthru['sailthru_api_key'];
+  	$api_secret = $sailthru['sailthru_api_secret'];
   $template = isset($sailthru['sailthru_setup_email_template']) ? $sailthru['sailthru_setup_email_template'] : '';
   $res = array();
 
@@ -750,7 +761,8 @@ function sailthru_verify_setup() {
   } else {
 
   	// now check to see if we can make an API call
-  	$client = new Sailthru_Client( $api_key, $api_secret );
+  	//$client = new Sailthru_Client( $api_key, $api_secret );
+  	$client = new WP_Sailthru_Client( $api_key, $api_secret);
   	$res = $client->getTemplates();
 
   	if ( !isset($res['error'] ) ) {
@@ -770,6 +782,7 @@ function sailthru_verify_setup() {
   		$res['error'] = true;
   		$res['errormessage'] = 'not configured';
   	}
+  
   }
 
   return $res;

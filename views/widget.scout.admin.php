@@ -8,7 +8,7 @@
 		if( !is_array($sailthru) )
 		{
 
-			echo '<p>Please return to the <a href="' . admin_url() . 'admin.php?page=sailthru_configuration_menu">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';			
+			echo '<p>Please return to the <a href="' . menu_page_url( 'sailthru_configuration_menu' )  . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';			
 			return;
 
 		}
@@ -22,7 +22,7 @@
 
 		if( ! isset($scout['sailthru_scout_is_on']) ||  ! $scout['sailthru_scout_is_on']) {	
 
-			echo '<p>Don\'t forget to <a href="' . admin_url() . 'admin.php?page=scout_configuration_page">enable Scout</a> before setting up this widget.</p>';
+			echo '<p>Don\'t forget to <a href="' . menu_page_url( 'scout_configuration_menu' ) . '">enable Scout</a> before setting up this widget.</p>';
 			return;
 
 		}		 
@@ -34,7 +34,7 @@
             <p>
             	<label for="<?php echo $this->get_field_id('title'); ?>">
             		<?php _e('Title:'); ?> 
-            		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+            		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
             	</label>
             </p>
         </div>

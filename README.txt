@@ -24,3 +24,14 @@ UNDER DEVELOPMENT
 
 For full installation instructions, documentation, and examples please visit:
 http://getstarted.sailthru.com/developers/api-libraries/wordpress
+
+==== Sailthru Specific ====
+Create a template in your Sailthru account with {subject} as the subject line and {body} in the code area.
+You can design your template to match your brand but the {body} variable will be replaced by content
+sent via Wordpress
+
+==== Wordpress Installation =====
+
+For full installation instructions, documentation, and examples please visit:
+http://getstarted.sailthru.com/developers/api-libraries/wordpress
+

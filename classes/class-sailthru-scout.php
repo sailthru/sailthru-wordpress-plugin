@@ -19,7 +19,7 @@ class Sailthru_Scout  extends WP_Widget {
 		$post_id = $this->create_scout_page();
 
 		// Attempt to register the sidebar widget for Scout
-		wp_register_sidebar_widget('sailthru-recommend-widget', 'Sailthru Recommends', array($this, 'widget'));
+		//wp_register_sidebar_widget('sailthru-recommend-widget', 'Sailthru Recommends', array($this, 'widget'));
 
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
@@ -65,7 +65,7 @@ class Sailthru_Scout  extends WP_Widget {
 			// Check first, otherwise js could throw errors
 			if( get_option('sailthru_setup_complete') ) {
 
-				wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon') );
+				//wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon') );
 
 				//wp_enqueue_script( 'sailthru-scout-params', SAILTHRU_PLUGIN_URL .'/js/scout.params.js' , array('sailthru-scout') );
 
@@ -101,20 +101,38 @@ class Sailthru_Scout  extends WP_Widget {
 		$horizon_domain = $options['sailthru_horizon_domain'];
 		$scout = get_option('sailthru_scout_options');
 
-		$scout_params[] = strlen($scout['sailthru_scout_includeConsumed']) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
-		$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
-		$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
+		// inlcudeConsumed?
+		if( isset($scout['sailthru_scout_includeConsumed']) ) {
+			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';		
+		} else {
+			$scout['sailthru_scout_includeConsumed'] = '';
+		}
+		
+		// renderItem?
+		if( isset( $scout['sailthru_scout_renderItem']) ) {
+			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';	
+		} else {
+			$scout['sailthru_scout_renderItem'] = '';
+		}
+		
+		if( isset( $scout['scout_num_visible']) ) {
+			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';	
+		} else {
+			$scout['scout_num_visible'] = '';
+		}
+		
 
 		if ($scout['sailthru_scout_is_on'] == 1) {
 		 	echo "<script type=\"text/javascript\">\n";
 	           echo "SailthruScout.setup({\n";
-	           echo "domain: '".$options['sailthru_horizon_domain']."',\n";
-
-	           foreach ($scout_params as $key => $val) {
-	           	if (strlen($val) >0)  {
-	           		echo $val.",\n";
-	           	}
-	           }
+	           echo "domain: '". esc_js($options['sailthru_horizon_domain'])."',\n";
+				if( is_array($scout_params) ) {
+					foreach ($scout_params as $key => $val) {
+						if (strlen($val) >0)  {
+							echo esc_js($val).",\n";
+						}
+					}
+				}
 	           echo "});\n";
 			echo "</script>\n";
 		}
@@ -131,13 +149,18 @@ class Sailthru_Scout  extends WP_Widget {
 
 	function create_scout_page() {
 
+		// never run this on public facing pages
+		if( !is_admin() ) {
+			return;
+		}
+
 		// -1 = No action has been taken.
 		$post_id = -1;
 
 		// Our specific settings
 		$author_id = 1;
 		$slug = 'scout-from-sailthru';
-		$title = 'Scout from Sailthru';
+		$title = 'Recommended for You';
 		$post_type = 'page';
 		$post_content = '<div id="sailthru-scout"><div class="loading">Loading, please wait...</div></div>';
 
@@ -161,7 +184,7 @@ class Sailthru_Scout  extends WP_Widget {
 
 		} else {
 
-	    		$post_id = -2;
+	    	$post_id = -2;
 
 		} // end if
 
@@ -199,9 +222,10 @@ class Sailthru_Scout  extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$instance = $old_instance;
+		$instance = array();
+			$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
 
-		return $new_instance;
+		return $instance;
 
 	} // end widget
 

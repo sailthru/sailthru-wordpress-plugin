@@ -25,31 +25,42 @@ License:
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
+
+
 if( ! defined('SAILTHRU_PLUGIN_PATH') )
-  define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
+	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
 if( ! defined('SAILTHRU_PLUGIN_URL') )
-  define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+
 
 /*
  * Sailthru PHP5 Developer Library
  * Source: http://getstarted.sailthru.com/developers/client-libraries/set-config-file/php5
  */
-require_once( 'lib/Sailthru_Util.php' );
-require_once( 'lib/Sailthru_Client.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Util.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Client.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Client_Exception.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php');
 
 /*
  * Get Sailthru for Wordpress plugin classes
  */
-require_once( 'classes/class-sailthru-horizon.php' );
-require_once( 'classes/class-sailthru-concierge.php' );
-require_once( 'classes/class-sailthru-scout.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
+
+
 
 /*
  * Sailthru for Wordpress admin view settings and registrations.
  */
-require_once( 'views/admin.functions.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.php' );
 
+/*
+ * Grab and activate the Sailthru Subscribe widget.
+ */
+require_once( SAILTHRU_PLUGIN_PATH . 'widget.subscribe.php' );
 
 
 /*
@@ -58,15 +69,15 @@ require_once( 'views/admin.functions.php' );
  */
 if( class_exists( 'Sailthru_Horizon' ) ) {
 
-    $sailthru_horizon = new Sailthru_Horizon();
+	$sailthru_horizon = new Sailthru_Horizon();
 
-    if( class_exists( 'Sailthru_Concierge' ) ) {
-        $sailthru_concierge = new Sailthru_Concierge();
-    }
+	//if( class_exists( 'Sailthru_Concierge' ) ) {
+	//	$sailthru_concierge = new Sailthru_Concierge();
+	//}
 
-    if( class_exists( 'Sailthru_Scout' ) ) {
-        $sailthru_scout = new Sailthru_Scout();
-    }
+	if( class_exists( 'Sailthru_Scout' ) ) {
+		$sailthru_scout = new Sailthru_Scout();
+	}
 }
 
 
@@ -84,36 +95,37 @@ add_action('wp_login', 'sailthru_user_login', 10, 2);
 
 function sailthru_user_login($user_login, $user) {
 
-  if (get_option('sailthru_setup_complete')) {
+	if (get_option('sailthru_setup_complete')) {
 
-    $sailthru = get_option('sailthru_setup_options');
-    $api_key = $sailthru['sailthru_api_key'];
-    $api_secret = $sailthru['sailthru_api_secret'];
+		$sailthru = get_option('sailthru_setup_options');
+		$api_key = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
 
-    $client = new Sailthru_Client( $api_key, $api_secret );
+		//$client = new Sailthru_Client( $api_key, $api_secret );
+		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 
-    $id = $user->user_email;
-    $options = array(
-      'login' => array(
-        'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-        'key' => 'email',
-        'ip' => $_SERVER['SERVER_ADDR'],
-        'site' => $_SERVER['HTTP_HOST'],
-      ),
-      'fields' => array('keys' => 1),
-    );
+		$id = $user->user_email;
+		$options = array(
+				'login' => array(
+				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'key' => 'email',
+				'ip' => $_SERVER['SERVER_ADDR'],
+				'site' => $_SERVER['HTTP_HOST'],
+			),
+			'fields' => array('keys' => 1),
+		);
 
-    try {
-      if ($client) {
-        $st = $client->saveUser($id, $options);
-      }
-    }
-    catch (Sailthru_Client_Exception $e) {
-      //silently fail
-      return;
-    }
+		try {
+			if ($client) {
+				$st = $client->saveUser($id, $options);
+			}
+		}
+		catch (Sailthru_Client_Exception $e) {
+			//silently fail
+			return;
+		}
 
-  }
+	}
 
 }
 
@@ -122,41 +134,42 @@ function sailthru_user_login($user_login, $user) {
  * If this plugin is active, override native WP email functions
  */
 if( get_option('sailthru_override_wp_mail')
-      && get_option('sailthru_setup_complete')
-        && !function_exists('wp_mail') ) {
+	  && get_option('sailthru_setup_complete')
+		&& !function_exists('wp_mail') ) {
 
-    function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
+	function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
 
-      // we'll be going through Sailthru so we'll handle text/html emails there already
-      // replace the <> in the reset password message link to allow the link to display.
-      // in HTML emails
-      $message = preg_replace( '#<(https?://[^*]+)>#', '$1', $message );
+	  // we'll be going through Sailthru so we'll handle text/html emails there already
+	  // replace the <> in the reset password message link to allow the link to display.
+	  // in HTML emails
+	  $message = preg_replace( '#<(https?://[^*]+)>#', '$1', $message );
 
-      extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
+	  extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
 
-        // recipients
-        $recipients = is_array($to) ? implode(',', $to) : $to;
+		// recipients
+		$recipients = is_array($to) ? implode(',', $to) : $to;
 
-        // as the client library accepts these...
-        $vars = array(
-            'subject' => $subject,
-            'body' => $message
-        );
+		// as the client library accepts these...
+		$vars = array(
+			'subject' => $subject,
+			'body' => $message
+		);
 
-        // template
-        $sailthru_configs = get_option('sailthru_setup_options');
-          $template = $sailthru_configs['sailthru_setup_email_template'];
+		// template
+		$sailthru_configs = get_option('sailthru_setup_options');
+		  $template = $sailthru_configs['sailthru_setup_email_template'];
 
 
 
-        // >> SEND  <<<<<<<<<<<<<<<<<<<
-        $sailthru = get_option('sailthru_setup_options');
-            $api_key = $sailthru['sailthru_api_key'];
-            $api_secret = $sailthru['sailthru_api_secret'];
-        $client = new Sailthru_Client( $api_key,  $api_secret);
-        $r = $client->send($template, $recipients, $vars, array());
+		// >> SEND  <<<<<<<<<<<<<<<<<<<
+		$sailthru = get_option('sailthru_setup_options');
+			$api_key = $sailthru['sailthru_api_key'];
+			$api_secret = $sailthru['sailthru_api_secret'];
+		//$client = new Sailthru_Client( $api_key,  $api_secret);
+		$client = new WP_Sailthru_Client( $api_key, $api_secret);	
+		$r = $client->send($template, $recipients, $vars, array());
 
-        return true;
+		return true;
 
-    }
+	}
 }

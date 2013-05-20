@@ -13,7 +13,9 @@ class Sailthru_Concierge {
 	function __construct() {
 
 		// Register Concierge Javascripts
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_conceirge_scripts' ) );
+
+		// NOTE: HORIZON class is now handling this logic
+		//add_action( 'wp_enqueue_scripts', array( $this, 'register_conceirge_scripts' ) );
 
 	} // end constructor
 
@@ -21,22 +23,21 @@ class Sailthru_Concierge {
 	 * Registers and enqueues Horizon for every page, but only if setup has been completed.
 	 * Once done, sets up the options for Conceirge
 	 */
-	public function register_conceirge_scripts() {
 
-		$params = get_option('sailthru_concierge_options');
+	public function register_conceirge_scripts( $hook ) {
 
-		if( isset($params['sailthru_concierge_is_on']) && $params['sailthru_concierge_is_on'] ) {
+		//$params = get_option('sailthru_concierge_options');
+
+		//if( isset($params['sailthru_concierge_is_on']) && $params['sailthru_concierge_is_on'] ) {
 
 			// Check first, otherwise js could throw errors
-			if( get_option('sailthru_setup_complete') ) {
+			//if( get_option('sailthru_setup_complete') ) {
 
-				wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
-				//wp_enqueue_script( 'sailthru-horizon-params', SAILTHRU_PLUGIN_URL . '/js/horizon.params.js' , array('sailthru-horizon') );
-				//wp_localize_script( 'sailthru-horizon-params', 'Concierge', $params );
+				//wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
 
-			}
+			//}
 
-		}
+		//}
 
 	} // register_conceirge_scripts
 
