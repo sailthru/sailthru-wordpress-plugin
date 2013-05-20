@@ -100,29 +100,31 @@ class Sailthru_Scout  extends WP_Widget {
 	 	$options = get_option('sailthru_setup_options');
 		$horizon_domain = $options['sailthru_horizon_domain'];
 		$scout = get_option('sailthru_scout_options');
+		$scout_params = array();
 
 		// inlcudeConsumed?
 		if( isset($scout['sailthru_scout_includeConsumed']) ) {
-			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';		
+			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
 		} else {
 			$scout['sailthru_scout_includeConsumed'] = '';
 		}
-		
+
 		// renderItem?
 		if( isset( $scout['sailthru_scout_renderItem']) ) {
-			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';	
+			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
 		} else {
 			$scout['sailthru_scout_renderItem'] = '';
 		}
-		
+
 		if( isset( $scout['scout_num_visible']) ) {
-			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';	
+			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
 		} else {
 			$scout['scout_num_visible'] = '';
 		}
-		
+
 
 		if ($scout['sailthru_scout_is_on'] == 1) {
+			echo "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/scout/v1.js\"></script>";
 		 	echo "<script type=\"text/javascript\">\n";
 	           echo "SailthruScout.setup({\n";
 	           echo "domain: '". esc_js($options['sailthru_horizon_domain'])."',\n";
@@ -134,7 +136,9 @@ class Sailthru_Scout  extends WP_Widget {
 					}
 				}
 	           echo "});\n";
-			echo "</script>\n";
+
+		     echo " if(SailthruScout.allContent.length == 0) { $('#sailthru-scout').hide() }";
+		     echo "</script>\n";
 		}
 
 	 }
