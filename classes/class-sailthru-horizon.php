@@ -443,8 +443,6 @@ class Sailthru_Horizon {
 
 			if( !empty( $post_expiration ) ) {
 
-				//$post_expiration = date( 'Y-m-d', strtotime( $post_expiration) );
-
 				$horizon_tags[] = "<meta name='sailthru.expire_date' content='" . esc_attr( $post_expiration ) . "' />";
 			}
 
@@ -525,10 +523,13 @@ class Sailthru_Horizon {
 
 			// Did the user set an expiry date?
 			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) ) {
-
-				// Save the date. hehe.
-				update_post_meta( $post_id, 'sailthru_post_expiration', $_POST['sailthru_post_expiration'] );
-
+				$expiry_time = strotime( $_POST['sailthru_post_expiration'] );
+				if ( $expiry_time ) {
+					$expiry_date = date( 'Y-m-d', $expiry_time );
+				
+					// Save the date. hehe.
+					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
+				}
 
 			} // end if
 
