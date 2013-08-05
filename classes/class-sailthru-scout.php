@@ -5,7 +5,7 @@
  *
  */
 
-class Sailthru_Scout  extends WP_Widget {
+class Sailthru_Scout_Widget extends WP_Widget {
 
 	/*--------------------------------------------*
 	 * Constructor
@@ -258,4 +258,4 @@ class Sailthru_Scout  extends WP_Widget {
 
 
 } // end class
-add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Scout");' ) );
+add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Scout_Widget");' ) );
