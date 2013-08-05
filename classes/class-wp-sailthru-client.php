@@ -53,10 +53,10 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
         if ( isset( $reply ) ) {
             if ( is_wp_error( $reply ) ) {
-                throw new Sailthru_Client_Exception("Bad response received from $url: " . $reply['response']['message']);
+                throw new Sailthru_Client_Exception("Bad response received from $url: " . $reply->get_error_message() );
             } else {
 
-                if( $reply['response']['code'] == 200) {
+                if( wp_remote_retrieve_response_code( $reply ) == 200 ) {
                    return $reply['body']; 
                 }
                 
