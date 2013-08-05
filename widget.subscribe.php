@@ -7,7 +7,7 @@ if( ! defined('SAILTHRU_PLUGIN_URL') )
 	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
 
 
-class Sailthru_Subscribe extends WP_Widget {
+class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	/*--------------------------------------------------*/
 	/* Constructor
@@ -310,4 +310,4 @@ class Sailthru_Subscribe extends WP_Widget {
 register_activation_hook( __FILE__, array( 'Sailthru_Subscribe', 'activate' ) );
 
 // Register a new widget with Wordpress
-add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe");' ) );
+add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe_Widget");' ) );
