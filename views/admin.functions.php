@@ -631,28 +631,30 @@ function sailthru_sanitize_text_input( $input ) {
  */
 function sailthru_setup_handler( $input ) {
 
+	$output = array();
+
 	// api key
-	$input['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_api_key'])) {
+	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
+	if( empty( $output['sailthru_api_key'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __('Sailthru will not function without an API key.'), 'error' );
 	}
 
 	// api secret
-	$input['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_api_secret'])) {
+	$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
+	if( empty($output['sailthru_api_secret'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-secret-fail', __('Sailthru will not function without an API secret.'), 'error' );
 	}
 
-	$input['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_horizon_domain'])) {
+	$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+	if( empty($output['sailthru_horizon_domain'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __('Please enter your Horizon domain.'), 'error' );
 	} else {
 
-		$input['sailthru_horizon_domain'] = str_ireplace( 'http://', '', $input['sailthru_horizon_domain'] );
-		$input['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $input['sailthru_horizon_domain'] );
-		$input['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $input['sailthru_horizon_domain'] );
-		if( substr($input['sailthru_horizon_domain'], -1 ) == '/' ) {
-		    $input['sailthru_horizon_domain'] = substr( $input['sailthru_horizon_domain'], 0, -1 );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'http://', '', $output['sailthru_horizon_domain'] );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $output['sailthru_horizon_domain'] );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
+		if( substr($output['sailthru_horizon_domain'], -1 ) == '/' ) {
+		    $output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
 
 	}
@@ -667,15 +669,15 @@ function sailthru_setup_handler( $input ) {
 			isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
 
 		// sitewide email template
-		$input['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
-		if( empty($input['sailthru_setup_email_template']) ) {
+		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
+		if( empty($output['sailthru_setup_email_template']) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __('Please choose a template to use when sending emails sitewide.'), 'error' );
 		}
 
 	}
 
 
-	return $input;
+	return $output;
 
 }
 // end sailthru_setup_handler
