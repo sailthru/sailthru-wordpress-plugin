@@ -80,7 +80,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array();
-			$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+		$instance['show_first_name'] = (bool) $new_instance['show_first_name'];
+		$instance['show_last_name'] = (bool) $new_instance['show_last_name'];
+		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
 		return $instance;
 
