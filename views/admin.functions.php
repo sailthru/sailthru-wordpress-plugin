@@ -539,10 +539,10 @@ function sailthru_toggle_feature_callback($args) {
 
 
 	// Fully formed checkbox
-	$html = '<input type="checkbox" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . $default_value . '" ' . checked( 1,  $options[$option_name], false ) . '/>';
+	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1,  $options[$option_name], false ) . '/>';
 
 	// Add alabel next to the checkbox
-	$html .= '<label for="' . $html_id . '">&nbsp;'  . $label . '</label>';
+	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;'  . esc_html( $label ) . '</label>';
 
 	echo $html;
 
