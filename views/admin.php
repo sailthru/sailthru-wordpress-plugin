@@ -2,7 +2,7 @@
 		<div class="wrap" id="sailthru-admin">
 
 			<div id="icon-sailthru" class="icon32"></div>
-			<h2><?php _e( 'Sailthru for Wordpress', 'sailthru-for-wordpress' ); ?></h2>
+			<h2><?php _e( 'Sailthru for WordPress', 'sailthru-for-wordpress' ); ?></h2>
 			<?php
 
 
