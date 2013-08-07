@@ -26,7 +26,7 @@
             <p>
             	<label for="<?php echo $this->get_field_id('title'); ?>">
             		<?php _e('Widget Title:'); ?> 
-            		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+            		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
             	</label>
             </p>
 			<p>
@@ -49,8 +49,8 @@
 					{ 
 						?>
 						<br />
-						<input type="checkbox" value="<?php echo $list['name']; ?>" name="<?php echo $this->get_field_name('sailthru_list'); ?>[<?php echo $key; ?>]" id="<?php echo $this->get_field_id('sailthru_list') . '-' . $key; ?>" <?php checked($instance['sailthru_list'][$key], $list['name']); ?>  /> 
-						<label for="<?php echo $this->get_field_id('sailthru_list') . '-' . $key; ?>"><?php echo $list['name']; ?></label>
+						<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo $this->get_field_name('sailthru_list'); ?>[<?php echo esc_attr( $key ); ?>]" id="<?php echo $this->get_field_id('sailthru_list') . '-' . $key; ?>" <?php checked($instance['sailthru_list'][$key], $list['name']); ?>  /> 
+						<label for="<?php echo esc_attr( $this->get_field_id('sailthru_list') . '-' . $key ); ?>"><?php echo esc_html( $list['name'] ); ?></label>
 						<?php
 					}
 				?>
