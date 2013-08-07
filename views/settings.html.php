@@ -1,4 +1,4 @@
-					<?php
+<?php
 					/* Check to see if everything is set up correctly */
 					$verify_setup = sailthru_verify_setup();
 					?>
