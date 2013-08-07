@@ -104,20 +104,20 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		// inlcudeConsumed?
 		if( isset($scout['sailthru_scout_includeConsumed']) ) {
-			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
+			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '. (bool) $scout['sailthru_scout_includeConsumed'].'' : '';
 		} else {
 			$scout['sailthru_scout_includeConsumed'] = '';
 		}
 
 		// renderItem?
 		if( isset( $scout['sailthru_scout_renderItem']) ) {
-			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
+			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ". (bool) $scout['sailthru_scout_renderItem']."": '';
 		} else {
 			$scout['sailthru_scout_renderItem'] = '';
 		}
 
 		if( isset( $scout['scout_num_visible']) ) {
-			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'". $scout['sailthru_scout_number']."' ": '';
+			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'". esc_js( $scout['sailthru_scout_number'] )."' ": '';
 		} else {
 			$scout['scout_num_visible'] = '';
 		}

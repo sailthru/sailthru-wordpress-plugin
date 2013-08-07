@@ -210,7 +210,7 @@ class Sailthru_Horizon {
 	 		if( !isset($concierge['sailthru_concierge_threshold']) ) {
 	 			$concierge_threshold = 'threshold: 500,';
 	 		} else {
-	 			$concierge_threshold =  strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".$concierge['sailthru_concierge_threshold'] .",": 'threshold: 500,';
+	 			$concierge_threshold =  strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".intval( $concierge['sailthru_concierge_threshold'] ) .",": 'threshold: 500,';
 	 		}
 
 	 		// delay
@@ -230,7 +230,7 @@ class Sailthru_Horizon {
 	 		if( !isset($concierge['sailthru_concierge_filter']) ) {
 	 			$concierge_filter = '';
 	 		} else {
-	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '".$concierge['sailthru_concierge_filter'] ."'" : '';
+	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '". esc_js( $concierge['sailthru_concierge_filter'] ) ."'" : '';
 	 		}
 
 
@@ -246,7 +246,7 @@ class Sailthru_Horizon {
 	 		}";
 
 		} else {
-			$horizon_params =   "domain: '" . $options['sailthru_horizon_domain'] . "'";
+			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "'";
 		}
 
 	 	$horizon_js  = "<!-- Sailthru Horizon -->\n";
