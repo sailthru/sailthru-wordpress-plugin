@@ -117,7 +117,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		}
 
 		if( isset( $scout['scout_num_visible']) ) {
-			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
+			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'". $scout['sailthru_scout_number']."' ": '';
 		} else {
 			$scout['scout_num_visible'] = '';
 		}
@@ -162,7 +162,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		$post_id = -1;
 
 		// Our specific settings
-		$author_id = 1;
 		$slug = 'scout-from-sailthru';
 		$title = 'Recommended for You';
 		$post_type = 'page';
@@ -177,7 +176,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 				array(
 					'comment_status'	=>	'closed',
 					'ping_status'		=>	'closed',
-					'post_author'		=>	$author_id,
 					'post_name'			=>	$slug,
 					'post_title'		=>	$title,
 					'post_status'		=>	'publish',
