@@ -402,7 +402,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . esc_attr( $value ) . '" />';
+	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
 
 } // end sandbox_twitter_callback
 
