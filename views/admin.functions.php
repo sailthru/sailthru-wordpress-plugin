@@ -725,14 +725,14 @@ function sailthru_create_dropdown( $args, $values ) {
 
 
 
-	$html = '<select name="' . $collection . '[' . $option_name . ']" id="' . $html_id . '">';
+	$html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
 
 	$html .= '<option value=""> - Choose One - </option>';
 
 	if( is_array($values) ) {
 		foreach( $values as $key => $value ) {
 
-			$html .= '<option value="' . $value['name'] . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
+			$html .= '<option value="' . esc_attr( $value['name'] ) . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
 
 		}
 	}
