@@ -159,7 +159,7 @@
 									<h4>Next Steps</h4>
 									<ul>
 										<li>Once you've added your key, you'll need to select a default email template to use.</li>
-										<li>For more information, read our <a href="http://getstarted.sailthru.com/developers/client-libraries/wordpress-plugin">Wordpress plugin documentation.</a></li>
+										<li>For more information, read our <a href="http://getstarted.sailthru.com/developers/client-libraries/wordpress-plugin">WordPress plugin documentation.</a></li>
 									</ul>
 								</div>
 							</div>
