@@ -5,7 +5,7 @@
  *
  */
 
-class Sailthru_Scout  extends WP_Widget {
+class Sailthru_Scout_Widget extends WP_Widget {
 
 	/*--------------------------------------------*
 	 * Constructor
@@ -104,20 +104,20 @@ class Sailthru_Scout  extends WP_Widget {
 
 		// inlcudeConsumed?
 		if( isset($scout['sailthru_scout_includeConsumed']) ) {
-			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '.$scout['sailthru_scout_includeConsumed'].'' : '';
+			$scout_params[] = strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ?  'includeConsumed: '. (bool) $scout['sailthru_scout_includeConsumed'].'' : '';
 		} else {
 			$scout['sailthru_scout_includeConsumed'] = '';
 		}
 
 		// renderItem?
 		if( isset( $scout['sailthru_scout_renderItem']) ) {
-			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ".$scout['sailthru_scout_renderItem']."": '';
+			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ". (bool) $scout['sailthru_scout_renderItem']."": '';
 		} else {
 			$scout['sailthru_scout_renderItem'] = '';
 		}
 
 		if( isset( $scout['scout_num_visible']) ) {
-			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'".$scout['sailthru_scout_number']."' ": '';
+			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'". esc_js( $scout['sailthru_scout_number'] )."' ": '';
 		} else {
 			$scout['scout_num_visible'] = '';
 		}
@@ -151,7 +151,7 @@ class Sailthru_Scout  extends WP_Widget {
 	 *          of the post if successful.
 	 */
 
-	function create_scout_page() {
+	private function create_scout_page() {
 
 		// never run this on public facing pages
 		if( !is_admin() ) {
@@ -162,7 +162,6 @@ class Sailthru_Scout  extends WP_Widget {
 		$post_id = -1;
 
 		// Our specific settings
-		$author_id = 1;
 		$slug = 'scout-from-sailthru';
 		$title = 'Recommended for You';
 		$post_type = 'page';
@@ -177,7 +176,6 @@ class Sailthru_Scout  extends WP_Widget {
 				array(
 					'comment_status'	=>	'closed',
 					'ping_status'		=>	'closed',
-					'post_author'		=>	$author_id,
 					'post_name'			=>	$slug,
 					'post_title'		=>	$title,
 					'post_status'		=>	'publish',
@@ -258,4 +256,4 @@ class Sailthru_Scout  extends WP_Widget {
 
 
 } // end class
-add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Scout");' ) );
+add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Scout_Widget");' ) );

@@ -27,7 +27,7 @@ function sailthru_initialize_setup_options() {
 
 			add_settings_field(
 				'sailthru_setup_email_template',
-				__( 'Wordpress template', 'sailthru-for-wordpress' ),
+				__( 'WordPress template', 'sailthru-for-wordpress' ),
 				'sailthru_setup_email_template_callback',
 				'sailthru_setup_options',
 				'sailthru_setup_section',
@@ -402,7 +402,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . esc_attr( $value ) . '" />';
+	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
 
 } // end sandbox_twitter_callback
 
@@ -539,10 +539,10 @@ function sailthru_toggle_feature_callback($args) {
 
 
 	// Fully formed checkbox
-	$html = '<input type="checkbox" id="' . $html_id . '" name="' . $collection . '[' . $option_name . ']" value="' . $default_value . '" ' . checked( 1,  $options[$option_name], false ) . '/>';
+	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1,  $options[$option_name], false ) . '/>';
 
 	// Add alabel next to the checkbox
-	$html .= '<label for="' . $html_id . '">&nbsp;'  . $label . '</label>';
+	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;'  . esc_html( $label ) . '</label>';
 
 	echo $html;
 
@@ -631,28 +631,30 @@ function sailthru_sanitize_text_input( $input ) {
  */
 function sailthru_setup_handler( $input ) {
 
+	$output = array();
+
 	// api key
-	$input['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_api_key'])) {
+	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
+	if( empty( $output['sailthru_api_key'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __('Sailthru will not function without an API key.'), 'error' );
 	}
 
 	// api secret
-	$input['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_api_secret'])) {
+	$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
+	if( empty($output['sailthru_api_secret'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-secret-fail', __('Sailthru will not function without an API secret.'), 'error' );
 	}
 
-	$input['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
-	if( empty($input['sailthru_horizon_domain'])) {
+	$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+	if( empty($output['sailthru_horizon_domain'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __('Please enter your Horizon domain.'), 'error' );
 	} else {
 
-		$input['sailthru_horizon_domain'] = str_ireplace( 'http://', '', $input['sailthru_horizon_domain'] );
-		$input['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $input['sailthru_horizon_domain'] );
-		$input['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $input['sailthru_horizon_domain'] );
-		if( substr($input['sailthru_horizon_domain'], -1 ) == '/' ) {
-		    $input['sailthru_horizon_domain'] = substr( $input['sailthru_horizon_domain'], 0, -1 );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'http://', '', $output['sailthru_horizon_domain'] );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $output['sailthru_horizon_domain'] );
+		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
+		if( substr($output['sailthru_horizon_domain'], -1 ) == '/' ) {
+		    $output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
 
 	}
@@ -667,15 +669,15 @@ function sailthru_setup_handler( $input ) {
 			isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
 
 		// sitewide email template
-		$input['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
-		if( empty($input['sailthru_setup_email_template']) ) {
+		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
+		if( empty($output['sailthru_setup_email_template']) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __('Please choose a template to use when sending emails sitewide.'), 'error' );
 		}
 
 	}
 
 
-	return $input;
+	return $output;
 
 }
 // end sailthru_setup_handler
@@ -723,14 +725,14 @@ function sailthru_create_dropdown( $args, $values ) {
 
 
 
-	$html = '<select name="' . $collection . '[' . $option_name . ']" id="' . $html_id . '">';
+	$html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
 
 	$html .= '<option value=""> - Choose One - </option>';
 
 	if( is_array($values) ) {
 		foreach( $values as $key => $value ) {
 
-			$html .= '<option value="' . $value['name'] . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
+			$html .= '<option value="' . esc_attr( $value['name'] ) . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
 
 		}
 	}

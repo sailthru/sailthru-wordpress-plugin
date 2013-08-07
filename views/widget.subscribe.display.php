@@ -1,4 +1,4 @@
- <?php
+<?php
 
     /*
      * Grab the settings from $instance and fill out default

@@ -7,7 +7,7 @@ if( ! defined('SAILTHRU_PLUGIN_URL') )
 	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
 
 
-class Sailthru_Subscribe extends WP_Widget {
+class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	/*--------------------------------------------------*/
 	/* Constructor
@@ -80,7 +80,10 @@ class Sailthru_Subscribe extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array();
-			$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+		$instance['show_first_name'] = (bool) $new_instance['show_first_name'];
+		$instance['show_last_name'] = (bool) $new_instance['show_last_name'];
+		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
 		return $instance;
 
@@ -310,4 +313,4 @@ class Sailthru_Subscribe extends WP_Widget {
 register_activation_hook( __FILE__, array( 'Sailthru_Subscribe', 'activate' ) );
 
 // Register a new widget with Wordpress
-add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe");' ) );
+add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe_Widget");' ) );

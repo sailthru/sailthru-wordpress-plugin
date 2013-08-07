@@ -8,7 +8,7 @@
 		if( !is_array($sailthru) )
 		{
 
-			echo '<p>Please return to the <a href="' . menu_page_url( 'sailthru_configuration_menu' )  . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
+			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
 			return;
 
 		}
@@ -60,8 +60,8 @@
 					{ 
 						?>
 						<br />
-						<input type="checkbox" value="<?php echo $list['name']; ?>" name="<?php echo $this->get_field_name('sailthru_list'); ?>[<?php echo $key; ?>]" id="<?php echo $this->get_field_id('sailthru_list') . '-' . $key; ?>" <?php checked($instance['sailthru_list'][$key], $list['name']); ?>  /> 
-						<label for="<?php echo $this->get_field_id('sailthru_list') . '-' . $key; ?>"><?php echo $list['name']; ?></label>
+						<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo $this->get_field_name('sailthru_list'); ?>[<?php echo $key; ?>]" id="<?php echo esc_attr( $this->get_field_id('sailthru_list') . '-' . $key ); ?>" <?php checked($instance['sailthru_list'][$key], $list['name']); ?>  /> 
+						<label for="<?php // echo esc_attr( $this->get_field_id('sailthru_list') . '-' . $key ); ?>"><?php echo esc_html( $list['name'] ); ?></label>
 						<?php
 					}
 				?>

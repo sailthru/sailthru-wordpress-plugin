@@ -54,12 +54,6 @@ class Sailthru_Horizon {
 		if ( ! current_user_can( 'activate_plugins' ) )
             return;
 
-		// signal that it's ok to override Wordpress's built-in email functions
-		if( false == get_option( 'sailthru_override_wp_mail' ) ) {
-			add_option( 'sailthru_override_wp_mail', 1 );
-		} // end if
-
-
 	} // end activate
 
 	/**
@@ -216,7 +210,7 @@ class Sailthru_Horizon {
 	 		if( !isset($concierge['sailthru_concierge_threshold']) ) {
 	 			$concierge_threshold = 'threshold: 500,';
 	 		} else {
-	 			$concierge_threshold =  strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".$concierge['sailthru_concierge_threshold'] .",": 'threshold: 500,';
+	 			$concierge_threshold =  strlen($concierge['sailthru_concierge_threshold']) ? "threshhold: ".intval( $concierge['sailthru_concierge_threshold'] ) .",": 'threshold: 500,';
 	 		}
 
 	 		// delay
@@ -236,7 +230,7 @@ class Sailthru_Horizon {
 	 		if( !isset($concierge['sailthru_concierge_filter']) ) {
 	 			$concierge_filter = '';
 	 		} else {
-	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '".$concierge['sailthru_concierge_filter'] ."'" : '';
+	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: '". esc_js( $concierge['sailthru_concierge_filter'] ) ."'" : '';
 	 		}
 
 
@@ -252,7 +246,7 @@ class Sailthru_Horizon {
 	 		}";
 
 		} else {
-			$horizon_params =   "domain: '" . $options['sailthru_horizon_domain'] . "'";
+			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "'";
 		}
 
 	 	$horizon_js  = "<!-- Sailthru Horizon -->\n";
@@ -443,8 +437,6 @@ class Sailthru_Horizon {
 
 			if( !empty( $post_expiration ) ) {
 
-				//$post_expiration = date( 'Y-m-d', strtotime( $post_expiration) );
-
 				$horizon_tags[] = "<meta name='sailthru.expire_date' content='" . esc_attr( $post_expiration ) . "' />";
 			}
 
@@ -525,10 +517,13 @@ class Sailthru_Horizon {
 
 			// Did the user set an expiry date?
 			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) ) {
-
-				// Save the date. hehe.
-				update_post_meta( $post_id, 'sailthru_post_expiration', $_POST['sailthru_post_expiration'] );
-
+				$expiry_time = strotime( $_POST['sailthru_post_expiration'] );
+				if ( $expiry_time ) {
+					$expiry_date = date( 'Y-m-d', $expiry_time );
+				
+					// Save the date. hehe.
+					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
+				}
 
 			} // end if
 
