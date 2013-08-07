@@ -151,7 +151,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 *          of the post if successful.
 	 */
 
-	function create_scout_page() {
+	private function create_scout_page() {
 
 		// never run this on public facing pages
 		if( !is_admin() ) {
