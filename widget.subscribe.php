@@ -41,7 +41,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
 
 		// Include the Ajax library on the front end
-		add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );		
+		add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );
 
 		// Method to subscribe a user
 		add_action( 'wp_ajax_nopriv_add_subscriber', array( &$this, 'add_subscriber') );
@@ -126,14 +126,24 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * Adds the WordPress Ajax Library to the frontend.
 	 */
 	public function add_ajax_library() {
-		
+
+		// We're having some issues with the subscribe widget, this is a temporary
+		// fix to make sure the host name matches the domain until we get to the root cause.
+		//ticket #20680
+
+		// Get's the host, parses the URL for the path and constructs a URL to ensure
+		// that the ajaxurl variable uses the same domain as the site rather than
+		// wordpress.com
+		$host = $_SERVER['HTTP_HOST'];
+		$url = parse_url(admin_url( 'admin-ajax.php'));
+
 		$html = '<script type="text/javascript">';
-			$html .= 'var ajaxurl = "' . admin_url( 'admin-ajax.php' ) . '"';
+			$html .= 'var ajaxurl = "http://' . $host.$url['path'] . '"';
 		$html .= '</script>';
-		
-		echo $html;	
-		
-	} // end add_ajax_library	
+
+		echo $html;
+
+	} // end add_ajax_library
 
 	/*--------------------------------------------------*/
 	/* Public Functions
@@ -206,7 +216,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$result['message'] = "No naughty business please";
 		}
 
-		
+
 		$email = trim( $_POST['email'] );
 		if( ! filter_var($email , FILTER_VALIDATE_EMAIL) || empty($email) ) {
 			$result['error'] = true;
@@ -301,7 +311,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		} else {
 			echo $result['message'];
 		}
-		
+
 
 		die();
 
