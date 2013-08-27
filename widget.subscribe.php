@@ -127,18 +127,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function add_ajax_library() {
 
-		// We're having some issues with the subscribe widget, this is a temporary
-		// fix to make sure the host name matches the domain until we get to the root cause.
-		//ticket #20680
-
-		// Get's the host, parses the URL for the path and constructs a URL to ensure
-		// that the ajaxurl variable uses the same domain as the site rather than
-		// wordpress.com
-		$host = $_SERVER['HTTP_HOST'];
-		$url = parse_url(admin_url( 'admin-ajax.php'));
 
 		$html = '<script type="text/javascript">';
-			$html .= 'var ajaxurl = "http://' . $host.$url['path'] . '"';
+			$html .= 'var ajaxurl = "'.home_url('wp-admin/admin-ajax.php').'"';
 		$html .= '</script>';
 
 		echo $html;
