@@ -33,7 +33,9 @@ if(!class_exists('Sailthru')) {
 			add_action('wp_ajax_sailthru_delete_datafeed', array(&$this, 'delete_datafeed'));
 			add_action('wp_ajax_sailthru_get_datafeed_html', array(&$this, 'get_datafeed_html'));
 			add_action('wp_ajax_sailthru_get_template_info', array(&$this, 'get_template_info'));
-			
+			add_action( 'widgets_init', function(){
+				register_widget( 'sailthru_Widget' );
+			});
 			//filters
 			add_filter('the_content', array(&$this, 'content_filter'));
 			add_filter('get_footer', array(&$this, 'footer_filter'));
@@ -226,3 +228,109 @@ if(get_option('sailthru_all_email') && !function_exists('wp_mail')) {
         return true;
 	}
 }
+/**
+ * Sailthru Subscribe widget
+ *
+ * Allows the user to specify a title, choose the form to show, 
+ * along with regular widget functions.
+ *
+ * Coded by Zach Silveira (zackify@gmail.com) from Shift3
+ */
+class sailthru_Widget extends WP_Widget {
+
+	/**
+	 * Register widget with WordPress.
+	 */
+	function __construct() {
+		parent::__construct(
+			'sailthru_widget', // Base ID
+			'Sailthru', // Name
+			array( 'description' => __( 'A Subscription form for your visitors', 'text_domain' ), ) // Args
+		);
+	}
+
+	/**
+	 * Front-end display of widget.
+	 *
+	 * @see WP_Widget::widget()
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Saved values from database.
+	 */
+	public function widget( $args, $instance ) {
+		$title = apply_filters( 'widget_title', $instance['title'] );
+
+		echo $args['before_widget'];
+		if ( ! empty( $title ) )
+			echo $args['before_title'] . $title . $args['after_title'];
+		echo __( 'Hello, World!', 'text_domain' );
+		echo $args['after_widget'];
+	}
+
+	/**
+	 * Back-end widget form.
+	 *
+	 * @see WP_Widget::form()
+	 *
+	 * @param array $instance Previously saved values from database.
+	 */
+	public function form( $instance ) {
+		if ( isset( $instance[ 'title' ] ) ) {
+			$title = $instance[ 'title' ];
+		}
+		else {
+			$title = __( 'Subscribe', 'text_domain' );
+		}
+		//the selected form to show in the widget
+		if ( isset( $instance[ 'selected_form' ] ) ) {
+			$selected = $instance[ 'selected_form' ];
+		}
+		//grab the saved custom html subscribe forms
+		$sailthru_forms = sailthru_form::get_forms();
+		
+			if(empty($sailthru_forms)) {
+				echo 'You have create a new subscription form on the options page before setting up this widget :/';
+			}
+			else{
+				?>
+				<p>
+				<label for="<?php echo $this->get_field_name( 'title' ); ?>">
+				<?php _e( 'Title:' ); ?>
+				</label> 
+				<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+				</p>
+				Select a form: 
+					<select name="<?php echo $this->get_field_name( 'selected_form' ); ?>" id="<?php echo $this->get_field_id( 'selected_form' ); ?>">
+						<?php
+									foreach($sailthru_forms as $id => $f) {
+										echo "<option value=\"{$f->name}\"";
+											if($f->name == $selected){
+												echo " selected='selected'";
+											}
+										echo ">{$f->name}</option>";
+									}
+								?>
+					</select>
+		<?php
+		} 
+	}
+
+	/**
+	 * Sanitize widget form values as they are saved.
+	 *
+	 * @see WP_Widget::update()
+	 *
+	 * @param array $new_instance Values just sent to be saved.
+	 * @param array $old_instance Previously saved values from database.
+	 *
+	 * @return array Updated safe values to be saved.
+	 */
+	public function update( $new_instance, $old_instance ) {
+		$instance = array();
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['selected_form'] = ( ! empty( $new_instance['selected_form'] ) ) ? strip_tags( $new_instance['selected_form'] ) : '';
+
+		return $instance;
+	}
+
+} // class Foo_Widget
