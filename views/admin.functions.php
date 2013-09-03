@@ -193,6 +193,19 @@ $forms = get_option('sailthru_forms_options');
 				'sailthru_customfield_name4'
 			)
 		);
+		add_settings_field(
+			'sailthru_customfield_name5',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #5', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name5',
+				'Hobbies',
+				'sailthru_customfield_name5'
+			)
+		);
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_forms_options',

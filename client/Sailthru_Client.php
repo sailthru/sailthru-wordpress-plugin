@@ -110,7 +110,7 @@ class Sailthru_Client {
             $post['schedule_time'] = $schedule_time;
         }
         $result = $this->apiPost('send', $post);
-        return $result;
+        return $options;
     }
 
     /**

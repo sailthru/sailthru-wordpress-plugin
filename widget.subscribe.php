@@ -85,6 +85,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			foreach ($customfields as $section) {
 				$instance['show_'.$section.'_name'] = (bool) $new_instance['show_'.$section.'_name'];
+				$instance['show_'.$section.'_required'] = (bool) $new_instance['show_'.$section.'_required'];
 			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
@@ -116,7 +117,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		include( SAILTHRU_PLUGIN_PATH . 'views/widget.subscribe.admin.php' );
 
 	} // end form
-
 	/*--------------------------------------------*
 	 * Action Functions
 	 *--------------------------------------------*/
@@ -214,29 +214,20 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		} else {
 			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
 		}
-
-		if( isset($_POST['first_name'] ) && !empty($_POST['first_name'] ) ){
-			$first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
-		} else {
-			$first_name = '';
+		//add the custom fields info to the api call! This is where the magic happens
+		$customfields = get_option('sailthru_forms_options');
+		foreach($customfields as $section){
+			$section = str_replace(' ', '_', $section);
+			
+			if(!empty($_POST['custom_'.$section])){
+				$vars[$section] = filter_var(trim($_POST['custom_'.$section]), FILTER_SANITIZE_STRING);
+			}
+			
 		}
-
-		if( isset($_POST['last_name']) && !empty($_POST['last_name'] ) ){
-			$last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
-		} else {
-			$last_name = '';
-		}
-
-		if( $first_name || $last_name ) {
 
 			$options = array(
-				'vars' => array(
-					'first_name'	=> $first_name,
-					'last_name'		=> $last_name,
-				)
+				'vars' => $vars
 			);
-
-		}
 
 		$subscribe_to_lists = array();
 			if( !empty($_POST['sailthru_email_list'] ) ) {
@@ -314,3 +305,26 @@ register_activation_hook( __FILE__, array( 'Sailthru_Subscribe', 'activate' ) );
 
 // Register a new widget with Wordpress
 add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe_Widget");' ) );
+function my_widget_shortcode( $atts ) {
+
+// Configure defaults and extract the attributes into variables
+extract( shortcode_atts( 
+	array( 
+		'title' => '',
+	), 
+	$atts 
+));
+
+$args = array(
+	'before_widget' => '<div class="box widget">',
+	'after_widget'  => '</div>',
+	'before_title'  => '<div class="widget-title">',
+	'after_title'   => '</div>',
+);
+
+ob_start();
+the_widget( 'Sailthru_Subscribe_Widget', $atts, $args ); 
+$output = ob_get_clean();
+return $output;
+}
+add_shortcode( 'sailthru_widget', 'my_widget_shortcode' );

@@ -172,4 +172,6 @@ if( get_option('sailthru_override_wp_mail')
 		return true;
 
 	}
+
 }
+

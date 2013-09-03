@@ -40,22 +40,25 @@
             		<input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" />
             	</label>
             </p>
+            <p>
 			<?php
+			//grab each custom form made by the admin and ask to show them
 			foreach ($customfields as $section) {
 				if(!empty($section)){
 				?>
-					<p>
+					
 			            <label for="<?php echo $this->get_field_id('show_'.$section.'_name'); ?>">
 							<?php _e("Show '".$section."' field:"); ?> 
-							<input id="<?php echo $this->get_field_id('show_'.$section.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$section.'_name']) ? ' checked' : ''); ?> /> Yes.
+							<input id="<?php echo $this->get_field_id('show_'.$section.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$section.'_name']) ? ' checked' : ''); ?> /> Required? <input id="<?php echo $this->get_field_id('show_'.$section.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$section.'_required']) ? ' checked' : ''); ?> />
 						</label>
-					</p>
+					<br>
 					<?php
 				}
+				
 	        }
             		?> 
 				
-
+					</p>
 			<p>			
 				<?php _e('Subscribe to list(s): '); ?>
 				<?php
