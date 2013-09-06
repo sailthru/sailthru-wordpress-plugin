@@ -43,40 +43,43 @@
             <?php
             // grab custom fields and show them in the form
             foreach ($customfields as $section) {
-            $section_field_name = str_replace(' ', '_', $section);
+            $section_field_name = str_replace(" ", '_', $section);
 				if(!empty($section)){
-				?>
+					if( $instance['show_'.$section.'_name'] ) {
+					?>
+					
+	            <div class="sailthru_form_input">
+	                <?php
+	                //check if the field is required
+	                if($instance['show_'.$section.'_required'] == 'checked'){
+		                ?>
+		                <label for="sailthru_first_name"><?php echo $section;?>*:</label>
+		                <input type="<?php echo $instance['show_'.$section.'_type'];?>" required="required" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+						<?php
+					}
+					else{
+						?>
+						<label for="sailthru_first_name"><?php echo $section;?>:</label>
+						<input type="<?php echo $instance['show_'.$section.'_type'];?>" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+					
+						<?php
+					}
+					?>
+					</div>
+	            	<?php 
+	            
+	            	} ?>
 				
-				 <?php if( $instance['show_'.$section.'_name'] ) { ?>
-            <div class="sailthru_form_input">
-                <?php
-                //check if the field is required
-                if($instance['show_'.$section.'_required'] == 'checked'){
-                ?>
-                <label for="sailthru_first_name"><?php echo $section;?>*:</label>
-                <input type="text" required="required" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+				
 				<?php
 				}
-				else{
-					?>
-					<label for="sailthru_first_name"><?php echo $section;?>:</label>
-					<input type="text" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
-				
-					<?php
 				}
-				?>
-            </div>
-            <?php } ?>
-				
-				
-					<?php
-				}
-	        }
+	        
             		?> 
 
             <div class="sailthru_form_input">
                 <label for="sailthru_email">Email:</label>
-                <input type="text" name="email" id="sailthru_email" value="" />
+                <input type="email" name="email" id="sailthru_email" value="" />
             </div>
 
             <div class="sailthru_form_input">

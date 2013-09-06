@@ -82,10 +82,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$instance = array();
 		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
 		$customfields = get_option('sailthru_forms_options');
-
 			foreach ($customfields as $section) {
+				$section = str_replace(" ", '_', $section);
 				$instance['show_'.$section.'_name'] = (bool) $new_instance['show_'.$section.'_name'];
 				$instance['show_'.$section.'_required'] = (bool) $new_instance['show_'.$section.'_required'];
+				$instance['show_'.$section.'_type'] = $new_instance['show_'.$section.'_type'];
 			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 

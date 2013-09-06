@@ -44,13 +44,28 @@
 			<?php
 			//grab each custom form made by the admin and ask to show them
 			foreach ($customfields as $section) {
+			$section_stripped_name = str_replace(" ", '_', $section);
 				if(!empty($section)){
 				?>
 					
 			            <label for="<?php echo $this->get_field_id('show_'.$section.'_name'); ?>">
 							<?php _e("Show '".$section."' field:"); ?> 
-							<input id="<?php echo $this->get_field_id('show_'.$section.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$section.'_name']) ? ' checked' : ''); ?> /> Required? <input id="<?php echo $this->get_field_id('show_'.$section.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$section.'_required']) ? ' checked' : ''); ?> />
-						</label>
+							<input id="<?php echo $this->get_field_id('show_'.$section_stripped_name.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$section_stripped_name.'_name']) ? ' checked' : ''); ?> />
+							
+							<br> 
+							
+							Required? <input id="<?php echo $this->get_field_id('show_'.$section_stripped_name.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$section_stripped_name.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$section_stripped_name.'_required']) ? ' checked' : ''); ?> /> <br>
+							
+							Field Type:
+							
+							<select id="<?php echo $this->get_field_id('show_'.$section.'_type'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_type'); ?>" value="<?php echo $instance['show_'.$section_stripped_name.'_type']; ?>">
+								<option value="textbox" <?php if ( $instance['show_'.$section.'_type'] == 'textbox' ) echo 'selected="selected"'; ?>>Textbox</option>
+								<option value="password" <?php if ( $instance['show_'.$section.'_type'] == 'password' ) echo 'selected="selected"'; ?>>Password</option>
+								<option value="tel" <?php if ( $instance['show_'.$section.'_type'] == 'tel' ) echo 'selected="selected"'; ?>>Telephone</option>
+								<option value="date" <?php if ( $instance['show_'.$section.'_type'] == 'date' ) echo 'selected="selected"'; ?>>Date</option>
+								<option value="select" <?php if ( $instance['show_'.$section.'_type'] == 'select' ) echo 'selected="selected"'; ?>>Select</option>
+							</select>
+													</label>
 					<br>
 					<?php
 				}
