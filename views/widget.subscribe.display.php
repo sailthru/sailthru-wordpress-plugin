@@ -53,7 +53,6 @@
 								$name = explode(':', $section);
 								$items = explode(',', $name[1]);
 				                ?>
-				                <br />
 				                <label for="custom_<?php echo $section_stripped;?>"><?php echo $name[0];?>:</label>
 				                <select name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name">
 				                <?php
@@ -61,7 +60,7 @@
 					                echo '<option value="'.$item.'">'.$item.'</option>';
 				                }
 				                ?>
-				                </select><br /><br />
+				                </select><br />
 				                
 				                <?php
 							
@@ -72,7 +71,6 @@
 								$name = explode(':', $section);
 								$items = explode(',', $name[1]);
 				                ?>
-				                <br />
 				                <label ><?php echo $name[0];?>:</label><br />
 				                <?php
 				                foreach($items as $item){
@@ -90,13 +88,13 @@
 		                if($instance['show_'.$section_stripped.'_required'] == 'checked'){
 			                ?>
 			                <label for="custom_<?php echo $section_stripped;?>"><?php echo $section;?>*:</label>
-			                <input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" required="required" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" />
+			                <input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" required="required" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" /><br />
 							<?php
 						}
 						else{
 						?>
 							<label for="custom_<?php echo $section_stripped;?>"><?php echo $section;?>:</label>
-							<input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" />
+							<input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" /><br />
 						
 							<?php
 						}

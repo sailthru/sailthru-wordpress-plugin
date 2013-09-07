@@ -163,7 +163,7 @@ $forms = get_option('sailthru_forms_options');
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_name2',
-				'Last Name',
+				'fruits:apple,pear,orange',
 				'sailthru_customfield_name2'
 			)
 		);
@@ -189,7 +189,7 @@ $forms = get_option('sailthru_forms_options');
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_name4',
-				'Gender',
+				'',
 				'sailthru_customfield_name4'
 			)
 		);
@@ -202,10 +202,76 @@ $forms = get_option('sailthru_forms_options');
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_name5',
-				'Hobbies',
+				'',
 				'sailthru_customfield_name5'
 			)
 		);
+		add_settings_field(
+			'sailthru_customfield_name6',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #6', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name6',
+				'',
+				'sailthru_customfield_name6'
+			)
+		);
+		add_settings_field(
+			'sailthru_customfield_name7',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #7', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name7',
+				'',
+				'sailthru_customfield_name7'
+			)
+		);
+		add_settings_field(
+			'sailthru_customfield_name8',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #8', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name8',
+				'',
+				'sailthru_customfield_name8'
+			)
+		);
+		add_settings_field(
+			'sailthru_customfield_name9',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #9', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name9',
+				'',
+				'sailthru_customfield_name9'
+			)
+		);
+add_settings_field(
+			'sailthru_customfield_name10',					// ID used to identify the field throughout the theme
+			__( 'Custom Field #10', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_name10',
+				'',
+				'sailthru_customfield_name10'
+			)
+		);
+
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_forms_options',
