@@ -83,7 +83,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
 		$customfields = get_option('sailthru_forms_options');
 			foreach ($customfields as $section) {
-				$section = str_replace(" ", '_', $section);
+				$section = preg_replace("/[^\da-z]/i", '_', $section);
 				$instance['show_'.$section.'_name'] = (bool) $new_instance['show_'.$section.'_name'];
 				$instance['show_'.$section.'_required'] = (bool) $new_instance['show_'.$section.'_required'];
 				$instance['show_'.$section.'_type'] = $new_instance['show_'.$section.'_type'];
@@ -218,10 +218,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		//add the custom fields info to the api call! This is where the magic happens
 		$customfields = get_option('sailthru_forms_options');
 		foreach($customfields as $section){
-			$section = str_replace(' ', '_', $section);
+            $section_stripped = preg_replace("/[^\da-z]/i", '_', $section);
 			
-			if(!empty($_POST['custom_'.$section])){
-				$vars[$section] = filter_var(trim($_POST['custom_'.$section]), FILTER_SANITIZE_STRING);
+			if(!empty($_POST['custom_'.$section_stripped])){
+				$vars[$section_stripped] = filter_var(trim($_POST['custom_'.$section_stripped]), FILTER_SANITIZE_STRING);
 			}
 			
 		}

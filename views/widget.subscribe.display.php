@@ -43,45 +43,43 @@
             <?php
             // grab custom fields and show them in the form
             foreach ($customfields as $section) {
-            $section_field_name = str_replace(" ", '_', $section);
+            $section_stripped = preg_replace("/[^\da-z]/i", '_', $section);
 				if(!empty($section)){
-					if( $instance['show_'.$section.'_name'] ) {
+					if( $instance['show_'.$section_stripped.'_name'] ) {
 					
-						if($instance['show_'.$section.'_type'] == 'select'){
+						if($instance['show_'.$section_stripped.'_type'] == 'select'){
 						
 
 								$name = explode(':', $section);
 								$items = explode(',', $name[1]);
 				                ?>
-				                <label for="custom_<?php echo $section_field_name;?>"><?php echo $name[0];?>:</label>
-				                <select name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name">
+				                <br />
+				                <label for="custom_<?php echo $section_stripped;?>"><?php echo $name[0];?>:</label>
+				                <select name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name">
 				                <?php
 				                foreach($items as $item){
 					                echo '<option value="'.$item.'">'.$item.'</option>';
 				                }
 				                ?>
-				                </select><br>
+				                </select><br /><br />
 				                
 				                <?php
 							
 						}
-						elseif($instance['show_'.$section.'_type'] == 'radio'){
+						elseif($instance['show_'.$section_stripped.'_type'] == 'radio'){
 						
 
 								$name = explode(':', $section);
 								$items = explode(',', $name[1]);
 				                ?>
-				                <label ><?php echo $name[0];?>:</label><br>
+				                <br />
+				                <label ><?php echo $name[0];?>:</label><br />
 				                <?php
 				                foreach($items as $item){
 					                ?>
-					                <input <?php if($instance['show_'.$section.'_required'] == 'checked'){ echo 'required=required';}?> type="radio" name="<?php echo $section;?>" value="<?php echo $item;?>"><?php echo $item;?><br>
+					                <input <?php if($instance['show_'.$section_stripped.'_required'] == 'checked'){ echo 'required=required';}?> type="radio" name="custom_<?php echo $section_stripped;?>" value="<?php echo $item;?>"><?php echo $item;?><br />
 					                <?php
 				                }
-				                ?>
-				                
-				                <?php
-							
 						}
 						else{
 						?>
@@ -89,16 +87,16 @@
 		            <div class="sailthru_form_input">
 		                <?php
 		                //check if the field is required
-		                if($instance['show_'.$section.'_required'] == 'checked'){
+		                if($instance['show_'.$section_stripped.'_required'] == 'checked'){
 			                ?>
-			                <label for="custom_<?php echo $section_field_name;?>"><?php echo $section;?>*:</label>
-			                <input type="<?php echo $instance['show_'.$section.'_type'];?>" required="required" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+			                <label for="custom_<?php echo $section_stripped;?>"><?php echo $section;?>*:</label>
+			                <input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" required="required" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" />
 							<?php
 						}
 						else{
-							?>
-							<label for="custom_<?php echo $section_field_name;?>"><?php echo $section;?>:</label>
-							<input type="<?php echo $instance['show_'.$section.'_type'];?>" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+						?>
+							<label for="custom_<?php echo $section_stripped;?>"><?php echo $section;?>:</label>
+							<input type="<?php echo $instance['show_'.$section_stripped.'_type'];?>" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" value="" />
 						
 							<?php
 						}
