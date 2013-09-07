@@ -3,7 +3,7 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your Wordpress set up. Deliver individualized experiences to your users in real-time by configuring Concierge and Scout. Comes bundled with a handy widget for allowing your visitors to subscribe to your lists right from your website. <strong>To get started</strong>: 1) Click the "Activate" link to the left of this description, 2) Locate your <a href="https://my.sailthru.com/login" target="_blank">Sailthru API key</a>, and 3) Go to the Sailthru configuration page, and save your API key.
-Version: 1.0
+Version: 1.1
 Author: Sailthru
 Author URI: http://sailthru.com
 Author Email: nick@sailthru.com

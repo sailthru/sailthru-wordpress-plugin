@@ -59,11 +59,12 @@
 							Field Type:
 							
 							<select id="<?php echo $this->get_field_id('show_'.$section.'_type'); ?>" name="<?php echo $this->get_field_name('show_'.$section.'_type'); ?>" value="<?php echo $instance['show_'.$section_stripped_name.'_type']; ?>">
-								<option value="textbox" <?php if ( $instance['show_'.$section.'_type'] == 'textbox' ) echo 'selected="selected"'; ?>>Textbox</option>
-								<option value="password" <?php if ( $instance['show_'.$section.'_type'] == 'password' ) echo 'selected="selected"'; ?>>Password</option>
-								<option value="tel" <?php if ( $instance['show_'.$section.'_type'] == 'tel' ) echo 'selected="selected"'; ?>>Telephone</option>
-								<option value="date" <?php if ( $instance['show_'.$section.'_type'] == 'date' ) echo 'selected="selected"'; ?>>Date</option>
-								<option value="select" <?php if ( $instance['show_'.$section.'_type'] == 'select' ) echo 'selected="selected"'; ?>>Select</option>
+								<option value="textbox" <?php selected( $instance['show_'.$section.'_type'], 'textbox' );?>>Textbox</option>
+								<option value="password" <?php selected( $instance['show_'.$section.'_type'], 'password' );?>>Password</option>
+								<option value="tel" <?php selected( $instance['show_'.$section.'_type'], 'tel' );?>>Telephone</option>
+								<option value="date" <?php selected( $instance['show_'.$section.'_type'], 'date' );?>>Date</option>
+								<option value="select" <?php selected( $instance['show_'.$section.'_type'], 'select' );?>>Select</option>
+								<option value="radio" <?php selected( $instance['show_'.$section.'_type'], 'radio' );?>>Radio</option>
 							</select>
 													</label>
 					<br>

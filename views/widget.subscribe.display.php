@@ -46,32 +46,71 @@
             $section_field_name = str_replace(" ", '_', $section);
 				if(!empty($section)){
 					if( $instance['show_'.$section.'_name'] ) {
-					?>
 					
-	            <div class="sailthru_form_input">
-	                <?php
-	                //check if the field is required
-	                if($instance['show_'.$section.'_required'] == 'checked'){
-		                ?>
-		                <label for="sailthru_first_name"><?php echo $section;?>*:</label>
-		                <input type="<?php echo $instance['show_'.$section.'_type'];?>" required="required" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
-						<?php
-					}
-					else{
+						if($instance['show_'.$section.'_type'] == 'select'){
+						
+
+								$name = explode(':', $section);
+								$items = explode(',', $name[1]);
+				                ?>
+				                <label for="custom_<?php echo $section_field_name;?>"><?php echo $name[0];?>:</label>
+				                <select name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name">
+				                <?php
+				                foreach($items as $item){
+					                echo '<option value="'.$item.'">'.$item.'</option>';
+				                }
+				                ?>
+				                </select><br>
+				                
+				                <?php
+							
+						}
+						elseif($instance['show_'.$section.'_type'] == 'radio'){
+						
+
+								$name = explode(':', $section);
+								$items = explode(',', $name[1]);
+				                ?>
+				                <label ><?php echo $name[0];?>:</label><br>
+				                <?php
+				                foreach($items as $item){
+					                ?>
+					                <input <?php if($instance['show_'.$section.'_required'] == 'checked'){ echo 'required=required';}?> type="radio" name="<?php echo $section;?>" value="<?php echo $item;?>"><?php echo $item;?><br>
+					                <?php
+				                }
+				                ?>
+				                
+				                <?php
+							
+						}
+						else{
 						?>
-						<label for="sailthru_first_name"><?php echo $section;?>:</label>
-						<input type="<?php echo $instance['show_'.$section.'_type'];?>" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+						
+		            <div class="sailthru_form_input">
+		                <?php
+		                //check if the field is required
+		                if($instance['show_'.$section.'_required'] == 'checked'){
+			                ?>
+			                <label for="custom_<?php echo $section_field_name;?>"><?php echo $section;?>*:</label>
+			                <input type="<?php echo $instance['show_'.$section.'_type'];?>" required="required" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+							<?php
+						}
+						else{
+							?>
+							<label for="custom_<?php echo $section_field_name;?>"><?php echo $section;?>:</label>
+							<input type="<?php echo $instance['show_'.$section.'_type'];?>" name="custom_<?php echo $section_field_name;?>" id="sailthru_<?php echo $section;?>_name" value="" />
+						
+							<?php
+						}
+						?>
+						</div>
+		            	<?php 
+		            
+		            	} ?>
 					
-						<?php
+					
+					<?php
 					}
-					?>
-					</div>
-	            	<?php 
-	            
-	            	} ?>
-				
-				
-				<?php
 				}
 				}
 	        
