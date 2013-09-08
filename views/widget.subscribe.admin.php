@@ -42,46 +42,22 @@
             </p>
             <p>
 			<?php
-			//grab each custom form made by the admin and ask to show them
-			foreach ($customfields as $section) {
 			//strip non alpha-numeric charaters
-			$section_stripped = preg_replace("/[^\da-z]/i", '_', $section);
-				if(!empty($section)){
+			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields['sailthru_customfield_name']);
 				?>
 					
-			            <label for="<?php echo $this->get_field_id('show_'.$section_stripped.'_name'); ?>">
+			            <label for="<?php echo $this->get_field_id('show_'.$name_stripped.'_name'); ?>">
 			            	<?php
 			            	//takes out the rest of the name if it's a select / radio
-							$name = explode(':', $section);
-							_e("Show '".$name[0]."' field:");
+							_e("Show '".$customfields['sailthru_customfield_name']."' field:");
 							?>
-							<input id="<?php echo $this->get_field_id('show_'.$section_stripped.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$section_stripped.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$section_stripped.'_name']) ? ' checked' : ''); ?> />
-							
-							<br> 
+							<input id="<?php echo $this->get_field_id('show_'.$name_stripped.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$name_stripped.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$name_stripped.'_name']) ? ' checked' : ''); ?> />	
+							<br>
+							Required: <input id="<?php echo $this->get_field_id('show_'.$name_stripped.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$name_stripped.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$name_stripped.'_required']) ? ' checked' : ''); ?> /> <br>
 							<?php
-							if($instance['show_'.$section.'_type'] !== 'select'){
-							
-							?>
-							Required? <input id="<?php echo $this->get_field_id('show_'.$section_stripped.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$section_stripped.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$section_stripped.'_required']) ? ' checked' : ''); ?> /> <br>
-							<?php
-							}
-							?>
-							Field Type:
-							
-							<select id="<?php echo $this->get_field_id('show_'.$section_stripped.'_type'); ?>" name="<?php echo $this->get_field_name('show_'.$section_stripped.'_type'); ?>" value="<?php echo $instance['show_'.$section_stripped.'_type']; ?>">
-								<option value="textbox" <?php selected( $instance['show_'.$section_stripped.'_type'], 'textbox' );?>>Textbox</option>
-								<option value="password" <?php selected( $instance['show_'.$section_stripped.'_type'], 'password' );?>>Password</option>
-								<option value="tel" <?php selected( $instance['show_'.$section_stripped.'_type'], 'tel' );?>>Telephone</option>
-								<option value="date" <?php selected( $instance['show_'.$section_stripped.'_type'], 'date' );?>>Date</option>
-								<option value="select" <?php selected( $instance['show_'.$section_stripped.'_type'], 'select' );?>>Select</option>
-								<option value="radio" <?php selected( $instance['show_'.$section_stripped.'_type'], 'radio' );?>>Radio</option>
-							</select>
-													</label>
-					<br>
-					<?php
-				}
+
 				
-	        }
+	        
             		?> 
 				
 					</p>

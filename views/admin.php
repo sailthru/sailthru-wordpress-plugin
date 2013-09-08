@@ -96,7 +96,6 @@
 									settings_fields( 'sailthru_forms_options' );
 									do_settings_sections( 'sailthru_forms_options' );
 
-
 								
 								// show welcome page
 								}
