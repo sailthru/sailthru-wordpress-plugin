@@ -17,7 +17,6 @@
 
     // display options
     $customfields = get_option('sailthru_forms_options');
-
  
     // nonce
     $nonce = wp_create_nonce("add_subscriber_nonce"); 
@@ -41,21 +40,22 @@
          <form method="post" action="#" id="sailthru-add-subscriber-form">
             <div id="sailthru-add-subscriber-errors"></div>
             <?php
-            // grab custom fields and show them in the form
-            $section_stripped = preg_replace("/[^\da-z]/i", '_', $customfields['sailthru_customfield_name']);
-					if( !empty($instance['show_'.$section_stripped.'_name']) ) {
+            $key = get_option('sailthru_forms_key');
+			for($i = 0;$i < $key;$i++){
+			$field_key = $i + 1;
+			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+					if( !empty($instance['show_'.$name_stripped.'_name']) ) {
 					
-						if($customfields['sailthru_customfield_type'] == 'select'){
+						if($customfields[$field_key]['sailthru_customfield_type'] == 'select'){
 						
 
-								$items = explode(',', $customfields['sailthru_customfield_value']);
 				                ?>
-				                <label for="custom_<?php echo $section_stripped;?>"><?php echo $customfields['sailthru_customfield_name'];?>:</label>
-				                <select name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name">
+				                <label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label>
+				                <select name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name">
 				                <?php
+				                $items = explode(',', $customfields[$field_key]['sailthru_customfield_value']);
 				                foreach($items as $item){
-				                $key = explode(':', $item);
-					                echo '<option value="'.$key[0].'">'.$key[1].'</option>';
+					                echo '<option value="'.$item.'">'.$item.'</option>';
 				                }
 				                ?>
 				                </select><br />
@@ -63,17 +63,16 @@
 				                <?php
 							
 						}
-						elseif($customfields['sailthru_customfield_type'] == 'radio'){
+						elseif($customfields[$field_key]['sailthru_customfield_type'] == 'radio'){
 						
 
-								$items = explode(',', $customfields['sailthru_customfield_value']);
+				                $items = explode(',', $customfields[$field_key]['sailthru_customfield_value']);
 				                ?>
-				                <label ><?php echo $customfields['sailthru_customfield_name'];?>:</label><br />
+				                <label ><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label><br /><br />
 				                <?php
 				                foreach($items as $item){
-				                $key = explode(':', $item);
 					                ?>
-					                <input <?php if($instance['show_'.$section_stripped.'_required'] == 'checked'){ echo 'required=required';}?> type="radio" name="custom_<?php echo $section_stripped;?>" value="<?php echo $key[0];?>"><?php echo $key[1];?><br />
+					                <input <?php if($instance['show_'.$name_stripped.'_required'] == 'checked'){ echo 'required=required';}?> type="radio" name="custom_<?php echo $name_stripped;?>" value="<?php echo $item;?>"><?php echo $item;?><br />
 					                <?php
 				                }
 						}
@@ -82,19 +81,19 @@
 						
 		            <div class="sailthru_form_input">
 		                <?php
-		                $key = explode(':', $customfields['sailthru_customfield_value']);
-		                $value = $key[1];
+		                $text_key = explode(':', $customfields[$field_key]['sailthru_customfield_value']);
+		                $value = $text_key[1];
 		                //check if the field is required
-		                if($instance['show_'.$section_stripped.'_required'] == 'checked'){
+		                if($instance['show_'.$name_stripped.'_required'] == 'checked'){
 			                ?>
-			                <label for="custom_<?php echo $section_stripped;?>"><?php echo $customfields['sailthru_customfield_name'];?>*:</label>
-			                <input type="<?php echo $customfields['sailthru_customfield_type'];?>" required="required" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" placeholder="<?php echo $value;?>" /><br />
+			                <label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>*:</label>
+			                <input type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>" required="required" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" placeholder="<?php echo $value;?>" /><br />
 							<?php
 						}
 						else{
 						?>
-							<label for="custom_<?php echo $section_stripped;?>"><?php echo $customfields['sailthru_customfield_name'];?>:</label>
-							<input type="<?php echo $customfields['sailthru_customfield_type'];?>" name="custom_<?php echo $section_stripped;?>" id="sailthru_<?php echo $section_stripped;?>_name" placeholder="<?php echo $value;?>" /><br />
+							<label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label>
+							<input type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" placeholder="<?php echo $value;?>" /><br />
 						
 							<?php
 						}
@@ -107,7 +106,7 @@
 					
 					<?php
 					}
-	        
+					}
             		?> 
 
             <div class="sailthru_form_input">

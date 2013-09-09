@@ -82,11 +82,16 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$instance = array();
 		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
 		$customfields = get_option('sailthru_forms_options');
-			foreach ($customfields as $section) {
-				$section = preg_replace("/[^\da-z]/i", '_', $section);
-				$instance['show_'.$section.'_name'] = (bool) $new_instance['show_'.$section.'_name'];
-				$instance['show_'.$section.'_required'] = (bool) $new_instance['show_'.$section.'_required'];
-				$instance['show_'.$section.'_type'] = $new_instance['show_'.$section.'_type'];
+		$key = get_option('sailthru_forms_key');
+			
+			for($i = 0;$i < $key;$i++){
+				$field_key = $i + 1;
+				$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+				$instance['show_'.$name_stripped.'_name'] = (bool) $new_instance['show_'.$name_stripped.'_name'];
+				$instance['show_'.$name_stripped.'_required'] = (bool) $new_instance['show_'.$name_stripped.'_required'];
+				$instance['show_'.$name_stripped.'_type'] = $new_instance['show_'.$name_stripped.'_type'];
+
+				
 			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
@@ -217,11 +222,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 		//add the custom fields info to the api call! This is where the magic happens
 		$customfields = get_option('sailthru_forms_options');
-		foreach($customfields as $section){
-            $section_stripped = preg_replace("/[^\da-z]/i", '_', $section);
+		$key = get_option('sailthru_forms_key');
+			for($i = 0;$i < $key;$i++){
+			$field_key = $i + 1;
+			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
 			
-			if(!empty($_POST['custom_'.$section_stripped])){
-				$vars[$section_stripped] = filter_var(trim($_POST['custom_'.$section_stripped]), FILTER_SANITIZE_STRING);
+			if(!empty($_POST['custom_'.$name_stripped])){
+				$vars[$name_stripped] = filter_var(trim($_POST['custom_'.$name_stripped]), FILTER_SANITIZE_STRING);
 			}
 			
 		}

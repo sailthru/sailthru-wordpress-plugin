@@ -127,7 +127,7 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
 function sailthru_initialize_forms_options() {
 
 	function sailthru_forms_callback(){
-		echo '<p>Add custom fields to the subscribe widget, for select boxes make key / value pairs like this: \'pear:pear,apple:apple cider\' with the key going first.</p>';
+		echo '<p>Add custom fields to the subscribe widget, for select boxes make values like this: \'pear,apple:apple cider\' with the key going first.</p>';
 	}
 
 	function field_type($args){
@@ -145,7 +145,7 @@ function sailthru_initialize_forms_options() {
 		} else {
 			$value = $default_value;
 	}
-
+	
 	// Render the output
 
 		echo '<select id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">';
@@ -156,6 +156,31 @@ function sailthru_initialize_forms_options() {
 			<option value="date" <?php selected( esc_attr( $value ), 'date' );?>>Date</option>
 			<option value="select" <?php selected( esc_attr( $value ), 'select' );?>>Select</option>
 			<option value="radio" <?php selected( esc_attr( $value ), 'radio' );?>>Radio</option>
+			</select>
+		<?php
+	}
+	function delete_field($args){
+		$collection = $args[0];
+		$option_name = $args[1];
+		$default_value = $args[2];
+		$html_id = $args[3];
+		// Read the saved options collection
+		$options = get_option( $collection );
+	
+		//delete the option here
+	
+	// Render the output
+
+		echo '<select id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">';
+		$key = get_option('sailthru_forms_key');
+			for($i = 0;$i < $key;$i++){
+			$field_key = $i + 1;
+			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+		?>
+			<option value="<?php echo $field_key;?>" <?php selected( esc_attr( $value ), 'textbox' );?>>Textbox</option>
+			<?php
+			}
+			?>
 			</select>
 		<?php
 	}
@@ -201,7 +226,7 @@ $forms = get_option('sailthru_forms_options');
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_type',
-				'Label',
+				'',
 				'sailthru_customfield_type'
 			)
 		);
@@ -215,21 +240,21 @@ $forms = get_option('sailthru_forms_options');
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_name',
-				'Label',
+				'',
 				'sailthru_customfield_name'
 			)
 		);
 	
 	add_settings_field(
 			'sailthru_customfield_value',					// ID used to identify the field throughout the theme
-			__( 'Field Key/Value', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			__( 'Field Key/Value (use key:value)', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
 			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
 			'sailthru_forms_options',			// The page on which this option will be displayed
 			'sailthru_forms_section',			// The name of the section to which this field belongs
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
 				'sailthru_forms_options',
 				'sailthru_customfield_value',
-				'Username:Bob',
+				'',
 				'sailthru_customfield_value'
 			)
 	);	
@@ -272,10 +297,24 @@ $forms = get_option('sailthru_forms_options');
 				'sailthru_customfield_css_class'
 			)
 	);
+	add_settings_field(
+			'sailthru_customfield_success',					// ID used to identify the field throughout the theme
+			__( 'Subscribe Success Message', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_forms_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_success',
+				'',
+				'sailthru_customfield_success'
+			)
+	);
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_forms_options',
-		'sailthru_forms_options'
+		'sailthru_forms_options',
+		'sailthru_forms_handler'
 	);
 
 } // end sailthru_initialize_setup_options
@@ -800,6 +839,34 @@ function sailthru_sanitize_text_input( $input ) {
  * Sanitize the text inputs, and don't let the horizon
  * domain get saved with either http:// https:// or www
  */
+ function sailthru_forms_handler( $input ) {
+
+
+	$fields = get_option('sailthru_forms_options');
+	$output = $fields;
+	$key = get_option('sailthru_forms_key');
+		if(isset($key)){
+			$new_key = $key + 1;
+			update_option('sailthru_forms_key',$new_key);
+		}
+		else{
+			$new_key = 0;
+			add_option('sailthru_forms_key',$new_key);
+		}
+		if(!empty($input['sailthru_customfield_name'])){
+			$output[$new_key]['sailthru_customfield_name']      = $input['sailthru_customfield_name'];
+			$output[$new_key]['sailthru_customfield_value']     = $input['sailthru_customfield_value'];
+			$output[$new_key]['sailthru_customfield_type']      = $input['sailthru_customfield_type'];
+			$output[$new_key]['sailthru_customfield_class']     = $input['sailthru_customfield_class'];
+			$output[$new_key]['sailthru_customfield_css_class'] = $input['sailthru_customfield_css_class'];
+			$output[$new_key]['sailthru_customfield_attr']      = $input['sailthru_customfield_attr'];
+		}
+		$output['sailthru_customfield_success']      = $input['sailthru_customfield_success'];
+		
+
+	return $output;
+
+}
 function sailthru_setup_handler( $input ) {
 
 	$output = array();

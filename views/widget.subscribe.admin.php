@@ -42,21 +42,23 @@
             </p>
             <p>
 			<?php
-			//strip non alpha-numeric charaters
-			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields['sailthru_customfield_name']);
+			$key = get_option('sailthru_forms_key');
+			for($i = 0;$i < $key;$i++){
+			$field_key = $i + 1;
+			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
 				?>
 					
 			            <label for="<?php echo $this->get_field_id('show_'.$name_stripped.'_name'); ?>">
 			            	<?php
 			            	//takes out the rest of the name if it's a select / radio
-							_e("Show '".$customfields['sailthru_customfield_name']."' field:");
+							_e("Show '".$customfields[$field_key]['sailthru_customfield_name']."' field:");
 							?>
 							<input id="<?php echo $this->get_field_id('show_'.$name_stripped.'_name'); ?>" name="<?php echo $this->get_field_name('show_'.$name_stripped.'_name'); ?>" type="checkbox" <?php echo (($instance['show_'.$name_stripped.'_name']) ? ' checked' : ''); ?> />	
 							<br>
 							Required: <input id="<?php echo $this->get_field_id('show_'.$name_stripped.'_required'); ?>" name="<?php echo $this->get_field_name('show_'.$name_stripped.'_required'); ?>" type="checkbox" <?php echo (($instance['show_'.$name_stripped.'_required']) ? ' checked' : ''); ?> /> <br>
 							<?php
 
-				
+}
 	        
             		?> 
 				
