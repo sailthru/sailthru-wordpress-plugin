@@ -98,6 +98,9 @@ class Sailthru_Horizon {
 		if( false != get_option( 'sailthru_forms_options') ) {
 			delete_option( 'sailthru_forms_options' );
 		}
+		if( false != get_option( 'sailthru_forms_key') ) {
+			delete_option( 'sailthru_forms_key' );
+		}
 		// remove data feeds
 		if( false != get_option( 'sailthru_datafeeds') ) {
 			delete_option( 'sailthru_datafeeds' );
