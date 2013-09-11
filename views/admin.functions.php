@@ -177,6 +177,19 @@ function sailthru_initialize_forms_options() {
 			}
 			echo '</select>';
 			}
+	function sailthru_success_field($args){
+		$customfields = get_option('sailthru_forms_options');
+		$collection = $args[0];
+		$option_name = $args[1];
+		$default_value = $args[2];
+		$html_id = $args[3];
+		// Read the saved options collection
+		$options = get_option( $collection );
+	
+	
+		echo '<textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="Thanks for subscribing!">'.$customfields['sailthru_customfield_success'].'</textarea>';
+		
+	}
 	
 	function sailthru_value_field($args){
 		$collection = $args[0];
@@ -313,7 +326,7 @@ $forms = get_option('sailthru_forms_options');
 	add_settings_field(
 			'sailthru_customfield_success',					// ID used to identify the field throughout the theme
 			__( 'Subscribe Success Message', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
-			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
+			'sailthru_success_field',// The name of the function responsible for rendering the option interface
 			'sailthru_forms_options',			// The page on which this option will be displayed
 			'sailthru_adv_section',			// The name of the section to which this field belongs
 			array(								// The array of arguments to pass to the callback. In this case, just a description.
