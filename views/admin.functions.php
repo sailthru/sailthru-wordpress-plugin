@@ -5,7 +5,7 @@
 function sailthru_initialize_setup_options() {
 
 	// If the section options don't exist, create them.
-	if( false == get_option( 'sailthru_setup_options' ) ) {
+	if ( false == get_option( 'sailthru_setup_options' ) ) {
 		add_option( 'sailthru_setup_options' );
 	} // end if
 
@@ -22,7 +22,7 @@ function sailthru_initialize_setup_options() {
 		 */
 		$setup = get_option('sailthru_setup_options');
 
-		if( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
+		if ( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
 				isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
 
 			add_settings_field(
@@ -126,11 +126,11 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
 
 function sailthru_initialize_forms_options() {
 
-	function sailthru_forms_callback(){
+	function sailthru_forms_callback() {
 		echo '<p>Add custom fields to the subscribe widget, for select boxes make values like this: \'pear,apple:apple cider\' with the key going first.</p>';
 	}
 
-	function field_type($args){
+	function field_type ( $args ) {
 		$collection = $args[0];
 		$option_name = $args[1];
 		$default_value = $args[2];
@@ -140,7 +140,7 @@ function sailthru_initialize_forms_options() {
 	
 		// Make sure the element is defined in the options. If not, we'll use the preferred default
 		$value = '';
-		if( isset( $options[ $option_name ] ) ) {
+		if ( isset( $options[ $option_name ] ) ) {
 			$value = $options[ $option_name ];
 		} else {
 			$value = $default_value;
@@ -159,7 +159,7 @@ function sailthru_initialize_forms_options() {
 			</select>
 		<?php
 	}
-	function delete_field($args){
+	function delete_field ( $args ) {
 		$customfields = get_option('sailthru_forms_options');
 		$collection = $args[0];
 		$option_name = $args[1];
@@ -169,15 +169,15 @@ function sailthru_initialize_forms_options() {
 		$options = get_option( $collection );
 		$key = get_option('sailthru_forms_key');
 		echo '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']"><option value="select">Select...</option>';	
-			for($i = 0;$i < $key;$i++){
+			for( $i = 0;$i < $key;$i++ ) {
 				 $field_key = $i + 1;
-				 if(!empty($customfields[$field_key]['sailthru_customfield_name'])){
+				 if ( !empty($customfields[$field_key]['sailthru_customfield_name'] ) ) {
 				 echo '<option value="'.$field_key.'" >'.$customfields[$field_key]['sailthru_customfield_name'].'</option>';
 				 }
 			}
 			echo '</select>';
 			}
-	function sailthru_success_field($args){
+	function sailthru_success_field ( $args ) {
 		$customfields = get_option('sailthru_forms_options');
 		$collection = $args[0];
 		$option_name = $args[1];
@@ -191,7 +191,7 @@ function sailthru_initialize_forms_options() {
 		
 	}
 	
-	function sailthru_value_field($args){
+	function sailthru_value_field ( $args ) {
 		$collection = $args[0];
 		$option_name = $args[1];
 		$default_value = $args[2];
@@ -206,7 +206,7 @@ function sailthru_initialize_forms_options() {
 		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'1') . ']" type="text" placeholder="key" /><input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'2' ) . ']" type="text"  placeholder="value"/><a id="add_value" href ="">Add Another</a><input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val') . ']" value="2" />';
 		
 	}
-	function sailthru_attr_field($args){
+	function sailthru_attr_field ( $args ) {
 		$collection = $args[0];
 		$option_name = $args[1];
 		$default_value = $args[2];
@@ -809,7 +809,7 @@ function sailthru_setup_email_template_callback( $args ) {
 		}
 
 
-	if (isset($res['error']) ){
+	if (isset( $res['error'] ) ) {
 		$tpl =  array();
 	} else {
 		$tpl = $res['templates'] ;
@@ -872,7 +872,7 @@ function sailthru_sanitize_text_input( $input ) {
 	$fields = get_option('sailthru_forms_options');
 	$output = $fields;
 	$key = get_option('sailthru_forms_key');
-		if(isset($key)){
+		if( isset( $key ) ) {
 			$new_key = $key + 1;
 			update_option('sailthru_forms_key',$new_key);
 		}
@@ -880,20 +880,20 @@ function sailthru_sanitize_text_input( $input ) {
 			$new_key = 0;
 			add_option('sailthru_forms_key',$new_key);
 		}
-		if(!empty($input['sailthru_customfield_name'])){
+		if(!empty( $input['sailthru_customfield_name'] ) ) {
 			$output[$new_key]['sailthru_customfield_name']      = $input['sailthru_customfield_name'];
 			$output[$new_key]['sailthru_customfield_type']      = $input['sailthru_customfield_type'];
 			$output[$new_key]['sailthru_customfield_class']     = $input['sailthru_customfield_class'];
 	
-			if(!empty($input['sailthru_customfield_attr'])){
+			if(!empty($input['sailthru_customfield_attr'] ) ) {
 			$output[$new_key]['sailthru_customfield_attr']      = $input['sailthru_customfield_attr'];
 		}
-			if($input['sailthru_customfield_type'] == 'select' || $input['sailthru_customfield_type'] == 'radio'){
+			if($input['sailthru_customfield_type'] == 'select' || $input['sailthru_customfield_type'] == 'radio' ) {
 				$amount = $input['sailthru_customfield_value_val'];
 					$values = '';
-					for($i = 1;$i <= $amount;$i++){
-						if($i != $amount){
-							if($i % 2 == 0){
+					for($i = 1;$i <= $amount;$i++) {
+						if($i != $amount ) {
+							if( $i % 2 == 0 ) {
 								$values .= $input['sailthru_customfield_value'.$i] .',';
 							}
 							else{
@@ -906,12 +906,12 @@ function sailthru_sanitize_text_input( $input ) {
 					}
 					$output[$new_key]['sailthru_customfield_value']      = $values;
 			}
-				if(!empty($input['sailthru_customfield_attr1']) && !empty($input['sailthru_customfield_attr2'])){
+				if(!empty($input['sailthru_customfield_attr1']) && !empty($input['sailthru_customfield_attr2'] ) ) {
 					$amount = $input['sailthru_customfield_attr_val'];
 					$values = '';
-					for($i = 1;$i <= $amount;$i++){
-						if($i != $amount){
-							if($i % 2 == 0){
+					for( $i = 1;$i <= $amount;$i++ ) {
+						if($i != $amount ) {
+							if($i % 2 == 0 ) {
 								$values .= $input['sailthru_customfield_attr'.$i] .',';
 							}
 							else{
@@ -925,7 +925,7 @@ function sailthru_sanitize_text_input( $input ) {
 					$output[$new_key]['sailthru_customfield_attr']      = $values;
 			}
 		}
-		if($input['sailthru_customfield_delete'] != 'select'){
+		if($input['sailthru_customfield_delete'] != 'select' ) {
 			$output[$input['sailthru_customfield_delete']]['sailthru_customfield_name']     = '';
 		}
 		$output['sailthru_customfield_success']      = $input['sailthru_customfield_success'];
@@ -940,25 +940,25 @@ function sailthru_setup_handler( $input ) {
 
 	// api key
 	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
-	if( empty( $output['sailthru_api_key'] ) ) {
+	if ( empty( $output['sailthru_api_key'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __('Sailthru will not function without an API key.'), 'error' );
 	}
 
 	// api secret
 	$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
-	if( empty($output['sailthru_api_secret'])) {
+	if ( empty($output['sailthru_api_secret'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-secret-fail', __('Sailthru will not function without an API secret.'), 'error' );
 	}
 
 	$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
-	if( empty($output['sailthru_horizon_domain'])) {
+	if ( empty($output['sailthru_horizon_domain'])) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __('Please enter your Horizon domain.'), 'error' );
 	} else {
 
 		$output['sailthru_horizon_domain'] = str_ireplace( 'http://', '', $output['sailthru_horizon_domain'] );
 		$output['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $output['sailthru_horizon_domain'] );
 		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
-		if( substr($output['sailthru_horizon_domain'], -1 ) == '/' ) {
+		if ( substr($output['sailthru_horizon_domain'], -1 ) == '/' ) {
 		    $output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
 
@@ -970,12 +970,12 @@ function sailthru_setup_handler( $input ) {
 	 */
 	$setup = get_option('sailthru_setup_options');
 
-	if( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
+	if ( isset($setup['sailthru_api_key']) && !empty($setup['sailthru_api_key']) &&
 			isset($setup['sailthru_api_secret']) && !empty($setup['sailthru_api_secret'])) {
 
 		// sitewide email template
 		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
-		if( empty($output['sailthru_setup_email_template']) ) {
+		if ( empty($output['sailthru_setup_email_template']) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __('Please choose a template to use when sending emails sitewide.'), 'error' );
 		}
 
@@ -1022,7 +1022,7 @@ function sailthru_create_dropdown( $args, $values ) {
 
 	// this is inefficient TODO: rewrite!
 	$current = get_option($collection);
-		if( isset($current[$option_name]) ) {
+		if ( isset($current[$option_name]) ) {
 			$saved_value = $current[$option_name];
 		} else {
 			$saved_value = '';
@@ -1034,7 +1034,7 @@ function sailthru_create_dropdown( $args, $values ) {
 
 	$html .= '<option value=""> - Choose One - </option>';
 
-	if( is_array($values) ) {
+	if ( is_array($values) ) {
 		foreach( $values as $key => $value ) {
 
 			$html .= '<option value="' . esc_attr( $value['name'] ) . '" ' . selected( $saved_value, $value['name'], false) . '>' . esc_attr($value['name']) . '</option>';
@@ -1077,7 +1077,7 @@ function sailthru_verify_setup() {
   		$tpl = $client->getTemplate($template);
   		$tpl_errors = sailthru_verify_template($tpl);
 
-  		if(count($tpl_errors) > 0) {
+  		if ( count($tpl_errors) > 0) {
   			// add errors to the error message
   			$res['error'] = true;
   			$res['errormessage'] = 'template not configured';
