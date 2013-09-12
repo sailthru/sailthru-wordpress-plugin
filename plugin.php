@@ -33,6 +33,8 @@ if( ! defined('SAILTHRU_PLUGIN_PATH') )
 if( ! defined('SAILTHRU_PLUGIN_URL') )
 	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
 
+	echo SAILTHRU_PLUGIN_URL.'aspldkaspokd';
+
 
 /*
  * Sailthru PHP5 Developer Library
@@ -166,7 +168,7 @@ if( get_option('sailthru_override_wp_mail')
 			$api_key = $sailthru['sailthru_api_key'];
 			$api_secret = $sailthru['sailthru_api_secret'];
 		//$client = new Sailthru_Client( $api_key,  $api_secret);
-		$client = new WP_Sailthru_Client( $api_key, $api_secret);	
+		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 		$r = $client->send($template, $recipients, $vars, array());
 
 		return true;
