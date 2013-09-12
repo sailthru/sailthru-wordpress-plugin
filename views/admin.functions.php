@@ -127,7 +127,7 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
 function sailthru_initialize_forms_options() {
 
 	function sailthru_forms_callback() {
-		echo '<p>Add custom fields to the subscribe widget, for select boxes make values like this: \'pear,apple:apple cider\' with the key going first.</p>';
+		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 	}
 
 	function field_type ( $args ) {
@@ -154,6 +154,7 @@ function sailthru_initialize_forms_options() {
 			<option value="password" <?php selected( esc_attr( $value ), 'password' );?>>Password</option>
 			<option value="tel" <?php selected( esc_attr( $value ), 'tel' );?>>Telephone</option>
 			<option value="date" <?php selected( esc_attr( $value ), 'date' );?>>Date</option>
+			<option value="hidden" <?php selected( esc_attr( $value ), 'hidden' );?>>Hidden</option>
 			<option value="select" <?php selected( esc_attr( $value ), 'select' );?>>Select</option>
 			<option value="radio" <?php selected( esc_attr( $value ), 'radio' );?>>Radio</option>
 			</select>
@@ -185,9 +186,14 @@ function sailthru_initialize_forms_options() {
 		$html_id = $args[3];
 		// Read the saved options collection
 		$options = get_option( $collection );
+		if ( empty( $customfields['sailthru_customfield_success'] ) ) {
+			$message = '';
+		}
+		else{
+			$message = $customfields['sailthru_customfield_success'];
+		}
 	
-	
-		echo '<textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="Thanks for subscribing!">'.$customfields['sailthru_customfield_success'].'</textarea>';
+		echo '<textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="Thanks for subscribing!">'.$message.'</textarea>';
 		
 	}
 	
@@ -253,7 +259,7 @@ $forms = get_option('sailthru_forms_options');
 	
 	add_settings_field(
 			'sailthru_customfield_name',					// ID used to identify the field throughout the theme
-			__( 'Field Label', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			__( 'Field Name', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
 			'sailthru_html_text_input_callback',// The name of the function responsible for rendering the option interface
 			'sailthru_forms_options',			// The page on which this option will be displayed
 			'sailthru_forms_section',			// The name of the section to which this field belongs
@@ -278,19 +284,6 @@ $forms = get_option('sailthru_forms_options');
 				'sailthru_customfield_value'
 			)
 	);	
-		add_settings_field(
-			'sailthru_customfield_delete',					// ID used to identify the field throughout the theme
-			__( 'Delete Field', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
-			'delete_field',// The name of the function responsible for rendering the option interface
-			'sailthru_forms_options',			// The page on which this option will be displayed
-			'sailthru_forms_section',			// The name of the section to which this field belongs
-			array(								// The array of arguments to pass to the callback. In this case, just a description.
-				'sailthru_forms_options',
-				'sailthru_customfield_delete',
-				'',
-				'sailthru_customfield_delete'
-			)
-		);
 	add_settings_section(
 		'sailthru_adv_section',			// ID used to identify this section and with which to register options
 		__( 'Extra Settings', 'sailthru-for-wordpress' ),				// Title to be displayed on the administration page
@@ -336,6 +329,25 @@ $forms = get_option('sailthru_forms_options');
 				'sailthru_customfield_success'
 			)
 	);
+	add_settings_section(
+		'sailthru_manage_section',			// ID used to identify this section and with which to register options
+		__( 'Manage Fields', 'sailthru-for-wordpress' ),				// Title to be displayed on the administration page
+		'',			// Callback used to render the description of the section
+		'sailthru_forms_options'			// Page on which to add this section of options
+	);
+	add_settings_field(
+			'sailthru_customfield_delete',					// ID used to identify the field throughout the theme
+			__( 'Delete Field', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			'delete_field',// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',			// The page on which this option will be displayed
+			'sailthru_manage_section',			// The name of the section to which this field belongs
+			array(								// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_customfield_delete',
+				'',
+				'sailthru_customfield_delete'
+			)
+		);
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -905,6 +917,9 @@ function sailthru_sanitize_text_input( $input ) {
 						}
 					}
 					$output[$new_key]['sailthru_customfield_value']      = $values;
+			}
+			if ($input['sailthru_customfield_type'] == 'hidden'){
+				$output[$new_key]['sailthru_customfield_value'] = $input['sailthru_customfield_value2'];
 			}
 				if(!empty($input['sailthru_customfield_attr1']) && !empty($input['sailthru_customfield_attr2'] ) ) {
 					$amount = $input['sailthru_customfield_attr_val'];

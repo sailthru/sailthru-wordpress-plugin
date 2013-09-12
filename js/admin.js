@@ -8,9 +8,18 @@
 		});
 		$('.selection').parent().parent().hide();
 		$('#type').on("change", (function() {
-			if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio') {
+			if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'hidden') {
 				$('.selection').parent().parent().show();
-			} else {
+				$('#add_value').show();
+				$( "input[name*=sailthru_customfield_value1]" ).show();
+				$("input[name*=sailthru_customfield_value1]").parent().parent().find('th').html('HTML value / visible value');
+				if($(this).attr('value') == 'hidden'){
+					$('#add_value').hide();
+					$( "input[name*=sailthru_customfield_value1]" ).hide();
+					$("input[name*=sailthru_customfield_value1]").parent().parent().find('th').html('Field Value');
+				}
+			} 
+			else {
 				$('.selection').parent().parent().hide();
 			}
 		}));

@@ -105,15 +105,29 @@
 		                <?php
 		                //check if the field is required
 		                if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) {
+						if($customfields[$field_key]['sailthru_customfield_type'] != 'hidden'){
 						?>
+							<br />
 			                <label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>*:</label>
-			                <input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>" <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?>required="required" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" /><br />
+			                <?php
+			                }
+			                ?>
+			                <input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>" <?php if($customfields[$field_key]['sailthru_customfield_type'] == 'hidden'){
+			                echo 'value="'.$customfields[$field_key]['sailthru_customfield_value'].'" ';
+		                }echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?>required="required" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
 							<?php
 						}
 						else{
+						if($customfields[$field_key]['sailthru_customfield_type'] != 'hidden'){
 						?>
+							<br />
 							<label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label>
-							<input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>"  <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" /><br />
+							<?php
+							}
+							?>
+							<input <?php if($customfields[$field_key]['sailthru_customfield_type'] == 'hidden'){
+			                echo 'value="'.$customfields[$field_key]['sailthru_customfield_value'].'"';
+		                } echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>"  <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
 						
 							<?php
 						}
