@@ -36,8 +36,14 @@
                 }
                 echo $before_title . esc_html(trim($title)) . $after_title;
             }
+            if(empty($customfields['sailthru_customfield_success'])){
+	            $success = 'Thank you for subscribing!';
+            }
+            else{
+	            $success = $customfields['sailthru_customfield_success'];
+            }
         ?>
-        <div id="success" hidden="hidden"><?php echo $customfields['sailthru_customfield_success'];?></div>
+        <div id="success" hidden="hidden"><?php echo $success;?></div>
          <form method="post" action="#" id="sailthru-add-subscriber-form">
             <div id="sailthru-add-subscriber-errors"></div>
             <?php

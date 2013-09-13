@@ -225,14 +225,17 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$key = get_option('sailthru_forms_key');
 			for($i = 0;$i < $key;$i++ ) {
 			$field_key = $i + 1;
-			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
-			
-			if ( !empty ( $_POST['custom_'.$name_stripped]) ) {
-				$vars[$name_stripped] = filter_var(trim($_POST['custom_'.$name_stripped]), FILTER_SANITIZE_STRING);
+			if(!empty($customfields[$field_key]['sailthru_customfield_name'])){
+				$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+				
+				if ( !empty ( $_POST['custom_'.$name_stripped]) ) {
+					$vars[$name_stripped] = filter_var(trim($_POST['custom_'.$name_stripped]), FILTER_SANITIZE_STRING);
+				}
 			}
-			
 		}
-
+			if ( empty($vars ) ) {
+				$vars = '';
+			}
 			$options = array(
 				'vars' => $vars
 			);
@@ -264,8 +267,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			'email'	=> $email,
 			'options' => $options
 		);
-
-		if ( $result['error'] == false ) {
+		if ( empty($result['error'] ) ) {
 
 			$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];

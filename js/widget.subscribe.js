@@ -7,7 +7,6 @@
 
 			e.preventDefault();
 			var user_input = $(this).serialize();
-				
 			$.post(
 				ajaxurl,
 				user_input,
