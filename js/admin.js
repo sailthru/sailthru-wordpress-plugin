@@ -41,6 +41,10 @@
 			$(this).parent().append('<br /> <input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="key"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/>');
 			$('#attr_amount').attr('value',second_val);
 		}));
+		
+		$("th:contains('Current')").html('');
+		
+		
 		// validate the form for saving api keys
 		$("#sailthru-add-api-key-form").submit(function(e) {
 			var isFormValid = true;

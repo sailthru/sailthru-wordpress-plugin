@@ -63,15 +63,22 @@
             $key = get_option('sailthru_forms_key');
 			for ( $i = 0;$i < $key;$i++ ) {
 			$field_key = $i + 1;
+			if(!empty($customfields[$field_key])){
 			$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
 					if ( !empty( $instance['show_'.$name_stripped.'_name'] ) ) {
-					
+						if( !empty ( $customfields[$field_key]['sailthru_customfield_attr'] ) ) {
+				                $attributes = $customfields[$field_key]['sailthru_customfield_attr'];
+				                } else {
+					                $attributes = '';
+				        }
+				                
 						if ( $customfields[$field_key]['sailthru_customfield_type'] == 'select' ) {
 						
 
 				                ?>
+				                <br />
 				                <label for="custom_<?php echo $name_stripped;?>"><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label>
-				                <select <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name">
+				                <select <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> <?php echo attributes($attributes);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name">
 				                <?php
 				                $items = explode(',', $customfields[$field_key]['sailthru_customfield_value']);
 				                foreach( $items as $item ) {
@@ -79,7 +86,7 @@
 					                echo '<option value="'.$vals[0].'">'.$vals[1].'</option>';
 				                }
 				                ?>
-				                </select><br />
+				                </select>
 				                
 				                <?php
 							
@@ -89,12 +96,13 @@
 
 				                $items = explode(',', $customfields[$field_key]['sailthru_customfield_value']);
 				                ?>
+				                <br />
 				                <label ><?php echo $customfields[$field_key]['sailthru_customfield_name'];?>:</label><br />
 				                <?php
 				                foreach ( $items as $item ) {
 				                	$vals = explode(':', $item);
 					                ?>
-					                <input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?>  <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?> <?php if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) { echo 'required=required';}?> type="radio" name="custom_<?php echo $name_stripped;?>" value="<?php echo $vals[0];?>"><?php echo $vals[1];?><br />
+					                <input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?>  <?php echo attributes($attributes);?> <?php if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) { echo 'required=required';}?> type="radio" name="custom_<?php echo $name_stripped;?>" value="<?php echo $vals[0];?>"><?php echo $vals[1];?><br />
 					                <?php
 				                }
 						}
@@ -114,7 +122,7 @@
 			                ?>
 			                <input <?php echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>" <?php if($customfields[$field_key]['sailthru_customfield_type'] == 'hidden'){
 			                echo 'value="'.$customfields[$field_key]['sailthru_customfield_value'].'" ';
-		                }echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?>required="required" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
+		                }echo attributes($attributes);?>required="required" name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
 							<?php
 						}
 						else{
@@ -127,7 +135,7 @@
 							?>
 							<input <?php if($customfields[$field_key]['sailthru_customfield_type'] == 'hidden'){
 			                echo 'value="'.$customfields[$field_key]['sailthru_customfield_value'].'"';
-		                } echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>"  <?php echo attributes($customfields[$field_key]['sailthru_customfield_attr']);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
+		                } echo field_class($customfields[$field_key]['sailthru_customfield_class']);?> type="<?php echo $customfields[$field_key]['sailthru_customfield_type'];?>"  <?php echo attributes($attributes);?> name="custom_<?php echo $name_stripped;?>" id="sailthru_<?php echo $name_stripped;?>_name" />
 						
 							<?php
 						}
@@ -139,6 +147,7 @@
 					
 					
 					<?php
+					}
 					}
 					}
             		?> 
