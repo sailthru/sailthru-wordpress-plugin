@@ -7,7 +7,7 @@
 
 			e.preventDefault();
 			var user_input = $(this).serialize();
-				
+
 			$.post(
 				ajaxurl,
 				user_input,
@@ -17,11 +17,11 @@
 					if( data.error == true ) {
 						$("#sailthru-add-subscriber-errors").html(data.message);
 					} else {
-						$("#sailthru-add-subscriber-form").html('Thank you for subscribing.');
+						$("#sailthru-add-subscriber-form").html('You\'re all set! Keep an eye out for our latest newsletter.');
 					}
-			  		
+
 				}
-			);				
+			);
 
 		});
 

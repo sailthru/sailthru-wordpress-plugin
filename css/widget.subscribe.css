@@ -1,9 +1,13 @@
 /* This stylesheet is used to style the public view of the widget. */
-.sailthru-signup-widget label { 
+.sailthru-signup-widget label {
 	display: block;
 	width: 80px;
 	float:left;
 	clear:both;
+}
+
+.sailthru-signup-widget label.error {
+  display:block;
 }
 
 .sailthru-signup-widget input[type="text"] {
@@ -14,4 +18,8 @@
 .sailthru-signup-widget input[type="submit"] {
 	display:block;
 	clear: both;
+}
+
+#sailthru-add-subscriber-errors {
+  color:#b94a48;
 }
