@@ -53,7 +53,7 @@ class Sailthru_Client {
 
     /**
      * File Upload Flag variable
-    */
+     */
     private $fileUpload = false;
 
     private $httpHeaders = array("User-Agent: Sailthru API PHP5 Client");
@@ -162,10 +162,11 @@ class Sailthru_Client {
      * Return information about an email address, including replacement vars and lists.
      *
      * @param string $email
+     * @param array $options
      * @link http://docs.sailthru.com/api/email
      */
-    public function getEmail($email) {
-        return $this->apiGet('email', array('email' => $email));
+    public function getEmail($email, array $options = array()) {
+        return $this->apiGet('email', array_merge(array('email' => $email), $options));
     }
 
 
@@ -375,13 +376,13 @@ class Sailthru_Client {
     }
 
     /**
-    * Get info on multiple blasts
-    * @param array $options associative array
-    *       start_date (required)
-    *       end-date (required)
-    *       status
-    * @link http://docs.sailthru.com/api/blast
-    */
+     * Get info on multiple blasts
+     * @param array $options associative array
+     *       start_date (required)
+     *       end-date (required)
+     *       status
+     * @link http://docs.sailthru.com/api/blast
+     */
     public function getBlasts($options) {
         return $this->apiGet('blast', $options);
     }
@@ -428,7 +429,7 @@ class Sailthru_Client {
      * @link http://docs.sailthru.com/api/template
      */
     public function getTemplates() {
-        return $this->apiGet('template', array());
+        return $this->apiGet('template');
     }
 
 
@@ -477,6 +478,38 @@ class Sailthru_Client {
 
 
     /**
+     * Fetch information about an include
+     *
+     * @param string $include_name
+     */
+    public function getInclude($include_name, array $options = array()) {
+        $options['include'] = $include_name;
+        return $this->apiGet('include', $options);
+    }
+
+
+    /**
+     * Fetch name of all existing includes
+     */
+    public function getIncludes() {
+        return $this->apiGet('include');
+    }
+
+
+    /**
+     * Save an include
+     *
+     * @param string $include_name
+     * @param array $include_fields
+     */
+    public function saveInclude($include_name, array $include_fields = array()) {
+        $data = $include_fields;
+        $data['include'] = $include_name;
+        return $this->apiPost('include', $data);
+    }
+
+
+    /**
      * Get information about a list.
      *
      * @param string $list
@@ -497,7 +530,7 @@ class Sailthru_Client {
      * @link http://docs.sailthru.com/api/list
      */
     public function getLists() {
-        return $this->apiGet('list');
+        return $this->apiGet('list', array());
     }
 
 
@@ -535,7 +568,7 @@ class Sailthru_Client {
         return $this->apiDelete('list', array('list' => $list));
     }
 
-    
+
     /**
      *
      * Push a new piece of content to Sailthru, triggering any applicable alerts.
@@ -551,7 +584,7 @@ class Sailthru_Client {
         $data['title'] = $title;
         $data['url'] = $url;
         if (!is_null($tags)) {
-                $data['tags'] = is_array($tags) ? implode(",", $tags) : $tags;
+            $data['tags'] = is_array($tags) ? implode(",", $tags) : $tags;
         }
         if (!is_null($date)) {
             $data['date'] = $date;
@@ -702,7 +735,7 @@ class Sailthru_Client {
     /**
      * Retrieve information about a particular send or aggregated information from all of templates over a specified date range.
      * @param array $data
-     */    
+     */
     public function stats_send($template=null, $start_date = null, $end_date = null, array $data = array()) {
         $data['stat'] = 'send';
 
@@ -769,7 +802,7 @@ class Sailthru_Client {
      * @link http://docs.sailthru.com/api/postbacks
      */
     public function receiveOptoutPost() {
-         $params = $_POST;
+        $params = $_POST;
         foreach (array('action', 'email', 'sig') as $k) {
             if (!isset($params[$k])) {
                 return false;
@@ -1037,20 +1070,11 @@ class Sailthru_Client {
 
 
     /**
-     * Creates new user
-     * @param Array $options
-     */ 
-    public function createNewUser(array $options = array()) {
-        unset($options['id']);
-        return $this->apiPost('user', $options);
-    }
-
-    /**
      * Get user by Sailthru ID
      * @param String $id
      * @param Array $fields
-     */ 
-    public function getUseBySid($id, array $fields = array()) {
+     */
+    public function getUserBySid($id, array $fields = array()) {
         return $this->apiGet('user', array('id' => $id));
     }
 
@@ -1059,7 +1083,7 @@ class Sailthru_Client {
      * @param String $id
      * @param String $key
      * @param Array $fields
-     */ 
+     */
     public function getUserByKey($id, $key, array $fields = array()) {
         $data  = array(
             'id' => $id,
@@ -1099,6 +1123,170 @@ class Sailthru_Client {
         return setcookie('sailthru_hid', $data['hid'], $expire, '/', $domain, $secure);
     }
 
+    /**
+     * Get an HTML preview of a template.
+     * @param type $template
+     * @param type $email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewTemplateWithHTML($template, $email) {
+        $data = array();
+        $data['template'] = $template;
+        $data['email'] = $email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an HTML preview of a blast.
+     * @param type $blast_id
+     * @param type $email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewBlastWithHTML($blast_id, $email) {
+        $data = array();
+        $data['blast_id'] = $blast_id;
+        $data['email'] = $email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an HTML preview of a recurring blast.
+     * @param type $blast_repeat_id
+     * @param type $email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewRecurringBlastWithHTML($blast_repeat_id, $email) {
+        $data = array();
+        $data['blast_repeat_id'] = $blast_repeat_id;
+        $data['email'] = $email;
+
+        $result = $this->apiPost('preview', $data);
+    }
+
+    /**
+     * Get an HTML preview of content_html.
+     * @param type $content_html
+     * @param type $email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewContentWithHTML($content_html, $email) {
+        $data = array();
+        $data['content_html'] = $content_html;
+        $data['email'] = $email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an email preview of a template.
+     * @param type $template
+     * @param type $send_email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewTemplateWithEmail($template, $send_email) {
+        $data = array();
+        $data['template'] = $template;
+        $data['send_email'] = $send_email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an email preview of a blast.
+     * @param type $blast_id
+     * @param type $send_email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewBlastWithEmail($blast_id, $send_email) {
+        $data = array();
+        $data['blast_id'] = $blast_id;
+        $data['send_email'] = $send_email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an email preview of a recurring blast.
+     * @param type $blast_repeat_id
+     * @param type $send_email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewRecurringBlastWithEmail($blast_repeat_id, $send_email) {
+        $data = array();
+        $data['blast_repeat_id'] = $blast_repeat_id;
+        $data['send_email'] = $send_email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get an email preview of content_html.
+     * @param type $content_html
+     * @param type $send_email
+     * @return type
+     * @link http://docs.sailthru.com/api/preview
+     */
+    public function previewContentWithEmail($content_html, $send_email) {
+        $data = array();
+        $data['content_html'] = $content_html;
+        $data['send_email'] = $send_email;
+
+        $result = $this->apiPost('preview', $data);
+        return $result;
+    }
+
+    /**
+     * Get information on a trigger
+     * @param type $template
+     * @param type $trigger_id
+     * @return type
+     * @link http://docs.sailthru.com/api/trigger
+     */
+    public function getTrigger($template, $trigger_id) {
+        $data = array();
+        $data['template'] = $template;
+        $data['trigger_id'] = $trigger_id;
+
+        $result = $this->apiGet('trigger', $data);
+        return $result;
+    }
+
+    /**
+     * Create a trigger
+     * @param type $template
+     * @param type $time
+     * @param type $time_unit
+     * @param type $event
+     * @param type $zephyr
+     * @return type
+     * @link http://docs.sailthru.com/api/trigger
+     */
+    public function postTrigger($template, $time, $time_unit, $event, $zephyr) {
+        $data = array();
+        $data['template'] = $template;
+        $data['time'] = $time;
+        $data['time_unit'] = $time_unit;
+        $data['event'] = $event;
+        $data['zephyr'] = $zephyr;
+
+        $result = $this->apiPost('trigger', $data);
+        return $result;
+    }
 
     /**
      * Perform an HTTP request using the curl extension
@@ -1108,7 +1296,8 @@ class Sailthru_Client {
      * @param array $headers
      * @return string
      */
-    private function httpRequestCurl($url, array $data, $method = 'POST') {
+    function httpRequestCurl($url, array $data, $method = 'POST') {
+        
         $ch = curl_init();
         if ($method == 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -1137,6 +1326,7 @@ class Sailthru_Client {
             throw new Sailthru_Client_Exception("Bad response received from $url");
         }
         return $data;
+        
     }
 
 
@@ -1148,7 +1338,7 @@ class Sailthru_Client {
      * @param array $headers
      * @return string
      */
-    private function httpRequestWithoutCurl($url, $data, $method = 'POST') {
+    function httpRequestWithoutCurl($url, $data, $method = 'POST') {
         if ($this->fileUpload === true) {
             $this->fileUpload = false;
             throw new Sailthru_Client_Exception('cURL extension is required for the request with file upload');
@@ -1222,7 +1412,7 @@ class Sailthru_Client {
      * @param array $data
      * @return array
      */
-    public function apiGet($action, $data, $method = 'GET') {
+    public function apiGet($action, $data = array(), $method = 'GET') {
         return $this->httpRequest("{$this->api_uri}/{$action}", $this->prepareJsonPayload($data), $method);
     }
 
