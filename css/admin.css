@@ -35,6 +35,10 @@
 			margin-right:0;
 		}
 
+#fields{
+	margin-left: 550px;
+	margin-top: -440px;
+}
 
 /* setup screen */
 #sailthru-add-api-key-form { display:none; }

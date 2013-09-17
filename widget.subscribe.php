@@ -1,6 +1,6 @@
 <?php
 
-if( ! defined('SAILTHRU_PLUGIN_PATH') )
+if ( ! defined('SAILTHRU_PLUGIN_PATH') )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
 if( ! defined('SAILTHRU_PLUGIN_URL') )
@@ -81,8 +81,18 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$instance = array();
 		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
-		$instance['show_first_name'] = (bool) $new_instance['show_first_name'];
-		$instance['show_last_name'] = (bool) $new_instance['show_last_name'];
+		$customfields = get_option('sailthru_forms_options');
+		$key = get_option('sailthru_forms_key');
+
+			for($i = 0;$i < $key;$i++ ) {
+				$field_key = $i + 1;
+				$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+				$instance['show_'.$name_stripped.'_name'] = (bool) $new_instance['show_'.$name_stripped.'_name'];
+				$instance['show_'.$name_stripped.'_required'] = (bool) $new_instance['show_'.$name_stripped.'_required'];
+				$instance['show_'.$name_stripped.'_type'] = $new_instance['show_'.$name_stripped.'_type'];
+
+
+			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
 		return $instance;
@@ -100,15 +110,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
         $instance = wp_parse_args(
         	(array) $instance, array(
                 'title' => '',
-                'show_first_name' => '',
-                'show_last_name' => '',
                 'sailthru_list' => array('')
             )
         );
 
         $title = $instance['title'];
-        $show_first_name = $instance['show_first_name'];
-        $show_last_name = $instance['show_last_name'];
         $sailthru_list = $instance['sailthru_list'];
 
 
@@ -201,15 +207,14 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function add_subscriber() {
 
-
-		if ( !wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce")) {
+		if ( !wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
 			$result['error'] = true;
 			$result['message'] = "No naughty business please";
 		}
 
 
 		$email = trim( $_POST['email'] );
-		if( ! filter_var($email , FILTER_VALIDATE_EMAIL) || empty($email) ) {
+		if ( ! filter_var($email , FILTER_VALIDATE_EMAIL) || empty ( $email ) ) {
 			$result['error'] = true;
 			$result['message'] = "Please enter a valid email address.";
 		} else {
@@ -241,13 +246,33 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$subscribe_to_lists = array();
 			if( !empty($_POST['sailthru_email_list'] ) ) {
+		//add the custom fields info to the api call! This is where the magic happens
+		$customfields = get_option('sailthru_forms_options');
+		$key = get_option('sailthru_forms_key');
+			for($i = 0;$i < $key;$i++ ) {
+			$field_key = $i + 1;
+			if(!empty($customfields[$field_key]['sailthru_customfield_name'])){
+				$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[$field_key]['sailthru_customfield_name']);
+
+				if ( !empty ( $_POST['custom_'.$name_stripped]) ) {
+					$vars[$name_stripped] = filter_var(trim($_POST['custom_'.$name_stripped]), FILTER_SANITIZE_STRING);
+				}
+			}
+		}
+			if ( empty($vars ) ) {
+				$vars = '';
+			}
+			$options = array(
+				'vars' => $vars
+			);
+
+		$subscribe_to_lists = array();
+			if ( !empty ( $_POST['sailthru_email_list'] ) ) {
 
 				$lists = explode(',', $_POST['sailthru_email_list']);
 
 				foreach( $lists as $key => $list ) {
-
 					$subscribe_to_lists[ $list ] = 1;
-
 				}
 
 				$options['lists'] = $subscribe_to_lists;
@@ -266,8 +291,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			'email'	=> $email,
 			'options' => $options
 		);
-
-		if( $result['error'] == false ) {
+		if ( empty($result['error'] ) ) {
 
 			$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];
@@ -285,8 +309,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 					return;
 				}
 
-
-			if( $res['ok'] != true ) {
+			if ( $res['ok'] != true ) {
 				$result['error'] = true;
 				$result['message'] = "There was an error subscribing you. Please try again later.";
 			}
@@ -296,7 +319,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 
 		// did this request come from an ajax call?
-		if(!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+		if ( !empty ( $_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			$result = json_encode($result);
 			echo $result;
 		} else {
@@ -315,3 +338,26 @@ register_activation_hook( __FILE__, array( 'Sailthru_Subscribe', 'activate' ) );
 
 // Register a new widget with Wordpress
 add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe_Widget");' ) );
+function my_widget_shortcode( $atts ) {
+
+// Configure defaults and extract the attributes into variables
+extract( shortcode_atts(
+	array(
+		'title' => '',
+	),
+	$atts
+));
+
+$args = array(
+	'before_widget' => '<div class="box widget">',
+	'after_widget'  => '</div>',
+	'before_title'  => '<div class="widget-title">',
+	'after_title'   => '</div>',
+);
+
+ob_start();
+the_widget( 'Sailthru_Subscribe_Widget', $atts, $args );
+$output = ob_get_clean();
+return $output;
+}
+add_shortcode( 'sailthru_widget', 'my_widget_shortcode' );
