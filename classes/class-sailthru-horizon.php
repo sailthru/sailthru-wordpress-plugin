@@ -460,7 +460,9 @@ class Sailthru_Horizon {
     		$horizon_tags[] = "";
     		$horizon_tags[] = "";
     		$horizon_tags[] = "<!-- END Sailthru Horizon Meta Information -->";
-
+		
+			$horizon_tags = apply_filters( 'sailthru_horizon_meta_tags', $horizon_tags, $post_object ); 
+    	
     	echo implode("\n", $horizon_tags);
 
 	} // sailthru_horizon_meta_tags
