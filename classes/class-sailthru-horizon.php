@@ -404,9 +404,9 @@ class Sailthru_Horizon {
     			$horizon_tags['sailthru.title'] = $post_title;
 
     		// tags
-    		$post_tags = get_the_tag_list( '', ', ', '' );
+    		$post_tags = get_the_tags();
 			if ( $post_tags )
-				$horizon_tags['sailthru.tags'] = $post_tags;
+				$horizon_tags['sailthru.tags'] = implode( ', ', wp_list_pluck( $post_tags, 'name' ) );
 
     		// author << works on display name. best option?
     		$post_author = get_the_author();
