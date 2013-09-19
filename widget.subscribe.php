@@ -221,13 +221,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
 		}
 
-		if( isset($_POST['first_name'] ) && !empty($_POST['first_name'] ) ){
+		if( isset($_POST['first_name'] ) && !empty($_POST['first_name'] ) ) {
 			$first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
 		} else {
 			$first_name = '';
 		}
 
-		if( isset($_POST['last_name']) && !empty($_POST['last_name'] ) ){
+		if( isset($_POST['last_name']) && !empty($_POST['last_name'] ) ) {
 			$last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
 		} else {
 			$last_name = '';
@@ -326,10 +326,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			echo $result['message'];
 		}
 
-
-		die();
-
 	}	// end add_subscriber()
+}
 
 } // end class
 
