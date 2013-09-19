@@ -1,5 +1,5 @@
 /* This stylesheet is used to style the public view of the widget. */
-.sailthru-signup-widget label { 
+.sailthru-signup-widget label {
 	display: block;
 	width: 80px;
 	float:left;
@@ -14,4 +14,9 @@
 .sailthru-signup-widget input[type="submit"] {
 	display:block;
 	clear: both;
+}
+
+body .sailthru-signup-widget form {
+  margin-top:10px;
+  padding0;
 }
