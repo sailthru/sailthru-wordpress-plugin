@@ -2,7 +2,7 @@
 /*
 !.gitignore
 !wp-content/
-
+.DS_Store
 # Ignore everything in the "plugins" directory, except for Sailthru's 
 # plugin directory.
 wp-content/plugins/*
