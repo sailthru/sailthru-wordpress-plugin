@@ -72,14 +72,14 @@
 					if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
 						if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
 				                $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
-				                } else {
+				        } else {
 					                $attributes = '';
 				        }
 				                
 						if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 						
 
-				                echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key]['sailthru_customfield_name'] . ':</label>
+				                echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
 				                <select ' . field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) . attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name">';
 				                
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
