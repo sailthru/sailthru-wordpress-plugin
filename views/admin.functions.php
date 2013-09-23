@@ -214,7 +214,7 @@ function sailthru_initialize_forms_options() {
 			                
 			                foreach ( $items as $item ) {
 			                	$vals = explode( ':', $item );
-				                echo '<br /><input type="radio" name="custom_' . $name_stripped . '" value="' . $vals[0] . '">' . $vals[1];
+				                echo '<br /><input type="radio" name="custom_' . $name_stripped . '" value="' . $vals[0] . '"> ' . $vals[1];
 			                }
 					}
 					//hidden field
