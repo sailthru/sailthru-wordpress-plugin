@@ -121,9 +121,9 @@
 							if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
 								echo '<br /><label for="custom_' .$name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
 							}
-								echo '<input';
+								echo '<input ';
 								if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
-				                echo 'value="'.$customfields[ $field_key ]['sailthru_customfield_value'].'"';
+				                echo 'value="'.$customfields[ $field_key ]['sailthru_customfield_value'].'" ';
 								} 
 								echo field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' type="' .$customfields[ $field_key ]['sailthru_customfield_type'] . '" ' . attributes( $attributes ) . 'name="custom_' . $name_stripped. '" id="sailthru_' .$name_stripped. '_name" />';
 							
