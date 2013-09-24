@@ -10,9 +10,41 @@
 #icon-sailthru {
 	background-image: url('../img/sailthru-header-icon.png');
 }
-.column-right{
-	margin-left: 500px;
-	margin-top: -304px;
+.column-right {
+	margin-left: 60%;
+	margin-top: -410px;
+	width:18%;
+	padding: 10px;
+	position: absolute;
+}
+@media (max-width: 650px) {
+    .column-right {
+		margin-top: -520px;
+	}
+}
+@media (max-width: 1000px) {
+    .column-right {
+		margin-top: -502px;
+	}
+}
+@media (max-width: 1200px) {
+    .column-right {
+		margin-top: -493px;
+	}
+}
+@media (max-width: 1300px) {
+    .column-right {
+		margin-top: -463px;
+	}
+}
+.column-left {
+	width:55%;
+	height: 50%;
+	padding: 10px;
+
+}
+p{
+	position:relative;
 }
 /* welcome screen */
 #sailthru-admin .welcome-panel-column {
