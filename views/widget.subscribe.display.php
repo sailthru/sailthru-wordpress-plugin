@@ -5,13 +5,17 @@
      * values as needed.
      */
     $title      = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
-    if( is_array( $instance['sailthru_list'] ) )
-    {
-        $sailthru_list = implode( ',', $instance['sailthru_list'] );
-    } else {
-        $sailthru_list = $instance['sailthru_list'];
-    }
-
+    if ( ! empty( $instance['sailthru_list'] ) ) {
+	    if ( is_array( $instance['sailthru_list'] ) )
+	    {
+	        $sailthru_list = implode( ',', $instance['sailthru_list'] );
+	    } else {
+	        $sailthru_list = $instance['sailthru_list'];
+	    }
+	}
+	else{
+		$sailthru_list = 'Sailthru Wordpress Shortcode';
+	}
 
     // display options
     $customfields = get_option( 'sailthru_forms_options' );
@@ -45,30 +49,19 @@
          <form method="post" action="#" id="sailthru-add-subscriber-form">
             <div id="sailthru-add-subscriber-errors"></div>
             <?php
-            function attributes ( $attribute_list ) {
-				if ( ! empty( $attribute_list ) ) {
-					$attributes = explode( ',', $attribute_list );
-					$list = '';
-						foreach ( $attributes as $attribute ) {
-							$split = explode( ':', $attribute );
-							$list .= $split[0]. '="' . $split[1] . '" ';
-						
-						}
-					return $list;
-				}
-				return ''; 
-			}
-			function field_class ( $class ) {
-				if ( ! empty( $class ) ) {
-					return 'class="' . $class.'"';
-				}
-				return ''; 
-			}
             $key = get_option( 'sailthru_forms_key' );
-			for ( $i = 0; $i < $key; $i++ ) {
-			$field_key = $i + 1;
-			if ( ! empty( $customfields[ $field_key ] ) ) {
-			$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+            if ( ! empty( $instance['fields'] ) ) {
+            	$fields = explode( ',', $instance['fields'] );
+	            foreach ( $fields as $field ) {
+	            	$name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
+	            	$instance['show_'.$name_stripped.'_name']     = true;
+	            	$instance['show_'.$name_stripped.'_required'] = false;
+	            }
+            }
+				for ( $i = 0; $i < $key; $i++ ) {
+				$field_key = $i + 1;
+				if ( ! empty( $customfields[ $field_key ] ) ) {
+				$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
 					if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
 						if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
 				                $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
@@ -78,7 +71,7 @@
 				                
 						if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 						
-
+	
 				                echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
 				                <select ' . field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) . attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name">';
 				                
@@ -92,7 +85,7 @@
 						}
 						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
 						
-
+	
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 				                echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label><br />';
 				                foreach ( $items as $item ) {
@@ -101,7 +94,7 @@
 					                if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) {
 					                	echo 'required=required ';
 					                }
-					                echo 'type="radio" name="custom_'. $name_stripped . '" value="' . $vals[0] . '">' . $vals[1] . '<br />';
+					                echo 'type="radio" name="custom_'. $name_stripped . '" value="' . $vals[0] . '"> ' . $vals[1] . '<br />';
 				                }
 						}
 						else{

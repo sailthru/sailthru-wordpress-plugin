@@ -93,10 +93,9 @@
 								// show custom forms page
 								} 
 								elseif ( $active_tab == 'custom_fields_configuration_page') {
-								
 									settings_fields( 'sailthru_forms_options' );
 									do_settings_sections( 'sailthru_forms_options' );
-									
+									echo '</div>';
 								// show welcome page
 								}
 								else {

@@ -1,10 +1,14 @@
 (function ($) {
 	"use strict";
 	$(function () {
-
+		$('#modal').hide();
+		$( "#show_shortcode" ).on( "click", function( e ) {
+			e.preventDefault();
+			$('#modal').toggle();
+		});
 		// when a user clicks subscribe
 		$("#sailthru-add-subscriber-form").submit( function( e ){
-
+			
 			e.preventDefault();
 			var user_input = $(this).serialize();
 			$.post(

@@ -10,8 +10,10 @@
 #icon-sailthru {
 	background-image: url('../img/sailthru-header-icon.png');
 }
-
-
+.column-right{
+	margin-left: 500px;
+	margin-top: -304px;
+}
 /* welcome screen */
 #sailthru-admin .welcome-panel-column {
 	width: 49.5%;
@@ -35,10 +37,7 @@
 			margin-right:0;
 		}
 
-#fields{
-	margin-left: 550px;
-	margin-top: -440px;
-}
+
 /* setup screen */
 #sailthru-add-api-key-form { display:none; }
 

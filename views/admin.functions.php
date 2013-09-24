@@ -112,7 +112,7 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
 function sailthru_initialize_forms_options() {
 
 	function sailthru_forms_callback() {
-		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. <br />Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
+		echo '<div class="column-left"><p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. <br />Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 	}
 
 	function field_type ( $args ) {
@@ -151,14 +151,14 @@ function sailthru_initialize_forms_options() {
 		$options       = get_option( $collection );
 		$key           = get_option( 'sailthru_forms_key' );
 		
-		echo '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']"><option value="select">Select...</option>';	
+		echo '<h3>Delete Fields</h3><p><select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']"><option value="select">Select...</option>';	
 			for ( $i = 0; $i < $key; $i++ ) {
 				 $field_key = $i + 1;
 				 if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
 				 echo '<option value="'.$field_key.'" >'.$customfields[ $field_key ]['sailthru_customfield_name'].'</option>';
 				 }
 			} //end for loop
-			echo '</select>';
+			echo '</select></p>';
 	}
 	
 	function sailthru_success_field ( $args ) {
@@ -179,66 +179,65 @@ function sailthru_initialize_forms_options() {
 		echo '<textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="Thanks for subscribing!">'.$message.'</textarea>';
 		
 	}
-	
-	function sailthru_fields(){
+	function manage_fields() {
+		echo '</div> <div class="column-right">';
+	}
+	function sailthru_fields() {
 	
 		    $customfields = get_option( 'sailthru_forms_options' );
 		    $key          = get_option( 'sailthru_forms_key' );
-		    echo '<div id="fields"><h3>Current Fields</h3>';
+		    echo '<h3>Current Fields</h3><p>';
 		    
 			for ( $i = 0; $i < $key; $i++ ) {
 			$field_key = $i + 1;
-			if ( ! empty ( $customfields[ $field_key ] ) ) {
-				if ( $customfields[ $field_key ]['sailthru_customfield_name'] != '' ) {	
-				
-					$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
-					//select field
-					if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
-				        echo '<br />
-				        <label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
-						<select name="custom_' . $name_stripped .'" id="sailthru_' . $name_stripped . '_name">';
-				        
-				        $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-				        foreach( $items as $item ) {
-					        $vals = explode( ':', $item );
-						    echo '<option value="' . $vals[0] . '">' . $vals[1] . '</option>';
-					    }
-				        echo '</select>';
-						
-					}
-					//radio field
-					elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
+				if ( ! empty ( $customfields[ $field_key ] ) ) {
+					if ( $customfields[ $field_key ]['sailthru_customfield_name'] != '' ) {	
 					
-			                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-			                echo '<br /><label >' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
-			                
-			                foreach ( $items as $item ) {
-			                	$vals = explode( ':', $item );
-				                echo '<br /><input type="radio" name="custom_' . $name_stripped . '" value="' . $vals[0] . '"> ' . $vals[1];
-			                }
-					}
-					//hidden field
-					elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
-						echo '<br /><br/>hidden field: ' . $customfields[ $field_key ]['sailthru_customfield_name'].'<br/>';
-					}
-					//field is a text input
-					else{
-					
-						echo '<div class="sailthru_form_input">';
-		                //check if the field is required
-						if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
-							echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+						$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+						//select field
+						if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
+					        echo '<br />
+					        <label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
+							<select name="custom_' . $name_stripped .'" id="sailthru_' . $name_stripped . '_name">';
+					        
+					        $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+					        foreach( $items as $item ) {
+						        $vals = explode( ':', $item );
+							    echo '<option value="' . $vals[0] . '">' . $vals[1] . '</option>';
+						    }
+					        echo '</select>';
+							
 						}
-						echo '<input type="' . $customfields[ $field_key ]['sailthru_customfield_type'] . '" name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name" />';
-	            
-	            	} //end text input
-				} // end if name ! empty
-			} // end if
-					}
-					?>
-				                </div>
-		           <?php
-      
+						//radio field
+						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
+						
+				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+				                echo '<br /><label >' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+				                
+				                foreach ( $items as $item ) {
+				                	$vals = explode( ':', $item );
+					                echo '<br /><input type="radio" name="custom_' . $name_stripped . '" value="' . $vals[0] . '"> ' . $vals[1];
+				                }
+						}
+						//hidden field
+						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+							echo '<br /><br/>hidden field: ' . $customfields[ $field_key ]['sailthru_customfield_name'].'<br/>';
+						}
+						//field is a text input
+						else{
+						
+							echo '<div class="sailthru_form_input">';
+			                //check if the field is required
+							if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+								echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+							}
+							echo '<input type="' . $customfields[ $field_key ]['sailthru_customfield_type'] . '" name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name" />';
+		            
+		            	} //end text input
+					} // end if name ! empty
+				} // end if
+			}
+			echo '</p></div>';
 	}
 	
 	function sailthru_value_field ( $args ) {
@@ -365,13 +364,13 @@ $forms = get_option( 'sailthru_forms_options' );
 	);
 	add_settings_section(
 		'sailthru_manage_section',			// ID used to identify this section and with which to register options
-		__( 'Manage Fields', 'sailthru-for-wordpress' ),				// Title to be displayed on the administration page
-		'',			// Callback used to render the description of the section
+		__( '', 'sailthru-for-wordpress' ),				// Title to be displayed on the administration page
+		'manage_fields',			// Callback used to render the description of the section
 		'sailthru_forms_options'			// Page on which to add this section of options
 	);
 	add_settings_field(
 			'sailthru_customfield_delete',					// ID used to identify the field throughout the theme
-			__( 'Delete Field', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			__( '', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
 			'delete_field',// The name of the function responsible for rendering the option interface
 			'sailthru_forms_options',			// The page on which this option will be displayed
 			'sailthru_manage_section',			// The name of the section to which this field belongs
@@ -385,7 +384,7 @@ $forms = get_option( 'sailthru_forms_options' );
 		
 		add_settings_field(
 			'sailthru_customfield_view',					// ID used to identify the field throughout the theme
-			__( 'Current fields', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
+			__( '', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
 			'sailthru_fields',// The name of the function responsible for rendering the option interface
 			'sailthru_forms_options',			// The page on which this option will be displayed
 			'sailthru_manage_section',			// The name of the section to which this field belongs

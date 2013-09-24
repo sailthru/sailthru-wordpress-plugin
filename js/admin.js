@@ -42,7 +42,6 @@
 			$('#attr_amount').attr('value',second_val);
 		}));
 		
-		$("th:contains('Current')").html('');
 		
 		
 		// validate the form for saving api keys

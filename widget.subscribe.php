@@ -1,5 +1,23 @@
 <?php
-
+function attributes ( $attribute_list ) {
+if ( ! empty( $attribute_list ) ) {
+	$attributes = explode( ',', $attribute_list );
+	$list = '';
+		foreach ( $attributes as $attribute ) {
+			$split = explode( ':', $attribute );
+			$list .= $split[0]. '="' . $split[1] . '" ';
+		
+		}
+	return $list;
+}
+return ''; 
+}
+function field_class ( $class ) {
+if ( ! empty( $class ) ) {
+	return 'class="' . $class.'"';
+}
+return ''; 
+}
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
@@ -323,13 +341,25 @@ add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subs
 function my_widget_shortcode( $atts ) {
 	
 	// Configure defaults and extract the attributes into variables
-	extract( shortcode_atts( $atts ) );
-	
+	extract( shortcode_atts( array(
+		'fields' => 'name',
+		'modal'  => 'false',
+	), $atts ) );
+	if ( ! empty($atts['modal'] ) ) { 
+		if ( $atts['modal'] == 'true' ) {
+			$before_widget = '<a id="show_shortcode" href="#">Show form</a><div id="modal"><div class="sailthru_shortcode_hidden">';
+			$after_widget = '</div></div>';
+		}
+		else{
+			$before_widget = '<div class="sailthru_shortcode">';
+			$after_widget = '</div>';
+		}
+	}
 	$args = array(
-		'before_widget' => '<div class="box widget">',
+		'before_widget' => $before_widget,
 		'after_widget'  => '</div>',
 		'before_title'  => '<div class="widget-title">',
-		'after_title'   => '</div>',
+		'after_title'   => $after_widget,
 	);
 	
 	ob_start();
