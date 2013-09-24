@@ -45,9 +45,9 @@
 	            $success = $customfields['sailthru_customfield_success'];
             }
         ?>
-        <div id="success" hidden="hidden"><?php echo $success;?></div>
-         <form method="post" action="#" id="sailthru-add-subscriber-form">
-            <div id="sailthru-add-subscriber-errors"></div>
+        <div class="success" hidden="hidden"><?php echo $success;?></div>
+         <form method="post" action="#" class="sailthru-add-subscriber-form">
+            <div class="sailthru-add-subscriber-errors"></div>
             <?php
             $key = get_option( 'sailthru_forms_key' );
             if ( ! empty( $instance['fields'] ) ) {
