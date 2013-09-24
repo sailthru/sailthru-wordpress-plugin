@@ -91,11 +91,14 @@
 									do_settings_sections( 'sailthru_scout_options' );
 
 								// show custom forms page
-								} 
-								elseif ( $active_tab == 'custom_fields_configuration_page') {
-									settings_fields( 'sailthru_forms_options' );
-									do_settings_sections( 'sailthru_forms_options' );
-									echo '</div>';
+								} elseif ( $active_tab == 'custom_fields_configuration_page') {
+
+										echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>
+										<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
+										settings_fields( 'sailthru_forms_options' );
+										do_settings_sections( 'sailthru_forms_options' );
+										echo '</div>'; // ends the half column begun in delete_field()
+									
 								// show welcome page
 								}
 								else {
@@ -104,8 +107,10 @@
 
 								} // end if/else
 
-
+								echo '<div style="clear:both;">';
 								submit_button();
+								echo '</div>';
+								
 
 							?>
 						</form>

@@ -43,6 +43,13 @@
 	padding: 10px;
 
 }
+
+.column-half {
+	width: 45%;
+	float: left;
+	margin-right: 2%;
+}
+
 p{
 	position:relative;
 }
