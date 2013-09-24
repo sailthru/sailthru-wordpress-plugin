@@ -73,7 +73,7 @@
 						
 	
 				                echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
-				                <select ' . field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) . attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name">';
+				                <select ' . field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name">';
 				                
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 				                foreach( $items as $item ) {
