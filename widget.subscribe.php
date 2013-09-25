@@ -344,10 +344,14 @@ function my_widget_shortcode( $atts ) {
 	extract( shortcode_atts( array(
 		'fields' => 'name',
 		'modal'  => 'false',
+		'text'   => 'Subscribe'
 	), $atts ) );
+	if ( empty($atts['text'] ) ) {
+		$atts['text'] = 'Subscribe';
+	}
 	if ( ! empty($atts['modal'] ) ) { 
 		if ( $atts['modal'] == 'true' ) {
-			$before_widget = '<a id="show_shortcode" href="#">Show form</a><div id="modal"><div class="sailthru_shortcode_hidden">';
+			$before_widget = '<a id="show_shortcode" href="#">' . $atts['text'] . '</a><div id="modal"><div class="sailthru_shortcode_hidden">';
 			$after_widget = '</div></div>';
 		}
 		else{
