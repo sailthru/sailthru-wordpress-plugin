@@ -338,7 +338,7 @@ register_activation_hook( __FILE__, array( 'Sailthru_Subscribe', 'activate' ) );
 // Register a new widget with Wordpress
 add_action( 'widgets_init', create_function( '', 'register_widget("Sailthru_Subscribe_Widget");' ) );
 
-function my_widget_shortcode( $atts ) {
+function sailthru_widget_shortcode( $atts ) {
 	
 	// Configure defaults and extract the attributes into variables
 	extract( shortcode_atts( array(
@@ -371,4 +371,4 @@ function my_widget_shortcode( $atts ) {
 	$output = ob_get_clean();
 	return $output;
 }
-add_shortcode( 'sailthru_widget', 'my_widget_shortcode' );
+add_shortcode( 'sailthru_widget', 'sailthru_widget_shortcode' );
