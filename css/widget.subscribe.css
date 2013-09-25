@@ -16,7 +16,23 @@
 	clear: both;
 }
 
-body .sailthru-signup-widget form {
-  margin-top:10px;
-  padding0;
+#modal
+{
+    position:absolute;
+    width:auto;
+    height:auto;
+    z-index:100;
+    text-align:center;
+    vertical-align:middle;
+}
+
+.sailthru_shortcode_hidden
+{
+    position:absolute;
+    padding: 20px;
+    z-index:101;
+    background-color: #d6d6d6;
+    -webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
 }

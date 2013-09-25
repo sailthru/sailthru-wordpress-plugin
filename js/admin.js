@@ -30,7 +30,7 @@
 			new_val = new_val + 1;
 			var second_val = new_val +1;
 			console.log(new_val);
-			$(this).parent().append('<br /> <input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + new_val + ']" type="text"  placeholder="key"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + second_val + ']" type="text"  placeholder="value"/>');
+			$(this).parent().prepend('<br /> <input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + new_val + ']" type="text"  placeholder="key"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + second_val + ']" type="text"  placeholder="value"/>');
 			$('#value_amount').attr('value',second_val);
 		}));
 
@@ -40,12 +40,9 @@
 			new_val = new_val + 1;
 			var second_val = new_val +1;
 			console.log(new_val);
-			$(this).parent().append('<br /> <input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="key"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/>');
+			$(this).parent().prepend('<br /> <input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="key"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/>');
 			$('#attr_amount').attr('value',second_val);
 		}));
-
-		$("th:contains('Current')").html('');
-
 
 		// validate the form for saving api keys
 		$("#sailthru-add-api-key-form").submit( function(e)
