@@ -159,7 +159,7 @@ EOT;
 			
 			require_once('client/requires.php');
 			$client = new Sailthru_Client(get_option('sailthru_api_key'), get_option('sailthru_secret'));
-			$res = $client->getTemplate('');
+			$res = $client->getTemplates();
 
 			if (isset($res['templates']) && $res['templates']) {
 			    $return = array();
