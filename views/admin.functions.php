@@ -176,7 +176,7 @@ function sailthru_initialize_forms_options() {
 				for ( $i = 0; $i < $key; $i++ ) {
 					 $field_key = $i + 1;
 					 if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
-					 echo '<option value="'.$field_key.'" >'.$customfields[ $field_key ]['sailthru_customfield_name'].'</option>';
+					 echo '<option value="'.esc_attr($field_key).'" >'.esc_html($customfields[ $field_key ]['sailthru_customfield_name']).'</option>';
 					 }
 				} //end for loop
 		echo '</select>';
@@ -199,7 +199,7 @@ function sailthru_initialize_forms_options() {
 		}
 
 		echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
-		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="30">'.$message.'</textarea></p>';
+		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="30">'.esc_textarea($message).'</textarea></p>';
 		echo '<div>'.submit_button('Update') .'</div>';
 	}
 
@@ -226,7 +226,7 @@ function sailthru_initialize_forms_options() {
 					        $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 					        foreach( $items as $item ) {
 						        $vals = explode( ':', $item );
-							    echo '<option value="' . $vals[0] . '">' . $vals[1] . '</option>';
+							    echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
 						    }
 					        echo '</select>';
 													}
@@ -234,16 +234,16 @@ function sailthru_initialize_forms_options() {
 						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
 
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-				                echo '<br /><label >' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+				                echo '<br /><label >' . esc_html($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>';
 
 				                foreach ( $items as $item ) {
 				                	$vals = explode( ':', $item );
-					                echo '<br /><input type="radio" name="custom_' . $name_stripped . '" value="' . $vals[0] . '"> ' . $vals[1];
+					                echo '<br /><input type="radio" name="custom_' . esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]);
 				                }
 						}
 						//hidden field
 						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
-							echo '<br /><br/>hidden field: ' . $customfields[ $field_key ]['sailthru_customfield_name'].'<br/>';
+							echo '<br /><br/>hidden field: ' . esc_html($customfields[ $field_key ]['sailthru_customfield_name']).'<br/>';
 						}
 						//field is a text input
 						else{
@@ -251,9 +251,9 @@ function sailthru_initialize_forms_options() {
 							echo '<div class="sailthru_form_input">';
 			                //check if the field is required
 							if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
-								echo '<br /><label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+								echo '<br /><label for="custom_' . esc_attr($name_stripped) . '">' . esc_attr($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>';
 							}
-							echo '<input type="' . $customfields[ $field_key ]['sailthru_customfield_type'] . '" name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name" />';
+							echo '<input type="' . esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_name" />';
 
 		            	} //end text input
 					} // end if name ! empty
@@ -268,7 +268,7 @@ function sailthru_initialize_forms_options() {
 		$html_id       = $args[3];
 		$options       = get_option( $collection );
 
-		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'1' ) . ']" type="text" placeholder="key" /><input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'2' ) . ']" type="text"  placeholder="value"/><a id="add_value" href ="">Add Another</a><input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="2" />';
+		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'1' ) . ']" type="text" placeholder="name" /><input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'2' ) . ']" type="text"  placeholder="value"/><a id="add_value" href ="">Add Another</a><input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="2" />';
 
 	}
 	function sailthru_attr_field ( $args ) {
@@ -758,7 +758,7 @@ function sailthru_scout_renderItem_callback( $args ) {
 	$scout = get_option( 'sailthru_scout_options' );
 		$saved_value = isset( $scout['sailthru_scout_renderItem'] ) ? $scout['sailthru_scout_renderItem'] : '';
 
-	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_attr( $saved_value ) . '</textarea>';
+	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
 
 	echo $html;
 

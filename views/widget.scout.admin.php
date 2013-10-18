@@ -7,7 +7,7 @@
 
 		if( ! is_array( $sailthru ) ) {
 
-			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';			
+			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
 			return;
 
 		}
@@ -19,12 +19,12 @@
 		 */
 		$scout = get_option( 'sailthru_scout_options' );
 
-		if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {	
+		if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
 
 			echo '<p>Don\'t forget to <a href="' . esc_url( menu_page_url( 'scout_configuration_menu', false ) ) . '">enable Scout</a> before setting up this widget.</p>';
 			return;
 
-		}		 
+		}
 
 	?>
 
@@ -32,7 +32,7 @@
         	<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>
             <p>
             	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
-            		<?php _e( 'Title:' ); ?> 
+            		<?php _e( 'Title:' ); ?>
             		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
             	</label>
             </p>

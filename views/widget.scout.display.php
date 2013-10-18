@@ -5,9 +5,9 @@
      */
     $scout = get_option( 'sailthru_scout_options' );
 
-    if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) { 
+    if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
 
-        // do nothing, get outta here 
+        // do nothing, get outta here
         return;
 
     }
@@ -31,8 +31,8 @@
                 $after_title = '';
             }
             echo $before_title . trim( $title ) . $after_title;
-        }  
-    ?> 
+        }
+    ?>
 
 	<div id="sailthru-scout"><div class="loading">Loading, please wait...</div></div>
 

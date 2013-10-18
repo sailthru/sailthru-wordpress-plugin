@@ -1,10 +1,10 @@
 <?php
-function attributes ( $attribute_list ) {
+function sailthru_attributes ( $attribute_list ) {
 if ( ! empty( $attribute_list ) ) {
 	$attributes = explode( ',', $attribute_list );
 	$list = '';
 		foreach ( $attributes as $attribute ) {
-			$split = explode( ':', $attribute );
+			$split = explode( ':', esc_attr($attribute) );
 			$list .= $split[0]. '="' . $split[1] . '" ';
 
 		}
@@ -12,9 +12,9 @@ if ( ! empty( $attribute_list ) ) {
 }
 return '';
 }
-function field_class ( $class ) {
+function sailthru_field_class ( $class ) {
 if ( ! empty( $class ) ) {
-	return 'class="' . $class.'"';
+	return 'class="' . esc_attr($class).'"';
 }
 return '';
 }
@@ -344,8 +344,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		if ( !empty ( $_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest') {
 			$result = json_encode( $result );
 			echo $result;
+			exit();
 		} else {
 			echo $result['message'];
+			exit();
 		}
 
 	}	// end add_subscriber()
@@ -373,7 +375,7 @@ function sailthru_widget_shortcode( $atts ) {
 	}
 	if ( ! empty($atts['modal'] ) ) {
 		if ( $atts['modal'] == 'true' ) {
-			$before_widget = '<a id="show_shortcode" href="#">' . $atts['text'] . '</a><div id="modal"><div class="sailthru_shortcode_hidden">';
+			$before_widget = '<a id="show_shortcode" href="#">' . esc_html($atts['text']) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
 			$after_widget = '</div></div>';
 		}
 		else{
