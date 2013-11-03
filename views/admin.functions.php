@@ -226,7 +226,7 @@ function sailthru_initialize_forms_options() {
 					        $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 					        foreach( $items as $item ) {
 						        $vals = explode( ':', $item );
-							    echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+							    echo '<option value="' . esc_attr($vals[0]) . '">' . esc_html($vals[1]) . '</option>';
 						    }
 					        echo '</select>';
 													}
@@ -251,7 +251,7 @@ function sailthru_initialize_forms_options() {
 							echo '<div class="sailthru_form_input">';
 			                //check if the field is required
 							if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
-								echo '<br /><label for="custom_' . esc_attr($name_stripped) . '">' . esc_attr($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>';
+								echo '<br /><label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>';
 							}
 							echo '<input type="' . esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_name" />';
 

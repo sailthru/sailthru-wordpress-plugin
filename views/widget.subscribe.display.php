@@ -72,27 +72,27 @@
 						if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 
 
-				                echo '<label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
+				                echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>
 				                <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_name">';
 
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 				                foreach( $items as $item ) {
 				                	$vals = explode( ':', $item );
-					                echo '<option value="' . $vals[0] . '">' . $vals[1] . '</option>';
+					                echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
 				                }
 				                echo '</select>';
 
 						}
 						elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-				                echo '<label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>';
+				                echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_name']) . ':</label>';
 				                foreach ( $items as $item ) {
 				                	$vals = explode( ':', $item );
 					                echo '<input ';
-					                if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) {
+					                if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
 					                	echo 'required=required ';
 					                }
-					                echo 'type="radio" name="custom_'. $name_stripped . '" value="' . $vals[0] . ' class="form-input""> ' . $vals[1] . '';
+					                echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . ' class="form-input""> ' . esc_html($vals[1]) . '';
 				                }
 						}
 						else{
