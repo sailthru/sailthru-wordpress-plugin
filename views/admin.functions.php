@@ -946,33 +946,33 @@ function sailthru_sanitize_text_input( $input ) {
 			add_option( 'sailthru_forms_key',$new_key );
 		}
 		if ( ! empty( $input['sailthru_customfield_name'] ) ) {
-			$output[ $new_key ]['sailthru_customfield_name']      = $input['sailthru_customfield_name'];
-			$output[ $new_key ]['sailthru_customfield_type']      = $input['sailthru_customfield_type'];
-			$output[ $new_key ]['sailthru_customfield_class']     = $input['sailthru_customfield_class'];
+			$output[ $new_key ]['sailthru_customfield_name']    = sanitize_text_field($input['sailthru_customfield_name']);
+			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
+			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
 
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
-			$output[ $new_key ]['sailthru_customfield_attr']      = $input['sailthru_customfield_attr'];
+			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
 			}
 			if ( $input['sailthru_customfield_type'] == 'select' || $input['sailthru_customfield_type'] == 'radio' ) {
-				$amount = $input['sailthru_customfield_value_val'];
+				$amount = sanitize_text_field($input['sailthru_customfield_value_val']);
 					$values = '';
 					for( $i = 1; $i <= $amount; $i++ ) {
 						if ( $i != $amount ) {
 							if ( $i % 2 == 0 ) {
-								$values .= $input['sailthru_customfield_value'.$i] .',';
+								$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]) .',';
 							}
 							else{
-								$values .= $input['sailthru_customfield_value'.$i] .':';
+								$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]) .':';
 							}
 						}
 						else{
-							$values .= $input['sailthru_customfield_value'.$i];
+							$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]);
 						}
 					} //end for
 					$output[ $new_key ]['sailthru_customfield_value']      = $values;
 			}
 			if ( $input['sailthru_customfield_type'] == 'hidden' ) {
-				$output[ $new_key ]['sailthru_customfield_value'] = $input['sailthru_customfield_value2'];
+				$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field($input['sailthru_customfield_value2']);
 			}
 				if ( ! empty( $input['sailthru_customfield_attr1'] ) && ! empty( $input['sailthru_customfield_attr2'] ) ) {
 					$amount = $input['sailthru_customfield_attr_val'];
@@ -980,14 +980,14 @@ function sailthru_sanitize_text_input( $input ) {
 					for( $i = 1; $i <= $amount; $i++ ) {
 						if ( $i != $amount ) {
 							if ( $i % 2 == 0 ) {
-								$values .= $input['sailthru_customfield_attr'.$i] .',';
+								$values .= sanitize_text_field($input['sailthru_customfield_attr'.$i]) .',';
 							}
 							else{
-								$values .= $input['sailthru_customfield_attr'.$i] .':';
+								$values .= sanitize_text_field($input['sailthru_customfield_attr'.$i]) .':';
 							}
 						}
 						else{
-							$values .= $input['sailthru_customfield_attr'.$i];
+							$values .= sanitize_text_field($input['sailthru_customfield_attr'.$i]);
 						}
 					}
 					$output[ $new_key ]['sailthru_customfield_attr']      = $values;
@@ -996,7 +996,7 @@ function sailthru_sanitize_text_input( $input ) {
 		if ( $input['sailthru_customfield_delete'] != 'select' ) {
 			$output[ $input['sailthru_customfield_delete'] ]['sailthru_customfield_name'] = '';
 		}
-		$output['sailthru_customfield_success'] = $input['sailthru_customfield_success'];
+		$output['sailthru_customfield_success'] = sanitize_text_field($input['sailthru_customfield_success']);
 
 
 	return $output;
