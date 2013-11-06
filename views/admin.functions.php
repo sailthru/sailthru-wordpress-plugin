@@ -136,9 +136,9 @@ function sailthru_initialize_forms_options() {
 			$field_key = $i + 1;
 			 if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
 				echo '<tr>';
-				echo '<td>'. $customfields[ $field_key ]['sailthru_customfield_label'].' </td>';
-				echo '<td>'. $customfields[ $field_key ]['sailthru_customfield_name'].' </td>';
-				echo '<td>'. $customfields[ $field_key ]['sailthru_customfield_type'].' </td>';
+				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']).' </td>';
+				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_name']).' </td>';
+				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_type']).' </td>';
 				echo '</tr>';
 			}
 		}
