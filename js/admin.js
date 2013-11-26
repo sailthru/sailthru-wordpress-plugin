@@ -13,7 +13,6 @@
 		$('.sailthru-del-field').click(function(e){
 			e.preventDefault();
 			$('form').submit();
-			console.log(e);
 		});
 
 		$('#type').on("change", (function() {
@@ -42,7 +41,6 @@
 			var new_val = parseInt($('#value_amount').attr('value'),10);
 			new_val = new_val + 1;
 			var second_val = new_val +1;
-			console.log(new_val);
 			$('#sailthru_value_fields_block').append('<div><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + new_val + ']" type="text"  placeholder="display value"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + second_val + ']" type="text"  placeholder="value"/></div>');
 			$('#value_amount').attr('value',second_val);
 		}));
@@ -52,7 +50,6 @@
 			var new_val = parseInt($('#attr_amount').attr('value'),10);
 			new_val = new_val + 1;
 			var second_val = new_val +1;
-			console.log(new_val);
 			$('#sailthru_attr_fields_block').append('<div><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="attribute"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/></div>');
 			$('#attr_amount').attr('value',second_val);
 		}));

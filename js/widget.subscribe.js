@@ -30,7 +30,6 @@
 				user_input,
 				function(data) {
 					data = jQuery.parseJSON(data);
-					console.log(data);
 					if( data.error == true ) {
 						$(".sailthru-add-subscriber-errors").html(data.message);
 					} else {

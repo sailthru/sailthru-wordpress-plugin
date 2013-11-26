@@ -78,7 +78,7 @@
 						if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 
 				                echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>
-				                <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . $name_stripped . '" id="sailthru_' . $name_stripped . '_id" class="form-control">';
+				                <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_id" class="form-control">';
 
 				                $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 				                foreach( $items as $item ) {
