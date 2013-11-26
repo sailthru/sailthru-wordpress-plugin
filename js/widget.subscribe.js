@@ -2,14 +2,23 @@
 	"use strict";
 	$(function () {
 		$('#sailthru-modal').hide();
+
 		$( "#show_shortcode" ).on( "click", function( e ) {
 			e.preventDefault();
-			$('#sailthru-modal').toggle();
+			var posTop = $(this).offset().top;
+			var modal = $( "#sailthru-modal");
+   		 	modal.css("top", '100px');
+   		 	modal.css("left", Math.max(0, (($(window).width() - $(modal).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
+
+   		 	$('.sailthru-signup-widget-close').show();
+   		 	modal.fadeIn();
+
 		});
 
 		$('#sailthru-modal .sailthru-signup-widget-close').click(function(){
 			$('#sailthru-modal ').fadeOut();
 		}) ;
+
 		// when a user clicks subscribe
 		$(".sailthru-add-subscriber-form").submit( function( e ){
 
