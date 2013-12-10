@@ -798,7 +798,8 @@ function sailthru_horizon_loadtype_callback() {
     $options = get_option( 'sailthru_setup_options' );
     $html = '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, $options['sailthru_horizon_load_type'], false ) . '/>';
     $html .= 'Use synchronous loading for Horizon';
-    echo $html;
+
+    echo esc_html($html);
 
 } // end sailthru_horizon_loadtype_callback
 
@@ -1102,6 +1103,8 @@ function sailthru_setup_handler( $input ) {
 	// api key
 	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
 	$output['sailthru_horizon_load_type'] = filter_var( $input['sailthru_horizon_load_type'], FILTER_SANITIZE_STRING );
+	$output['sailthru_horizon_load_type'] = $input['sailthru_horizon_load_type'] == '1' ? $input['sailthru_horizon_load_type'] : false;
+
 
 
 	if ( empty( $output['sailthru_api_key'] ) ) {
