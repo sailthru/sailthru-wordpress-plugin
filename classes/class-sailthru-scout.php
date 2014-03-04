@@ -15,11 +15,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		// Register Scout Javascripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_scout_scripts' ) );
 
-		// Attempt to create the page needed for Scout
-		$post_id = $this->create_scout_page();
-
 		// Attempt to register the sidebar widget for Scout
-		//wp_register_sidebar_widget('sailthru-recommend-widget', 'Sailthru Recommends', array($this, 'widget'));
 
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
@@ -142,57 +138,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		}
 
 	 }
-
-	/**
-	 * A function used to programmatically create a page needed for Scout. The slug, author ID, and title
-	 * are defined within the context of the function.
-	 *
-	 * @returns -1 if the post was never created, -2 if a post with the same title exists, or the ID
-	 *          of the post if successful.
-	 */
-
-	private function create_scout_page() {
-
-		// never run this on public facing pages
-		if( !is_admin() ) {
-			return;
-		}
-
-		// -1 = No action has been taken.
-		$post_id = -1;
-
-		// Our specific settings
-		$slug = 'scout-from-sailthru';
-		$title = 'Recommended for You';
-		$post_type = 'page';
-		$post_content = '<div id="sailthru-scout"><div class="loading">Loading, please wait...</div></div>';
-
-
-		// If the page doesn't already exist, then create it
-		if( null == get_page_by_title( $title ) ) {
-
-			// Set the post ID so that we know the post was created successfully
-			$post_id = wp_insert_post(
-				array(
-					'comment_status'	=>	'closed',
-					'ping_status'		=>	'closed',
-					'post_name'			=>	$slug,
-					'post_title'		=>	$title,
-					'post_status'		=>	'publish',
-					'post_type'			=>	$post_type,
-					'post_content'		=>	$post_content
-				)
-			);
-
-		} else {
-
-	    	$post_id = -2;
-
-		} // end if
-
-		return $post_id;
-
-	}
 
 
 	/*--------------------------------------------------*/
