@@ -3,7 +3,7 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your Wordpress set up. Deliver individualized experiences to your users in real-time by configuring Concierge and Scout. Comes bundled with a handy widget for allowing your visitors to subscribe to your lists right from your website. <strong>To get started</strong>: 1) Click the "Activate" link to the left of this description, 2) Locate your <a href="https://my.sailthru.com/login" target="_blank">Sailthru API key</a>, and 3) Go to the Sailthru configuration page, and save your API key.
-Version: 1.0
+Version: 1.1
 Author: Sailthru
 Author URI: http://sailthru.com
 Author Email: nick@sailthru.com
@@ -31,7 +31,8 @@ if( ! defined('SAILTHRU_PLUGIN_PATH') )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
 if( ! defined('SAILTHRU_PLUGIN_URL') )
-	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(basename(dirname(__file__))).'/'.basename(dirname(__file__)).'/');
+	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+
 
 /*
  * Sailthru PHP5 Developer Library
@@ -159,16 +160,16 @@ if( get_option('sailthru_override_wp_mail')
 		  $template = $sailthru_configs['sailthru_setup_email_template'];
 
 
-
-		// >> SEND  <<<<<<<<<<<<<<<<<<<
+		// SEND
 		$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];
 			$api_secret = $sailthru['sailthru_api_secret'];
-		//$client = new Sailthru_Client( $api_key,  $api_secret);
 		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 		$r = $client->send($template, $recipients, $vars, array());
 
 		return true;
 
 	}
+
 }
+
