@@ -56,20 +56,23 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			)
 		);
 
-		// Register admin styles and scripts
-		// According to documentation: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
+		// Only register widget scripts, styles, and ajax when widget is active
+		if ( is_active_widget( false, false, $this->id_base, true ) ) {
+			// Register admin styles and scripts
+			// According to documentation: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
+			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 
-		// Register site styles and scripts
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
+			// Register site styles and scripts
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
 
-		// Include the Ajax library on the front end
-		add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );
+			// Include the Ajax library on the front end
+			add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );
 
-		// Method to subscribe a user
-		add_action( 'wp_ajax_nopriv_add_subscriber', array( &$this, 'add_subscriber') );
-		add_action( 'wp_ajax_add_subscriber', array( &$this, 'add_subscriber') );
+			// Method to subscribe a user
+			add_action( 'wp_ajax_nopriv_add_subscriber', array( &$this, 'add_subscriber') );
+			add_action( 'wp_ajax_add_subscriber', array( &$this, 'add_subscriber') );
+		}
 
 	} // end constructor
 
