@@ -53,6 +53,11 @@ class Sailthru_Horizon {
 		if ( ! current_user_can( 'activate_plugins' ) )
             return;
 
+          // signal that it's ok to override Wordpress's built-in email functions
+		if( false == get_option( 'sailthru_override_wp_mail' ) ) {
+			add_option( 'sailthru_override_wp_mail', 1 );
+		} // end if
+
 	} // end activate
 
 	/**
