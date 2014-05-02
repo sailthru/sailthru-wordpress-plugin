@@ -441,11 +441,31 @@ class Sailthru_Horizon {
     		$post_title = get_the_title();
     			$horizon_tags['sailthru.title'] = esc_attr($post_title);
 
-    		// tags
-    		$post_tags = get_the_tags();
-		if ( $post_tags ) {
-			$horizon_tags['sailthru.tags'] = esc_attr(implode( ', ', wp_list_pluck( $post_tags, 'name' )) );
-		}
+    		// tags in the order of priority
+    		// first sailthru tags
+    		$post_tags = get_post_meta( $post_object->ID, 'sailthru_meta_tags', true);
+
+	    		// wordpress tags
+	    		if( empty( $post_tags ) ) {
+		    		$post_tags = get_the_tags();
+		    		if( $post_tags ) {
+						$post_tags = esc_attr(implode( ', ', wp_list_pluck( $post_tags, 'name' )) );		    			
+		    		}
+	    		}
+
+	    			// wordpress categories
+	    			if( empty( $post_tags ) ) {
+	    				$post_categories = get_the_category( $post_object->ID );
+	    				foreach( $post_categories as $post_category ) {
+	    					$post_tags .= $post_category->name . ', ';
+	    				}
+	    				$post_tags = substr($post_tags, 0, -2);
+	    			}
+
+			if ( ! empty( $post_tags ) ) {
+				$horizon_tags['sailthru.tags'] = $post_tags;
+			}
+
 
     		// author << works on display name. best option?
     		$post_author = get_the_author();
@@ -519,19 +539,20 @@ class Sailthru_Horizon {
 	 *--------------------------------------------*/
 
 	/**
-	 * Introduces the meta box for expiring content.
+	 * Introduces the meta box for expiring content,
+	 * and a meta box for Sailthru tags.
 	 */
 	public function sailthru_post_metabox() {
 
 		add_meta_box(
-			'sailthru-expiration-date',
-			__( 'Sailthru Expiration Date', 'sailthru' ),
+			'sailthru-post-data',
+			__( 'Sailthru Post Data', 'sailthru' ),
 			array( $this, 'post_metabox_display' ),
 			'post',
 			'side',
 			'high'
 		);
-
+	
 	} // sailthru_post_metabox
 
 	/**
@@ -543,13 +564,28 @@ class Sailthru_Horizon {
 
 
 		$sailthru_post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true);
+		$sailthru_meta_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true);
 
 		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
-		$html  = '<input id="sailthru_post_expiration" type="text" name="sailthru_post_expiration" value="' . esc_attr($sailthru_post_expiration) . '" size="25" class="datepicker" />';
-
+		
+		// post expiration		
+		$html  = '<p><strong>Sailthru Post Expiration</strong></p>';
+		$html .= '<input id="sailthru_post_expiration" type="text" placeholder="YYYY-MM-DD" name="sailthru_post_expiration" value="' . esc_attr($sailthru_post_expiration) . '" size="25" class="datepicker" />';
 		$html .= '<p class="description">';
-		$html .= '<br>Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
+		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';		
 		$html .= '</p><!-- /.description -->';
+		
+
+		// post meta tags
+		$html .= '<p>&nbsp;</p>';
+		$html .= '<p><strong>Sailthru Meta Tags</strong></p>';		
+		$html .= '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr($sailthru_meta_tags) . '" size="25"  />';	
+		$html .= '<p class="description">';
+		$html .= 'Tags are used to measure user interests and later to send them content customized to their tastes.';
+		$html .= '</p><!-- /.description -->';
+		$html .= '<p class="howto">Separate tags with commas</p>';
+		
+		
 
 		echo $html;
 
@@ -566,8 +602,10 @@ class Sailthru_Horizon {
 		// First, make sure the user can save the post
 		if( $this->user_can_save( $post_id, $this->nonce ) ) {
 
-			// Did the user set an expiry date?
-			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) ) {
+			// Did the user set an expiry date, or are they clearing an old one?
+			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) 
+					|| get_post_meta($post_id, 'sailthru_post_expiration', TRUE) ) {
+
 				$expiry_time = strtotime( $_POST['sailthru_post_expiration'] );
 				if ( $expiry_time ) {
 					$expiry_date = date( 'Y-m-d', $expiry_time );
@@ -577,6 +615,16 @@ class Sailthru_Horizon {
 				}
 
 			} // end if
+
+			// Did the user set some meta tags, or are they clearing out old tags?
+			if( ! empty( $_POST['sailthru_meta_tags'] ) && isset( $_POST['sailthru_meta_tags'] ) 
+					|| get_post_meta($post_id, 'sailthru_meta_tags', TRUE) ) {
+				
+				//remove trailing comma
+				$meta_tags = rtrim( $_POST['sailthru_meta_tags'], ','); 
+				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
+				
+			} 		
 
 		} // end if
 
