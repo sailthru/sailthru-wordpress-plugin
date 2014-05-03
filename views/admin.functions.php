@@ -178,8 +178,9 @@ function sailthru_initialize_forms_options() {
 		$key           = get_option( 'sailthru_forms_key' );
 		$order		   = get_option( 'sailthru_customfields_order' );
 		echo '<p><strong>Existing fields</strong></p>';
-		echo '<table class="wp-list-table widefat">';
+		echo '<table class="wp-list-table widefat fixed posts">';
 		echo '<thead>';
+		echo '<th scope="col" style="width:20px">&nbsp;</th>';
 		echo '<th scope="col" class="manage-column">Display Label</th>';
 		echo '<th scope="col" class="manage-column">Field Value</th>';
 		echo '<th scope="col" class="manage-column">Field Type</th>';
@@ -198,6 +199,7 @@ function sailthru_initialize_forms_options() {
 						if($i == (int)$pos){	
 							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
 								echo '<tr id="pos_'. $i.'">';
+								echo '<td><span class="dashicons icon-sort"></span></td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
@@ -211,6 +213,7 @@ function sailthru_initialize_forms_options() {
 				for ( $i = 1; $i <= $key; $i++ ) {
 					if( isset($customfields[$i]) && !empty($customfields[$i])){
 						echo '<tr id="pos_'. $i.'">';
+						echo '<td><span class="dashicons icon-sort"></span></td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
