@@ -39,23 +39,6 @@
 								</div>
 							</div>
 
-
-							<?php /*
-							<div class="postbox-container last">
-								<div  class="meta-box-sortables">
-									<div id="sailthru-choose-tags" class="postbox">
-
-										<div class="inside">
-
-										</div>
-
-									</div>
-								</div>
-							</div>
-							*/ ?>
-
-
-
 						</div>
 
 						<div class="clear"></div>

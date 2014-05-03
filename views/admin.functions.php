@@ -26,8 +26,8 @@ function sailthru_initialize_setup_options() {
 				isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
 
 			add_settings_field(
-				'sailthru_setup_email_template',
-				__( 'WordPress template', 'sailthru-for-wordpress' ),
+				'sailthru_setup_email_template',	// ID used to identify the field throughout the theme
+				__( 'WordPress template', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
 				'sailthru_setup_email_template_callback',
 				'sailthru_setup_options',
 				'sailthru_setup_section',
@@ -111,7 +111,43 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
+	   	/*
+		 * Sailthru options for overriding emails
+		*/
+		
+	if ( isset( $setup['sailthru_api_key']) && ! empty ( $setup['sailthru_api_key'] ) &&
+		 isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
 
+		add_settings_field(
+				'sailthru_setup_new_user_override_template',	// ID used to identify the field throughout the theme
+				__( 'Override New User Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_setup_email_template_callback',
+				'sailthru_setup_options',
+				'sailthru_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_setup_new_user_override_template',
+					'',
+					'sailthru_setup_new_user_override_template',
+				)
+			);
+		
+		add_settings_field(
+				'sailthru_setup_password_reset_override_template',	// ID used to identify the field throughout the theme
+				__( 'Override Password Reset Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_setup_email_template_callback',
+				'sailthru_setup_options',
+				'sailthru_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_setup_password_reset_override_template',
+					'',
+					'sailthru_setup_password_reset_override_template',
+				)
+			);
+	}
+
+		
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_setup_options',
@@ -126,36 +162,68 @@ function sailthru_initialize_forms_options() {
 
 	function sailthru_forms_callback( $args ) {
 
+		
+		add_action('admin_head', '<script src="http://code.jquery.com/jquery-1.9.1.js"></script>');
+		//echo '<script src="http://code.jquery.com/jquery-1.9.1.js"></script>';
+		//echo '<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>'
 		/*
 		** Custom and Extra Sections should be in a first column.
 		** Begin the column here. It ends in delete_field()
 		*/
-		echo '<div class="column-half" id="sailthru-col-left">';
+		echo '<div class="column-half">';
 		echo '<h3>Custom fields</h3>';
 		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>';
 
 		$customfields  = get_option( 'sailthru_forms_options' );
 		$key           = get_option( 'sailthru_forms_key' );
-
+		$order		   = get_option( 'sailthru_customfields_order' );
 		echo '<p><strong>Existing fields</strong></p>';
 		echo '<table class="wp-list-table widefat">';
 		echo '<thead>';
 		echo '<th scope="col" class="manage-column">Display Label</th>';
 		echo '<th scope="col" class="manage-column">Field Value</th>';
 		echo '<th scope="col" class="manage-column">Field Type</th>';
+		echo '<th scope="col" class="manage-column"> </th>';
 		echo '</thead>';
-
-		for ( $i = 0; $i < $key; $i++ ) {
-			$field_key = $i + 1;
-			 if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
-				echo '<tr>';
-				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']).' </td>';
-				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_name']).' </td>';
-				echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_type']).' </td>';
-				echo '</tr>';
+		echo '<tbody id="sortable">';
+		if ( isset($customfields) && !empty($customfields)){
+			//If these were sorted display in proper order
+			//echo $key;
+			//print_r($customfields);
+			//echo $order;
+			if( isset($order) && !empty($order) ){
+				$order_list = explode(',', $order);
+				foreach ($order_list as $pos) {
+					for ($i=1; $i <= (int)$key; $i++) {
+						if($i == (int)$pos){	
+							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
+								echo '<tr id="pos_'. $i.'">';
+								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
+								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
+								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
+								echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+							 	echo '</tr>';
+							}
+						}
+					}
+				}
+			} else {
+				for ( $i = 1; $i <= $key; $i++ ) {
+					if( isset($customfields[$i]) && !empty($customfields[$i])){
+						echo '<tr id="pos_'. $i.'">';
+						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
+						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
+						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
+						echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+						echo '</tr>';
+					}
+					
+				}
 			}
-		}
+		} 
+		echo '</tbody>';
 		echo '</table>';
+		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
 		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 
 
@@ -173,7 +241,7 @@ function sailthru_initialize_forms_options() {
 			$value = $options[ $option_name ];
 		} else {
 			$value = $default_value;
-	}
+		}
 
 	// Render the output of the field type selector
 
@@ -196,9 +264,7 @@ function sailthru_initialize_forms_options() {
 		** Delete and Existing Sections should be in a second column.
 		** Begin the column here. It ends in views/admin.php (unfortunately)
 		*/
-		echo '</div><div class="column-half" id="sailthru-col-right">';
-		echo '<h3>Delete Fields</h3>';
-		echo '<p>Delete a field already created by using the form below.</p>';
+		echo '</div></div><div class="column-half">';
 	}
 
 	function delete_field ( $args ) {
@@ -209,19 +275,25 @@ function sailthru_initialize_forms_options() {
 		$html_id       = $args[3];
 		$options       = get_option( $collection );
 		$key           = get_option( 'sailthru_forms_key' );
-
-
+		
+	
 		echo '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">
 				<option value="select">Select...</option>';
 				for ( $i = 0; $i < $key; $i++ ) {
 					 $field_key = $i + 1;
-					 if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
-					 echo '<option value="'.esc_attr($field_key).'" >'.esc_html($customfields[ $field_key ]['sailthru_customfield_label']).'</option>';
+					 if ( ! empty ( $customfields[ $field_key ][ 'sailthru_customfield_name' ] ) ) {
+					 echo '<option value="'.esc_attr($field_key).'" >'.esc_html($customfields[ $field_key ][ 'sailthru_customfield_label' ]).'</option>';
 					 }
 				} //end for loop
 		echo '</select>';
 		echo '<div>'.submit_button('Delete Field') .'</div>';
 
+	}
+
+	
+	function field_order( $args ){
+		
+		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_field_order]" id="field_order"></input>';
 	}
 
 	function sailthru_success_field ( $args ) {
@@ -314,6 +386,7 @@ function sailthru_initialize_forms_options() {
 		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'1' ) . ']" type="text"  placeholder="value"/>';
 		echo '<input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="1" />';
 		echo '</div>';
+		echo '</div>';
 		echo '<div class="instructions">';
 		echo '<a id="add_value" href ="">Add Another</a>';
 		echo '<div>';
@@ -330,6 +403,7 @@ function sailthru_initialize_forms_options() {
 		echo '<input class="attribute" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'1' ) . ']" type="text" placeholder="attribute" />';
 		echo '<input class="attribute" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'2' ) . ']" type="text"  placeholder="value"/>';
 		echo '<input id="attr_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="2" />';
+		echo '</div>';
 		echo '</div>';
 		echo '<div class="instructions">';
 		echo '<a id="add_attr" href ="">Add Another</a>';
@@ -395,6 +469,21 @@ function sailthru_initialize_forms_options() {
 				'The name used as a var in the Sailthru user profile.',
 			)
 		);
+	
+		add_settings_field(
+			'sailthru_customfield_field_order',
+			__( '', 'sailthru-for-wordpress' ),
+			'field_order',
+			'sailthru_forms_options',
+			'sailthru_forms_section',
+			array(
+					'sailthru_forms_options',
+					'sailthru_customfield_field_order',
+					'',
+					'sailthru_customfield_field_order',
+				)
+			);
+		
 
 		add_settings_field(
 				'sailthru_customfield_value',				// ID used to identify the field throughout the theme
@@ -410,10 +499,13 @@ function sailthru_initialize_forms_options() {
 				)
 		);
 
+
+		
+
 	add_settings_section(
 		'sailthru_adv_section',								// ID used to identify this section and with which to register options
 		__( 'Additional HTML Attributes', 'sailthru-for-wordpress' ),	     // Title to be displayed on the administration page
-		'sailthru_html_fields_options_callback',													// Callback used to render the description of the section
+		'sailthru_html_fields_options_callback',							// Callback used to render the description of the section
 		'sailthru_forms_options'							// Page on which to add this section of options
 	);
 		add_settings_field(
@@ -444,13 +536,15 @@ function sailthru_initialize_forms_options() {
 					'sailthru_customfield_attr'
 				)
 		);
-
+	
 	add_settings_section(
 		'sailthru_delete_section',							// ID used to identify this section and with which to register options
 		__( '', 'sailthru-for-wordpress' ),					// Title to be displayed on the administration page
 		'sailthru_create_second_column',					// Callback used to render the description of the section
 		'sailthru_forms_options'							// Page on which to add this section of options
 	);
+		
+
 		add_settings_field(
 				'sailthru_customfield_delete',				// ID used to identify the field throughout the theme
 				__( 'Choose one', 'sailthru-for-wordpress' ),// The label to the left of the option interface element
@@ -463,7 +557,8 @@ function sailthru_initialize_forms_options() {
 					'',
 					'sailthru_customfield_delete'
 				)
-			);
+			);		
+			
 		add_settings_field(
 				'sailthru_customfield_success',				// ID used to identify the field throughout the theme
 				__( 'Subscribe Message', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
@@ -722,6 +817,111 @@ add_action( 'admin_init', 'sailthru_intialize_scout_options' );
 
 
  // end sailthru_intialize_forms_options
+
+function sailthru_initialize_integrations_options(){
+	if ( false == get_option( 'sailthru_integrations_options' ) ) {
+		add_option( 'sailthru_integrations_options' );
+	} // end if
+	add_settings_section(
+			'sailthru_integrations_settings_section',			// ID used to identify this section and with which to register options
+			__( 'Integrations', 'sailthru-for-wordpress' ),				// Title to be displayed on the administration page
+			'sailthru_integrations_callback',			// Callback used to render the description of the section
+			'sailthru_integrations_options'			// Page on which to add this section of options
+		);
+
+		add_settings_field(
+				'sailthru_twitter_enabled',	// ID used to identify the field throughout the theme
+				__( 'Twitter Lead Cards', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_twitter_enabled_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_twitter_enabled',
+					'',
+					'sailthru_twitter_enabled',
+					'Enable Twitter Lead Cards',
+				)
+			);
+		add_settings_field(
+				'sailthru_twitter_url',	// ID used to identify the field throughout the theme
+				__( 'Twitter Submit URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_twitter_url',
+					'',
+					'sailthru_twitter_url',
+				)
+			);
+		add_settings_field(
+				'sailthru_twitter_salt',	// ID used to identify the field throughout the theme
+				__( 'Twitter Shared Salt', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_twitter_salt',
+					'',
+					'sailthru_twitter_salt',
+				)
+			);
+
+		add_settings_field(
+				'sailthru_gigya_enabled',	// ID used to identify the field throughout the theme
+				__( 'Gigya Social Login', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_gigya_enabled_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_gigya_enabled',
+					'',
+					'sailthru_gigya_enabled',
+					'Enable Gigya Social Login',
+				)
+			);
+
+		add_settings_field(
+				'sailthru_gigya_key',	// ID used to identify the field throughout the theme
+				__( 'Gigya Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_gigya_key',
+					'',
+					'sailthru_gigya_key',
+				)
+			);
+
+		add_settings_field(
+				'sailthru_gigya_url',	// ID used to identify the field throughout the theme
+				__( 'Gigya Callback URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_gigya_url',
+					'',
+					'sailthru_gigya_url',
+				)
+			);
+			
+		
+		register_setting(
+		'sailthru_integrations_options',
+		'sailthru_integrations_options',
+		'sailthru_sanitize_text_input'
+	);
+	
+}
+add_action( 'admin_init', 'sailthru_initialize_integrations_options' );
 /* ------------------------------------------------------------------------ *
  * Section Callbacks
  * ------------------------------------------------------------------------ */
@@ -747,8 +947,14 @@ function sailthru_scout_options_callback() {
 } // end sailthru_scout_options_callback
 
 function sailthru_html_fields_options_callback() {
-	echo '<p>Add additional HTML attributes such as CSS classes and data attributes to the form field. These are optional fields to allow theme developers to integrate with their own themes.</p>';
+	echo '<div id="accordion"><h3>Advanced HTML options</h3><div>';
+	//Add additional HTML attributes such as CSS classes and data attributes to the form field. These are optional fields to allow theme developers to integrate with their own themes.
 }
+
+function sailthru_integrations_callback() {
+	echo '<p>Options for Sailthru integrations</p>';
+}
+
 
 
 /* ------------------------------------------------------------------------ *
@@ -770,7 +976,7 @@ function sailthru_html_text_input_callback( $args ) {
 	$option_name   = $args[1];
 	$default_value = $args[2];
 	$html_id       = $args[3];
-	$hint       = $args[4];
+	//$hint       = $args[4];
 	$options       = get_option( $collection );
 
 	// Make sure the element is defined in the options. If not, we'll use the preferred default
@@ -795,11 +1001,27 @@ function sailthru_html_text_input_callback( $args ) {
  */
 function sailthru_horizon_loadtype_callback() {
 
-    $options = get_option( 'sailthru_setup_options' );
+   $options = get_option( 'sailthru_setup_options' );
     $load_type = isset($options['sailthru_horizon_load_type']) ? $options['sailthru_horizon_load_type'] : '';
    echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
    echo 'Use synchronous loading for Horizon';
 
+}
+
+function sailthru_twitter_enabled_callback() {
+
+    $options = get_option( 'sailthru_integrations_options' );
+    $load_type = isset($options['sailthru_twitter_enabled']) ? $options['sailthru_twitter_enabled'] : '';
+   echo '<input type="checkbox" id="sailthru_twitter_enabled" name="sailthru_integrations_options[sailthru_twitter_enabled]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
+  echo 'Enable Twitter Lead Cards';
+
+}
+
+function sailthru_gigya_enabled_callback() {
+	$options = get_option( 'sailthru_integrations_options' );
+	$load_type = isset($options['sailthru_gigya_enabled']) ? $options['sailthru_gigya_enabled'] : '';
+   	echo '<input type="checkbox" id="sailthru_gigya_enabled" name="sailthru_integrations_options[sailthru_gigya_enabled]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
+  	echo 'Enable Gigya Social Login';
 }
 
 /**
@@ -950,34 +1172,70 @@ function sailthru_toggle_feature_callback( $args ) {
 function sailthru_setup_email_template_callback( $args ) {
 
 	$sailthru   = get_option( 'sailthru_setup_options' );
-	$api_key    = $sailthru['sailthru_api_key'];
-	$api_secret = $sailthru['sailthru_api_secret'];
+	if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
+		$api_key    = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+	
+	
 
-	//$client = new Sailthru_Client( $api_key, $api_secret );
-	$client = new WP_Sailthru_Client( $api_key, $api_secret );
-
-		try {
-			if ( $client ) {
-				$res = $client->getTemplates();
+		//$client = new Sailthru_Client( $api_key, $api_secret );
+		$client = new WP_Sailthru_Client( $api_key, $api_secret );
+		$sailthru_client = new Sailthru_Client( $api_key, $api_secret );
+			try {
+				if ( $client ) {
+					$res = $client->getTemplates();
+				}
 			}
-		}
-		catch ( Sailthru_Client_Exception $e ) {
-			//silently fail
-			return;
-		}
+			catch ( Sailthru_Client_Exception $e ) {
+				//silently fail
+				return;
+			}
 
 
-	if ( isset( $res['error'] ) ) {
-		$tpl =  array();
+		if ( isset( $res['error'] ) ) {
+			$tpl =  array();
+		} 
+			//if there are no templates available create a basic one
+			$tpl = $res['templates'];
+
+			if( isset($tpl) || $tpl != '') {
+				
+				$name = get_bloginfo('name');
+				$email = get_bloginfo('admin_email');
+				try {
+					
+					if ( $sailthru_client ){
+						
+						$template = 'default-template';
+						$options = array(
+							'from_name' => '',
+							'from_email' => '',
+							'content_html' => '',
+							'subject' => '' );
+						$response = $client->saveTemplate($template, $options);
+						
+					}		
+				} catch ( Sailthru_Client_Exception $e ) {
+						//silently fail
+						return;
+				}
+
+			} 
+		
+	}
+	if(isset($tpl)){
+		$html = sailthru_create_dropdown( $args, $tpl );
 	} else {
-		$tpl = $res['templates'] ;
+		$html = sailthru_create_dropdown( $args, array() );
+		$html .= "Sailthru Api Key and Secret must be saved first";
 	}
 
-	$html = sailthru_create_dropdown( $args, $tpl );
-
 	echo $html;
-
+	
 }
+
+
+
 
 
 
@@ -1029,6 +1287,10 @@ function sailthru_sanitize_text_input( $input ) {
 	$fields = get_option( 'sailthru_forms_options' );
 	$output = $fields;
 	$key    = get_option( 'sailthru_forms_key' );
+	$order = sanitize_text_field($input['sailthru_customfield_field_order']);
+		if ( isset( $order ) and $order != ''){
+			update_option( 'sailthru_customfields_order', $order);	
+		}
 		if ( isset( $key ) ) {
 			$new_key = $key + 1;
 			update_option( 'sailthru_forms_key',$new_key );
@@ -1038,11 +1300,14 @@ function sailthru_sanitize_text_input( $input ) {
 			add_option( 'sailthru_forms_key',$new_key );
 		}
 		if ( ! empty( $input['sailthru_customfield_name'] ) ) {
+			//remove custom order
+			delete_option('sailthru_customfields_order');
 			$output[ $new_key ]['sailthru_customfield_label']    = sanitize_text_field($input['sailthru_customfield_label']);
 			$output[ $new_key ]['sailthru_customfield_name']    = sanitize_text_field($input['sailthru_customfield_name']);
 			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
 			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
-
+			$output[ $new_key ]['sailthru_customfield_field_order']		= sanitize_text_field($input['sailthru_customfield_field_order']);
+			
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
 			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
 			}
@@ -1086,11 +1351,15 @@ function sailthru_sanitize_text_input( $input ) {
 					$output[ $new_key ]['sailthru_customfield_attr']      = $values;
 			}
 		}// end if empty field name
-		if ( $input['sailthru_customfield_delete'] != 'select' ) {
-			$output[ $input['sailthru_customfield_delete'] ]['sailthru_customfield_name'] = '';
+
+		if ( !empty ( $input['sailthru_customfield_delete'] ) ) {
+			unset($output[$input['sailthru_customfield_delete']]);
+			update_option( 'sailthru_forms_options', $output);
+
+			// $order = str_replace( '"'.$input['sailthru_customfield_delete'].'"', '', $order);
+			delete_option('sailthru_customfields_order');
 		}
 		$output['sailthru_customfield_success'] = sanitize_text_field($input['sailthru_customfield_success']);
-
 
 	return $output;
 
@@ -1103,8 +1372,7 @@ function sailthru_setup_handler( $input ) {
 	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
 	$output['sailthru_horizon_load_type'] = filter_var( $input['sailthru_horizon_load_type'], FILTER_SANITIZE_STRING );
 	$output['sailthru_horizon_load_type'] = $input['sailthru_horizon_load_type'] == '1' ? $input['sailthru_horizon_load_type'] : false;
-
-
+	
 
 	if ( empty( $output['sailthru_api_key'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __( 'Sailthru will not function without an API key.' ), 'error' );
@@ -1142,12 +1410,58 @@ function sailthru_setup_handler( $input ) {
 
 		// sitewide email template
 		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
-
+		$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
+		$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
 		if ( empty( $output['sailthru_setup_email_template'] ) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __( 'Please choose a template to use when sending emails sitewide.' ), 'error' );
 		}
 	}
 
+		if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
+			isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
+			//twitter lead cards
+			$output['sailthru_twitter_enabled'] = filter_var( $input['sailthru_twitter_enabled'], FILTER_SANITIZE_STRING );
+			$output['sailthru_twitter_enabled'] = $input['sailthru_twitter_enabled'] == '1' ? $input['sailthru_twitter_enabled'] : false;
+
+
+			if ( $output['sailthru_twitter_enabled'] ) {
+				$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
+				$output['sailthru_twitter_salt'] = filter_var( $input['sailthru_twitter_salt'], FILTER_SANITIZE_STRING );
+
+				if ( empty( $output['sailthru_twitter_url'] ) ) {
+					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter a Twitter Lead Card URL.' ), 'error' );
+				}
+				if ( empty( $output['sailthru_twitter_salt'] ) ) {
+					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter a Twitter salt.' ), 'error' );
+				}	
+				if( !urlExists($output['sailthru_twitter_url'] ) ){
+					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Twitter Lead Card callback file does not exist @ ' . $output['sailthru_twitter_url'] ), 'error' );	
+				} 
+			}
+		}
+
+		if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
+		 	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
+
+		 	$output['sailthru_gigya_enabled'] = filter_var( $input['sailthru_gigya_enabled'], FILTER_SANITIZE_STRING );
+		 	$output['sailthru_gigya_enabled'] = $input['sailthru_gigya_enabled'] == '1' ? $input['sailthru_gigya_enabled'] : false;
+			//Gigya Social
+
+			if( $output['sailthru_gigya_enabled'] ){ 
+				$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
+				$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
+
+				if( empty( $output['sailthru_gigya_url'] ) ){
+					 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Social Callback URL.' ), 'error' );
+				}
+				if( empty( $output['sailthru_gigya_key'] ) ){
+					add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Social Key.' ), 'error' );
+				}
+				if( !urlExists( $output['sailthru_gigya_url'] ) ){
+					add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Gigya callback file does not exist @ '. $output['sailthru_gigya_url'] ), 'error' );	
+				} 
+			}
+		 }
 
 	return $output;
 
@@ -1225,7 +1539,6 @@ function sailthru_verify_setup() {
   $api_secret = $sailthru['sailthru_api_secret'];
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
-  $tpl_errors = array();
 
   if ( $template == '' ) {
 	  $res['error'] = true;
@@ -1240,12 +1553,8 @@ function sailthru_verify_setup() {
 
   	if ( !isset( $res['error'] ) ) {
   		// we can make a call, now check the template is configured
-  		try {
-           	$tpl = $client->getTemplate( $template );
-           	$tpl_errors = sailthru_verify_template( $tpl );
-           } catch ( Exception $e ) {
-           	$tpl_errors = array( 'Request to Sailthru API failed: ' . $e->getMessage() );
-           }
+  		$tpl = $client->getTemplate( $template );
+  		$tpl_errors = sailthru_verify_template( $tpl );
 
   		if ( count( $tpl_errors ) > 0 ) {
   			// add errors to the error message
@@ -1288,4 +1597,14 @@ function sailthru_verify_template( $tpl ) {
 	}
 
 	return $errors;
+}
+
+function urlExists( $url ) {
+	$response = wp_remote_head( $url, array( 'timeout' => 5, ));
+	$accepted_status_codes = array( 200, 301, 302 );
+	if ( !is_wp_error( $response ) && in_array( wp_remote_retrieve_response_code( $response ), $accepted_status_codes)) {
+		return true;
+	}
+
+	return false;
 }
