@@ -84,9 +84,14 @@
 		});
 		// set up form. make the email template more prominent
 		$("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
+		
 		// datepicker for meta box
-		$('.datepicker').datepicker({
-			dateFormat: 'yy-mm-dd'
-		});
+		// but since Datepicker causes a jQuery conflict, wrap it
+		// and prevent from initializing unless necessary
+		if( $('.datepicker').length ) {
+			$('.datepicker').datepicker({
+				dateFormat: 'yy-mm-dd'
+			});
+		}
 	});
 }(jQuery));

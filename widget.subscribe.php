@@ -210,9 +210,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function register_admin_scripts() {
 
-		//wp_enqueue_script( 'sailthru-subscribe-admin-script', SAILTHRU_PLUGIN_URL .'js/widget.subscribe.admin.js' , array('jquery') );
 		wp_enqueue_style( 'sailthru-subscribe-admin-styles', SAILTHRU_PLUGIN_URL . 'css/widget.subscribe.admin.css' );
-		wp_enqueue_script( 'sailthru-admin-jquery', SAILTHRU_PLUGIN_URL. 'js/jquery-1.9.1.js', array( 'jquery' ) );
+
+		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'sailthru-subscribe-widget-admin-jquery-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.admin.js', array( 'jquery' ) );
 		wp_enqueue_script( 'jquery-ui-accordion' );
 		wp_enqueue_script( 'jquery-ui-sortable' );
