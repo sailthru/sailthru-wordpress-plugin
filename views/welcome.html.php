@@ -22,6 +22,7 @@ $verify_setup = sailthru_verify_setup();
 <?php if ( isset( $verify_setup['errormessage'] ) && $verify_setup['errormessage'] == 'select a template' ) : ?>
   <h2>Almost there, just one more step</h2>
   <?php
+    create_default_template();
     settings_fields( 'sailthru_setup_options' );
     do_settings_sections( 'sailthru_setup_options' );
   ?>

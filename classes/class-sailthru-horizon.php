@@ -398,6 +398,16 @@ class Sailthru_Horizon {
 				array( &$this, 'load_sailthru_admin_display')
 			);
 			$this->admin_views[$forms_menu] = 'customforms_configuration_page';
+			
+			$integrations_menu = add_submenu_page(
+				'sailthru_configuration_page',
+				__( 'Integrations', 'sailthru-for-wordpress' ),
+				__( 'Integrations', 'sailthru-for-wordpress' ),
+				'manage_options',
+				'integrations_configuration_page',
+				array( &$this, 'load_sailthru_admin_display')
+			);
+			$this->admin_views[$integrations_menu] = 'integrations_configuration_page';
 
 
 	} // end sailthru_menu

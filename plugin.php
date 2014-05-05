@@ -49,6 +49,7 @@ require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php');
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-social.php' );
 
 
 

@@ -19,6 +19,8 @@
 
     // display options
     $customfields = get_option( 'sailthru_forms_options' );
+    $sailthru = get_option( 'sailthru_setup_options' );
+    $integrations = get_option( 'sailthru_integrations_options' );
     // nonce
     $nonce = wp_create_nonce( 'add_subscriber_nonce' );
 
@@ -44,9 +46,19 @@
             else{
               $success = $customfields['sailthru_customfield_success'];
             }
+
+            if(isset($integrations['sailthru_twitter_enabled'])) {
+        ?>
+        <div class="success" hidden="hidden"><?php echo $success;?></div>
+         <form method="post" action="<?php echo $integrations['sailthru_twitter_url']; ?>" class="sailthru-add-subscriber-form">
+        <?php
+            } else {
         ?>
         <div class="success" hidden="hidden"><?php echo $success;?></div>
          <form method="post" action="#" class="sailthru-add-subscriber-form">
+          <?php
+            }
+          ?>
             <div class="sailthru-add-subscriber-errors"></div>
 
             <div class="sailthru_form_input form-group">
@@ -54,28 +66,129 @@
                 <input type="text" name="email" value="" class="form-control sailthru_email" />
             </div>
 
-            <?php
-            $key = get_option( 'sailthru_forms_key' );
-            if ( ! empty( $instance['fields'] ) ) {
-              $fields = explode( ',', $instance['fields'] );
-              foreach ( $fields as $field ) {
-                $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
-                $instance['show_'.$name_stripped.'_name']     = true;
-                $instance['show_'.$name_stripped.'_required'] = false;
-              }
-            }
-        for ( $i = 0; $i < $key; $i++ ) {
-        $field_key = $i + 1;
-        if ( ! empty( $customfields[ $field_key ] ) ) {
+<?php
+$key = get_option( 'sailthru_forms_key' );
+if ( ! empty( $instance['fields'] ) ) {
+  $order = "";
+  $fields = explode( ',', $instance['fields'] );
+  foreach ( $fields as $field ) {
+    $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
+    $instance['show_'.$name_stripped.'_name']     = true;
+    $instance['show_'.$name_stripped.'_required'] = false;
+    for ( $i = 1; $i <= $key ; $i++ ){
+      if( isset($customfields[ $i ] ) ){
+        $db_name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name'] );
+      
+        if( $name_stripped == $db_name_stripped ){
+          $order .= $i . ",";
+          break;
+        }
+      }
+    }
+  }
+  $order_list = explode(',', $order);
+} else {
+  $order = get_option( 'sailthru_customfields_order' );
+}
+if( isset($order ) && $order != '' ){
+  $order_list = explode(',', $order);
+}
+if (isset($order_list)){
+  //for ($j = 0; $j < count($order_list); $j++){
+    for ( $i = 0; $i < count($order_list); $i++ ) {
+      $field_key = (int)$order_list[$i];
+      if ( ! empty( $customfields[ $field_key ] ) ) {
         $name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
-          if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
-            if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
-                        $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
-                } else {
-                          $attributes = '';
-                }
-                                 echo '<div class="sailthru_form_input form-group">';
-            if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
+        if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+          if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
+            $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
+          } else {
+            $attributes = '';
+          }
+          echo '<div class="sailthru_form_input form-group">';
+          if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
+
+            echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>
+            <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_id" class="form-control">';
+
+            $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+            foreach( $items as $item ) {
+              $vals = explode( ':', $item );
+              echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+            }
+            echo '</select>';
+
+          }
+          elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
+            $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+            echo '<div class="radio">';
+            echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
+            foreach ( $items as $item ) {
+              $vals = explode( ':', $item );
+              echo '<input ';
+              if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                echo 'required=required ';
+              }
+              echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[0]) . '';
+            }
+            echo '</div>';
+          }
+          elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'checkbox' ) {
+            $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+            echo '<div class="checkbox">';
+            echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
+            foreach ( $items as $item ) {
+              $vals = explode( ':', $item );
+              echo '<input ';
+              if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                echo 'required=required ';
+              }
+              echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]) . '';
+            }
+            echo '</div>';
+          }
+          else{
+                          //check if the field is required
+            if ( $instance['show_'.$name_stripped.'_required'] == 'checked' ) {
+              if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+                echo '<label for="custom_' . esc_attr($name_stripped) . '" class="sailthru-widget-label sailthru-widget-required">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . ' </label>';
+              }
+              echo '<input ' . sailthru_field_class( esc_attr($customfields[ $field_key ]['sailthru_customfield_class']) ) . ' type="' . esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" ';
+              if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+                echo 'value="'.esc_attr($customfields[ $field_key ]['sailthru_customfield_value']).'" ';
+              }
+              echo sailthru_attributes( $attributes ) . 'required="required" name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_name" class="form-control"/>';
+            }
+            else{
+              if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+                echo '<label for="custom_' .esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</label>';
+              }
+              echo '<input ';
+              if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+                echo 'value="'.esc_attr($customfields[ $field_key ]['sailthru_customfield_value']).'" ';
+              }
+              echo sailthru_field_class( esc_attr($customfields[ $field_key ]['sailthru_customfield_class'] ) ) .' type="' .esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" ' . sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped). '" id="sailthru_' .esc_attr($name_stripped). '_id"  class="form-control"/>';
+
+            }
+          }
+          echo '</div>';
+        } //end if !empty name
+      } // end if !empty field key
+    }// end for loop    
+  //}// end for loop
+} else {
+  for ( $i = 0; $i < $key; $i++ ) {
+    $field_key = $i + 1;
+    if ( ! empty( $customfields[ $field_key ] ) ) {
+      $name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+      if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+        if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
+          $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
+        } else {
+          $attributes = '';
+        }
+        echo '<div class="sailthru_form_input form-group">';
+        if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 
                         echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>
                         <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_id" class="form-control">';
@@ -157,4 +270,40 @@
                 </span>
         </form>
     </div>
+
+  <?php 
+  //Gigya login 
+  if ( isset($integrations[ 'sailthru_gigya_enabled' ] ) && isset($integrations[ 'sailthru_gigya_key' ]) && isset( $integrations['sailthru_gigya_url'])){ ?>  
+  <script type="text/javascript" src=<?php echo '"http://cdn.gigya.com/js/socialize.js?apiKey=' . esc_js( $integrations[ 'sailthru_gigya_key' ] ). '"'; ?>>
+  {
+    siteName: <?php echo "'". get_site_url() . "'"; ?> 
+    ,enabledProviders: 'facebook, twitter, linkedin'
+  }
+</script>
+
+<script src="sync.js"></script>
+
+  <script type="text/javascript">
+    SailthruGigya.callback_url = <?php echo '"'. esc_url( $integrations[ 'sailthru_gigya_url' ] ) . '"';?>;
+    gigya.socialize.addEventHandlers({
+        onLogin:SailthruSync
+    });
+  </script>
+     <script type="text/javascript">
+      var login_params=
+      {
+        showTermsLink: 'false'
+        ,height: 100
+        ,width: 330
+        ,containerID: 'componentDiv'
+        ,buttonsStyle: 'fullLogo'
+        ,autoDetectUserProviders: ''
+        ,facepilePosition: 'none'
+      }
+      </script>
+     <div id="componentDiv"></div>
+      <script type="text/javascript">
+         gigya.socialize.showLoginUI(login_params);
+      </script>
+      <?php }//End If?>
 </div>

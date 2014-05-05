@@ -14,9 +14,10 @@
 					$active_tab = 'scout_configuration_page';
 				} else if ( $active_tab == 'settings_configuration_page') {
 					$active_tab = 'settings_configuration_page';
-				}
-				else if ( $active_tab == 'customforms_configuration_page') {
+				} else if ( $active_tab == 'customforms_configuration_page') {
 					$active_tab = 'customforms_configuration_page';
+				} else if( $active_tab == 'integrations_configuration_page') {
+					$active_tab == 'integrations_configuration_page';
 				}
 				else {
 					$active_tab = 'customforms_configuration_page';
@@ -64,6 +65,7 @@
 							<a href="?page=concierge_configuration_page" class="nav-tab <?php echo $active_tab == 'concierge_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Concierge', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=scout_configuration_page" class="nav-tab <?php echo $active_tab == 'scout_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Scout', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=custom_fields_configuration_page" class="nav-tab <?php echo $active_tab == 'custom_fields_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ); ?></a>
+							<a href="?page=integrations_configuration_page" class="nav-tab <?php echo $active_tab == 'integrations_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Integrations', 'sailthru-for-wordpress' ); ?></a>
 
 						</h2>
 
@@ -94,8 +96,11 @@
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
 										settings_fields( 'sailthru_forms_options' );
 										do_settings_sections( 'sailthru_forms_options' );
-										echo '</div>'; // ends the half column begun in delete_field()
+										//echo '</div>'; // ends the half column begun in delete_field()
 								// show welcome page
+								} elseif ( $active_tab == 'integrations_configuration_page') {
+									settings_fields( 'sailthru_integrations_options' );
+									do_settings_sections( 'sailthru_integrations_options' );
 								}
 								else {
 
