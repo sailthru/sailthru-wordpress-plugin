@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
 
 //Enables sortable funcionality on objects IDed by sortable
 jQuery(function() {
-	jQuery( "sortable" ).disableSelection();
+	jQuery( "#sortable" ).disableSelection();
 	var sort = jQuery( "#sortable" ).sortable({
 		axis: 'y',
 		cursor: 'move',

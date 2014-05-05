@@ -162,10 +162,6 @@ function sailthru_initialize_forms_options() {
 
 	function sailthru_forms_callback( $args ) {
 
-		
-		add_action('admin_head', '<script src="http://code.jquery.com/jquery-1.9.1.js"></script>');
-		//echo '<script src="http://code.jquery.com/jquery-1.9.1.js"></script>';
-		//echo '<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>'
 		/*
 		** Custom and Extra Sections should be in a first column.
 		** Begin the column here. It ends in delete_field()
@@ -177,6 +173,9 @@ function sailthru_initialize_forms_options() {
 		$customfields  = get_option( 'sailthru_forms_options' );
 		$key           = get_option( 'sailthru_forms_key' );
 		$order		   = get_option( 'sailthru_customfields_order' );
+		echo '<pre>';
+		var_dump( $order );
+		echo '</pre>';
 		echo '<p><strong>Existing fields</strong></p>';
 		echo '<table class="wp-list-table widefat fixed posts">';
 		echo '<thead>';
