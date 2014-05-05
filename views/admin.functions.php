@@ -166,7 +166,7 @@ function sailthru_initialize_forms_options() {
 		** Custom and Extra Sections should be in a first column.
 		** Begin the column here. It ends in delete_field()
 		*/
-		echo '<div class="column-half">';
+		echo '<div class="wrapper">';
 		echo '<h3>Custom fields</h3>';
 		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>';
 
@@ -228,7 +228,7 @@ function sailthru_initialize_forms_options() {
 		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
 		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 
-
+		echo '</div>';
 	}
 
 	function field_type ( $args ) {
@@ -261,13 +261,6 @@ function sailthru_initialize_forms_options() {
 
 	}
 
-	function sailthru_create_second_column() {
-		/*
-		** Delete and Existing Sections should be in a second column.
-		** Begin the column here. It ends in views/admin.php (unfortunately)
-		*/
-		echo '</div></div><div class="column-half">';
-	}
 
 	function delete_field ( $args ) {
 		$customfields  = get_option( 'sailthru_forms_options' );
@@ -313,9 +306,16 @@ function sailthru_initialize_forms_options() {
 			$message = $customfields['sailthru_customfield_success'];
 		}
 
-		echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
-		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="30">'.esc_textarea($message).'</textarea></p>';
-		echo '<div>'.submit_button('Update') .'</div>';
+
+
+		echo '<div class="inside">';
+			echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
+			echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="30">'.esc_textarea($message).'</textarea></p>';
+			echo '<div>'.submit_button('Update') .'</div>';
+		echo '</div>';
+
+
+
 	}
 
 
@@ -542,7 +542,7 @@ function sailthru_initialize_forms_options() {
 	add_settings_section(
 		'sailthru_delete_section',							// ID used to identify this section and with which to register options
 		__( '', 'sailthru-for-wordpress' ),					// Title to be displayed on the administration page
-		'sailthru_create_second_column',					// Callback used to render the description of the section
+		'',													// Callback used to render the description of the section
 		'sailthru_forms_options'							// Page on which to add this section of options
 	);
 		
@@ -949,8 +949,8 @@ function sailthru_scout_options_callback() {
 } // end sailthru_scout_options_callback
 
 function sailthru_html_fields_options_callback() {
-	echo '<div id="accordion"><h3>Advanced HTML options</h3><div>';
-	//Add additional HTML attributes such as CSS classes and data attributes to the form field. These are optional fields to allow theme developers to integrate with their own themes.
+
+	echo '<h3 class="hndle"><span>Advanced HTML options</span></h3>';
 }
 
 function sailthru_integrations_callback() {
