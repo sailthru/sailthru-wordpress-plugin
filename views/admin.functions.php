@@ -170,58 +170,56 @@ function sailthru_initialize_forms_options() {
 		echo '<h3>Custom fields</h3>';
 		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>';
 
+		
 		$customfields  = get_option( 'sailthru_forms_options' );
 		$key           = get_option( 'sailthru_forms_key' );
-		$order		   = get_option( 'sailthru_customfields_order' );
+
+
 		echo '<pre>';
-		var_dump( $order );
+		print_r($customfields);
 		echo '</pre>';
+
 		echo '<p><strong>Existing fields</strong></p>';
 		echo '<table class="wp-list-table widefat fixed posts">';
 		echo '<thead>';
 		echo '<th scope="col" style="width:20px">&nbsp;</th>';
 		echo '<th scope="col" class="manage-column">Display Label</th>';
-		echo '<th scope="col" class="manage-column">Field Value</th>';
+		echo '<th scope="col" class="manage-column">Field Name</th>';;
 		echo '<th scope="col" class="manage-column">Field Type</th>';
-		echo '<th scope="col" class="manage-column"> </th>';
+		echo '<th>Order</th>';
+		echo '<th scope="col" class="manage-column">Delete?</th>';
 		echo '</thead>';
-		echo '<tbody id="sortable">';
+		echo '<tbody class="sortable">';
 		if ( isset($customfields) && !empty($customfields)){
-			//If these were sorted display in proper order
-			//echo $key;
-			//print_r($customfields);
-			//echo $order;
-			if( isset($order) && !empty($order) ){
-				$order_list = explode(',', $order);
-				foreach ($order_list as $pos) {
-					for ($i=1; $i <= (int)$key; $i++) {
-						if($i == (int)$pos){	
-							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
-								echo '<tr id="pos_'. $i.'">';
-								echo '<td><span class="dashicons icon-sort"></span></td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
-								echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
-							 	echo '</tr>';
-							}
-						}
-					}
+
+			//sort by field order
+		    $sorter=array();
+		    $ret=array();
+		    foreach ($customfields as $ii => $va) {
+		        $sorter[$ii]=$va[$key];
+		    }
+		    asort($sorter);
+		    foreach ($sorter as $ii => $va) {
+		        $ret[$ii]=$customfields[$ii];
+		    }
+		    $customfields=$ret;			
+
+
+			for ($i=1; $i <= (int)$key; $i++) {
+				
+				if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
+					echo '<tr id="pos_' . $i . '">';
+					echo '<td><span class="dashicons icon-sort"></span></td>';
+					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
+					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
+					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';					
+					echo '<td><input type="hidden" class="field_order"  name="sailthru_forms_options[' . $i . '][sailthru_customfield_order]" value="'. esc_html($customfields[$i]['sailthru_customfield_order']) . '" /></td>';
+					echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+				 	echo '</tr>';
 				}
-			} else {
-				for ( $i = 1; $i <= $key; $i++ ) {
-					if( isset($customfields[$i]) && !empty($customfields[$i])){
-						echo '<tr id="pos_'. $i.'">';
-						echo '<td><span class="dashicons icon-sort"></span></td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
-						echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
-						echo '</tr>';
-					}
-					
-				}
+				
 			}
+
 		} 
 		echo '</tbody>';
 		echo '</table>';
@@ -281,15 +279,17 @@ function sailthru_initialize_forms_options() {
 					 }
 				} //end for loop
 		echo '</select>';
+			
 		echo '<div>'.submit_button('Delete Field') .'</div>';
 
 	}
 
-	
+	/*
 	function field_order( $args ){
 		
-		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_field_order]" id="field_order"></input>';
+		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_order]" id="field_order"></input>';
 	}
+	*/
 
 	function sailthru_success_field ( $args ) {
 		$customfields  = get_option( 'sailthru_forms_options' );
@@ -320,7 +320,7 @@ function sailthru_initialize_forms_options() {
 
 
 
-
+	/*
 	function sailthru_fields() {
 
 		    $customfields = get_option( 'sailthru_forms_options' );
@@ -375,6 +375,7 @@ function sailthru_initialize_forms_options() {
 				} // end if
 			}
 	}
+	*/
 
 	function sailthru_value_field ( $args ) {
 		$collection    = $args[0];
@@ -473,16 +474,16 @@ function sailthru_initialize_forms_options() {
 		);
 	
 		add_settings_field(
-			'sailthru_customfield_field_order',
-			__( '', 'sailthru-for-wordpress' ),
-			'field_order',
+			'sailthru_customfield_order',
+			__( 'Field Order', 'sailthru-for-wordpress' ),
+			'sailthru_html_text_input_callback',
 			'sailthru_forms_options',
 			'sailthru_forms_section',
 			array(
 					'sailthru_forms_options',
-					'sailthru_customfield_field_order',
+					'sailthru_customfield_order',
 					'',
-					'sailthru_customfield_field_order',
+					'sailthru_customfield_order',
 				)
 			);
 		
@@ -1289,10 +1290,7 @@ function sailthru_sanitize_text_input( $input ) {
 	$fields = get_option( 'sailthru_forms_options' );
 	$output = $fields;
 	$key    = get_option( 'sailthru_forms_key' );
-	$order = sanitize_text_field($input['sailthru_customfield_field_order']);
-		if ( isset( $order ) and $order != ''){
-			update_option( 'sailthru_customfields_order', $order);	
-		}
+
 		if ( isset( $key ) ) {
 			$new_key = $key + 1;
 			update_option( 'sailthru_forms_key',$new_key );
@@ -1303,12 +1301,11 @@ function sailthru_sanitize_text_input( $input ) {
 		}
 		if ( ! empty( $input['sailthru_customfield_name'] ) ) {
 			//remove custom order
-			delete_option('sailthru_customfields_order');
 			$output[ $new_key ]['sailthru_customfield_label']    = sanitize_text_field($input['sailthru_customfield_label']);
 			$output[ $new_key ]['sailthru_customfield_name']    = sanitize_text_field($input['sailthru_customfield_name']);
 			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
 			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
-			$output[ $new_key ]['sailthru_customfield_field_order']		= sanitize_text_field($input['sailthru_customfield_field_order']);
+			$output[ $new_key ]['sailthru_customfield_order']		= sanitize_text_field($input[$key]['sailthru_customfield_order']);
 			
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
 			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
@@ -1357,15 +1354,49 @@ function sailthru_sanitize_text_input( $input ) {
 		if ( !empty ( $input['sailthru_customfield_delete'] ) ) {
 			unset($output[$input['sailthru_customfield_delete']]);
 			update_option( 'sailthru_forms_options', $output);
-
-			// $order = str_replace( '"'.$input['sailthru_customfield_delete'].'"', '', $order);
-			delete_option('sailthru_customfields_order');
 		}
 		$output['sailthru_customfield_success'] = sanitize_text_field($input['sailthru_customfield_success']);
 
 	return $output;
 
 }
+
+
+/**
+ * Save Sailthru Field order via WP's Ajax
+ */
+function sailthru_save_custom_field_order(){
+
+
+	$order = get_option( 'sailthru_forms_options', array() );
+	
+	$new_order = $_POST['pos'];
+
+	$final = array();	
+
+		foreach( $new_order as $key=>$value ) {
+
+			$update[$value] = array(
+				'sailthru_customfield_order'=> $key
+			);
+
+		} 
+
+		$final = array_replace_recursive( $order, $update );
+	
+
+	update_option( 'sailthru_forms_options', $final );
+
+	$order = get_option( 'sailthru_forms_options' );
+	
+
+	die();
+	
+
+}
+add_action('wp_ajax_sailthru_update_field_order', 'sailthru_save_custom_field_order');
+
+
 function sailthru_setup_handler( $input ) {
 
 	$output = array();

@@ -88,7 +88,7 @@ if ( ! empty( $instance['fields'] ) ) {
   }
   $order_list = explode(',', $order);
 } else {
-  $order = get_option( 'sailthru_customfields_order' );
+  $order = get_option( 'sailthru_customfield_order' );
 }
 if( isset($order ) && $order != '' ){
   $order_list = explode(',', $order);

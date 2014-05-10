@@ -4,11 +4,11 @@
 }
 
 
-#sortable tr:hover, #sortable_widget tr:hover {
+.sortable tr:hover, .sortable_widget tr:hover {
     cursor: pointer;
 }
 
-#sortable tr.ui-sortable-helper, #sortable_widget tr.ui-sortable-helper {
+.sortable tr.ui-sortable-helper, .sortable_widget tr.ui-sortable-helper {
     cursor: move;
 }
 

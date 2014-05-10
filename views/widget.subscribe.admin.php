@@ -5,7 +5,7 @@
 
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
-		$order 		  = get_option( 'sailthru_customfields_order' );
+		$order 		  = get_option( 'sailthru_customfield_order' );
 		$key 		  = get_option( 'sailthru_forms_key' );
 
 		if ( ! is_array( $sailthru ) )
@@ -42,7 +42,7 @@
             </p>
             <p>
 			<?php
-			echo '<div id="sortable_widget">';
+			echo '<div class="sortable_widget">';
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
 			echo '<tr><th style="width:20px"></th><th align="left">Field</th><th align="left">Active</th><th>Required</th></tr>';

@@ -1,7 +1,7 @@
 //Enables sortable funcionality on objects IDed by sortable
 jQuery(document).ready(function() {
-    jQuery("#sortable_widget tbody").disableSelection();
-    var sort = jQuery("#sortable_widget tbody").sortable({
+    jQuery(".sortable_widget tbody").disableSelection();
+    var sort = jQuery(".sortable_widget tbody").sortable({
     	axis: 'y',
 		stop: function (event, ui) {
     		var data = jQuery( this ).sortable("serialize");
@@ -18,37 +18,26 @@ jQuery(document).ready(function() {
 
 //Enables sortable funcionality on objects IDed by sortable
 jQuery(function() {
-	jQuery( "#sortable" ).disableSelection();
-	var sort = jQuery( "#sortable" ).sortable({
+	jQuery( ".sortable" ).disableSelection();
+	var sort = jQuery( ".sortable" ).sortable({
 		axis: 'y',
 		cursor: 'move',
-		stop: function (event, ui) {
-    		var data = sort.sortable("serialize");
-			
-			jQuery.ajax({
-				data: data,
+		update: function () {
+			var order = jQuery( this ).sortable("serialize") + "&action=sailthru_update_field_order";
+			jQuery.post( ajaxurl, order, function(response){
+
+				alert(response);
+
 			});
-			//retrieves the numbered position of the field
-			data = data.match(/\d(\d?)*/g);
-			jQuery(function () {
-				jQuery( "#field_order" ).val( data );
-			})
-				
 		}
 	});
 });
 
-//Enables accordion funcionality on objects IDed by accordion
-jQuery(function() {
-	jQuery( "#accordion" ).accordion({
-	 	collapsible: true,
-	 	active: false
-	 });
-});
 
 //Updates value of hidden value for deletion of widget value
 jQuery(function() {
 	jQuery( ".delete" ).click(function(e) {
+		
 		e.preventDefault();
 		var value = jQuery( this ).val();
 		jQuery( "#delete_value" ).val( value );
