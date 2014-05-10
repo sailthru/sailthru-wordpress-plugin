@@ -27,7 +27,7 @@ jQuery(function() {
 			var order = jQuery( this ).sortable("serialize") + "&action=sailthru_update_field_order";
 			jQuery.post( ajaxurl, order, function(response){
 
-				alert(response);
+				//alert(response);
 
 			});
 		}

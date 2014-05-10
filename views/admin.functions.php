@@ -186,7 +186,6 @@ function sailthru_initialize_forms_options() {
 		echo '<th scope="col" class="manage-column">Display Label</th>';
 		echo '<th scope="col" class="manage-column">Field Name</th>';;
 		echo '<th scope="col" class="manage-column">Field Type</th>';
-		echo '<th>Order</th>';
 		echo '<th scope="col" class="manage-column">Delete?</th>';
 		echo '</thead>';
 		echo '<tbody class="sortable">';
@@ -215,7 +214,6 @@ function sailthru_initialize_forms_options() {
 					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
 					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
 					echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';					
-					echo '<td><input type="hidden" class="field_order"  name="sailthru_forms_options[' . $i . '][sailthru_customfield_order]" value="'. esc_html($customfields[$i]['sailthru_customfield_order']) . '" /></td>';
 					echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
 				 	echo '</tr>';
 				}
@@ -225,6 +223,7 @@ function sailthru_initialize_forms_options() {
 		} 
 		echo '</tbody>';
 		echo '</table>';
+		echo '<input type="hidden" class="field_order"  name="sailthru_forms_options[' . $i . '][sailthru_customfield_order]" value="'. esc_html($customfields[$i]['sailthru_customfield_order']) . '" />';
 		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
 		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 
@@ -861,19 +860,7 @@ function sailthru_initialize_integrations_options(){
 					'sailthru_twitter_url',
 				)
 			);
-		add_settings_field(
-				'sailthru_twitter_salt',	// ID used to identify the field throughout the theme
-				__( 'Twitter Shared Salt', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
-					'sailthru_integrations_options',
-					'sailthru_twitter_salt',
-					'',
-					'sailthru_twitter_salt',
-				)
-			);
+
 
 		add_settings_field(
 				'sailthru_gigya_enabled',	// ID used to identify the field throughout the theme
@@ -919,10 +906,10 @@ function sailthru_initialize_integrations_options(){
 			);
 			
 		
-		register_setting(
+	register_setting(
 		'sailthru_integrations_options',
 		'sailthru_integrations_options',
-		'sailthru_sanitize_text_input'
+		'sailthru_integrations_handler'
 	);
 	
 }
@@ -1006,10 +993,10 @@ function sailthru_html_text_input_callback( $args ) {
  */
 function sailthru_horizon_loadtype_callback() {
 
-   $options = get_option( 'sailthru_setup_options' );
-    $load_type = isset($options['sailthru_horizon_load_type']) ? $options['sailthru_horizon_load_type'] : '';
-   echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
-   echo 'Use synchronous loading for Horizon';
+	$options = get_option( 'sailthru_setup_options' );
+	$load_type = isset($options['sailthru_horizon_load_type']) ? $options['sailthru_horizon_load_type'] : '';
+	echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
+	echo 'Use synchronous loading for Horizon';
 
 }
 
@@ -1017,8 +1004,8 @@ function sailthru_twitter_enabled_callback() {
 
     $options = get_option( 'sailthru_integrations_options' );
     $load_type = isset($options['sailthru_twitter_enabled']) ? $options['sailthru_twitter_enabled'] : '';
-   echo '<input type="checkbox" id="sailthru_twitter_enabled" name="sailthru_integrations_options[sailthru_twitter_enabled]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
-  echo 'Enable Twitter Lead Cards';
+   	echo '<input type="checkbox" id="sailthru_twitter_enabled" name="sailthru_integrations_options[sailthru_twitter_enabled]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
+  	echo 'Enable Twitter Lead Cards';
 
 }
 
@@ -1302,12 +1289,12 @@ function sailthru_sanitize_text_input( $input ) {
 			add_option( 'sailthru_forms_key',$new_key );
 		}
 		if ( ! empty( $input['sailthru_customfield_name'] ) ) {
-			//remove custom order
+			
 			$output[ $new_key ]['sailthru_customfield_label']    = sanitize_text_field($input['sailthru_customfield_label']);
 			$output[ $new_key ]['sailthru_customfield_name']    = sanitize_text_field($input['sailthru_customfield_name']);
 			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
 			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
-			$output[ $new_key ]['sailthru_customfield_order']		= sanitize_text_field($input[$key]['sailthru_customfield_order']);
+			$output[ $new_key ]['sailthru_customfield_order']		= sanitize_text_field($input['sailthru_customfield_order']);
 			
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
 			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
@@ -1385,8 +1372,9 @@ function sailthru_save_custom_field_order(){
 		} 
 
 		$final = array_replace_recursive( $order, $update );
-		print_r( $final );
-		var_dump( update_option( 'sailthru_forms_options', $final ) );
+		//print_r( $final );
+		var_dump( update_option( 'sailthru_customfield_order', $final ) );
+		//update_option_sailthru_forms_options('sailthru_customfield_order', $final);
 
 	
 	die();
@@ -1449,57 +1437,62 @@ function sailthru_setup_handler( $input ) {
 		}
 	}
 
-		if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
-			isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
-			//twitter lead cards
-			$output['sailthru_twitter_enabled'] = filter_var( $input['sailthru_twitter_enabled'], FILTER_SANITIZE_STRING );
-			$output['sailthru_twitter_enabled'] = $input['sailthru_twitter_enabled'] == '1' ? $input['sailthru_twitter_enabled'] : false;
-
-
-			if ( $output['sailthru_twitter_enabled'] ) {
-				$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
-				$output['sailthru_twitter_salt'] = filter_var( $input['sailthru_twitter_salt'], FILTER_SANITIZE_STRING );
-
-				if ( empty( $output['sailthru_twitter_url'] ) ) {
-					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter a Twitter Lead Card URL.' ), 'error' );
-				}
-				if ( empty( $output['sailthru_twitter_salt'] ) ) {
-					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter a Twitter salt.' ), 'error' );
-				}	
-				if( !urlExists($output['sailthru_twitter_url'] ) ){
-					add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Twitter Lead Card callback file does not exist @ ' . $output['sailthru_twitter_url'] ), 'error' );	
-				} 
-			}
-		}
-
-		if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
-		 	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
-
-		 	$output['sailthru_gigya_enabled'] = filter_var( $input['sailthru_gigya_enabled'], FILTER_SANITIZE_STRING );
-		 	$output['sailthru_gigya_enabled'] = $input['sailthru_gigya_enabled'] == '1' ? $input['sailthru_gigya_enabled'] : false;
-			//Gigya Social
-
-			if( $output['sailthru_gigya_enabled'] ){ 
-				$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
-				$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
-
-				if( empty( $output['sailthru_gigya_url'] ) ){
-					 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Social Callback URL.' ), 'error' );
-				}
-				if( empty( $output['sailthru_gigya_key'] ) ){
-					add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Social Key.' ), 'error' );
-				}
-				if( !urlExists( $output['sailthru_gigya_url'] ) ){
-					add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Gigya callback file does not exist @ '. $output['sailthru_gigya_url'] ), 'error' );	
-				} 
-			}
-		 }
 
 	return $output;
 
 }
 // end sailthru_setup_handler
 
+
+function sailthru_integrations_handler( $input ) {
+		$output = array();
+
+	//if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
+	//	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
+		//twitter lead cards
+		$output['sailthru_twitter_enabled'] = filter_var( $input['sailthru_twitter_enabled'], FILTER_SANITIZE_STRING );
+		$output['sailthru_twitter_enabled'] = $input['sailthru_twitter_enabled'] == '1' ? $input['sailthru_twitter_enabled'] : false;
+
+
+		if ( $output['sailthru_twitter_enabled'] ) {
+			$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
+			
+
+			// twitter leads cards are enabled. check for endpoint
+			if ( empty( $output['sailthru_twitter_url'] ) ) {
+				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Enter the address you wish to have your Lead Cards point to.' ), 'error' );
+			} else {
+
+			}
+
+		}
+	//}
+
+	//if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
+	 //	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
+
+	 	$output['sailthru_gigya_enabled'] = filter_var( $input['sailthru_gigya_enabled'], FILTER_SANITIZE_STRING );
+	 	$output['sailthru_gigya_enabled'] = $input['sailthru_gigya_enabled'] == '1' ? $input['sailthru_gigya_enabled'] : false;
+		//Gigya Social
+
+		if( $output['sailthru_gigya_enabled'] ){ 
+			$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
+			$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
+
+			if( empty( $output['sailthru_gigya_url'] ) ){
+				 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Social Callback URL.' ), 'error' );
+			}
+			if( empty( $output['sailthru_gigya_key'] ) ){
+				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Social Key.' ), 'error' );
+			}
+			if( !urlExists( $output['sailthru_gigya_url'] ) ){
+				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Gigya callback file does not exist @ '. $output['sailthru_gigya_url'] ), 'error' );	
+			} 
+		}
+	 //}
+	return $output;
+
+}
 
 
 /* ------------------------------------------------------------------------ *

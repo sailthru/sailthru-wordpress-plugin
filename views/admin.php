@@ -18,8 +18,7 @@
 					$active_tab = 'customforms_configuration_page';
 				} else if( $active_tab == 'integrations_configuration_page') {
 					$active_tab == 'integrations_configuration_page';
-				}
-				else {
+				} else {
 					$active_tab = 'customforms_configuration_page';
 				} // end if/else
 
@@ -71,6 +70,7 @@
 
 						<form method="post" action="options.php">
 							<?php
+								// welcome
 								if ( $active_tab == 'sailthru_configuration_page' ) {
 
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
@@ -94,16 +94,20 @@
 
 								// show custom forms page
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
-										settings_fields( 'sailthru_forms_options' );
-										do_settings_sections( 'sailthru_forms_options' );
-										echo '</div>'; // ends the half column begun in delete_field()
+
+									settings_fields( 'sailthru_forms_options' );
+									do_settings_sections( 'sailthru_forms_options' );
+									//echo '</div>'; // ends the half column begun in delete_field()
+
 								// show welcome page
 								} elseif ( $active_tab == 'integrations_configuration_page') {
+
 									settings_fields( 'sailthru_integrations_options' );
 									do_settings_sections( 'sailthru_integrations_options' );
-								}
-								else {
 
+								// fallback to welcome
+								} else {
+									
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
 
 								} // end if/else

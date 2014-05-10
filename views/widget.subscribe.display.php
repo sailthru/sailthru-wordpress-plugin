@@ -20,7 +20,6 @@
     // display options
     $customfields = get_option( 'sailthru_forms_options' );
     $sailthru = get_option( 'sailthru_setup_options' );
-    $integrations = get_option( 'sailthru_integrations_options' );
     // nonce
     $nonce = wp_create_nonce( 'add_subscriber_nonce' );
 
@@ -47,18 +46,10 @@
               $success = $customfields['sailthru_customfield_success'];
             }
 
-            if(isset($integrations['sailthru_twitter_enabled'])) {
-        ?>
-        <div class="success" hidden="hidden"><?php echo $success;?></div>
-         <form method="post" action="<?php echo $integrations['sailthru_twitter_url']; ?>" class="sailthru-add-subscriber-form">
-        <?php
-            } else {
         ?>
         <div class="success" hidden="hidden"><?php echo $success;?></div>
          <form method="post" action="#" class="sailthru-add-subscriber-form">
-          <?php
-            }
-          ?>
+
             <div class="sailthru-add-subscriber-errors"></div>
 
             <div class="sailthru_form_input form-group">
@@ -271,39 +262,4 @@ if (isset($order_list)){
         </form>
     </div>
 
-  <?php 
-  //Gigya login 
-  if ( isset($integrations[ 'sailthru_gigya_enabled' ] ) && isset($integrations[ 'sailthru_gigya_key' ]) && isset( $integrations['sailthru_gigya_url'])){ ?>  
-  <script type="text/javascript" src=<?php echo '"http://cdn.gigya.com/js/socialize.js?apiKey=' . esc_js( $integrations[ 'sailthru_gigya_key' ] ). '"'; ?>>
-  {
-    siteName: <?php echo "'". get_site_url() . "'"; ?> 
-    ,enabledProviders: 'facebook, twitter, linkedin'
-  }
-</script>
-
-<script src="sync.js"></script>
-
-  <script type="text/javascript">
-    SailthruGigya.callback_url = <?php echo '"'. esc_url( $integrations[ 'sailthru_gigya_url' ] ) . '"';?>;
-    gigya.socialize.addEventHandlers({
-        onLogin:SailthruSync
-    });
-  </script>
-     <script type="text/javascript">
-      var login_params=
-      {
-        showTermsLink: 'false'
-        ,height: 100
-        ,width: 330
-        ,containerID: 'componentDiv'
-        ,buttonsStyle: 'fullLogo'
-        ,autoDetectUserProviders: ''
-        ,facepilePosition: 'none'
-      }
-      </script>
-     <div id="componentDiv"></div>
-      <script type="text/javascript">
-         gigya.socialize.showLoginUI(login_params);
-      </script>
-      <?php }//End If?>
 </div>
