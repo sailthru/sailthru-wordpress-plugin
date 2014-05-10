@@ -176,7 +176,7 @@ function sailthru_initialize_forms_options() {
 
 
 		echo '<pre>';
-		print_r($customfields);
+		var_dump($customfields);
 		echo '</pre>';
 
 		echo '<p><strong>Existing fields</strong></p>';
@@ -193,6 +193,7 @@ function sailthru_initialize_forms_options() {
 		if ( isset($customfields) && !empty($customfields)){
 
 			//sort by field order
+			/*
 		    $sorter=array();
 		    $ret=array();
 		    foreach ($customfields as $ii => $va) {
@@ -202,7 +203,8 @@ function sailthru_initialize_forms_options() {
 		    foreach ($sorter as $ii => $va) {
 		        $ret[$ii]=$customfields[$ii];
 		    }
-		    $customfields=$ret;			
+		    $customfields=$ret;	
+		    */		
 
 
 			for ($i=1; $i <= (int)$key; $i++) {
@@ -1376,20 +1378,17 @@ function sailthru_save_custom_field_order(){
 
 		foreach( $new_order as $key=>$value ) {
 
-			$update[$value] = array(
+			$update[$value]  = array(
 				'sailthru_customfield_order'=> $key
 			);
 
 		} 
 
 		$final = array_replace_recursive( $order, $update );
+		print_r( $final );
+		var_dump( update_option( 'sailthru_forms_options', $final ) );
+
 	
-
-	update_option( 'sailthru_forms_options', $final );
-
-	$order = get_option( 'sailthru_forms_options' );
-	
-
 	die();
 	
 

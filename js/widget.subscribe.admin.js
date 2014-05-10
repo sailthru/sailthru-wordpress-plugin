@@ -16,7 +16,8 @@ jQuery(document).ready(function() {
     });
 });
 
-//Enables sortable funcionality on objects IDed by sortable
+// Enables sortable funcionality on objects IDed by sortable
+// This happens on the 'Subscribe Widget Fields'
 jQuery(function() {
 	jQuery( ".sortable" ).disableSelection();
 	var sort = jQuery( ".sortable" ).sortable({
