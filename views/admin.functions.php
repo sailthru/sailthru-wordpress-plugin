@@ -996,7 +996,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" />';
+	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
 	if (isset($args[4])) {
 		echo '<div class="instructions">'.esc_html($args[4]).'</div>';
 	}
@@ -1461,6 +1461,9 @@ function sailthru_setup_handler( $input ) {
 
 
 function sailthru_integrations_handler( $input ) {
+
+
+
 		$output = array();
 
 		/* 
