@@ -117,7 +117,7 @@ function sailthru_initialize_setup_options() {
 		add_settings_field(
 			'sailthru_override_other_emails',
 			__( 'Override other Wordpress system emails?', 'sailthru-for-wordpress' ),
-			'sailthru_toggle_feature_callback',
+			'sailthru_override_other_emails_callback',
 			'sailthru_setup_options',
 			'sailthru_setup_section',
 			array(
@@ -1031,6 +1031,19 @@ function sailthru_horizon_loadtype_callback() {
 	$load_type = isset($options['sailthru_horizon_load_type']) ? $options['sailthru_horizon_load_type'] : '';
 	echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
 	echo 'Use synchronous loading for Horizon';
+
+}
+
+/**
+ * Creates a checkbox for the Horizon JS output type
+ *
+ */
+function sailthru_override_other_emails_callback() {
+
+	$options = get_option( 'sailthru_setup_options' );
+	$override_on = isset($options['sailthru_override_other_emails']) ? $options['sailthru_override_other_emails'] : '';
+	echo '<input type="checkbox" id="sailthru_override_other_emails" name="sailthru_setup_options[sailthru_override_other_emails]" value="1"' . checked( 1, esc_attr($override_on), false ) . '/>';
+	echo 'Yes';
 
 }
 
