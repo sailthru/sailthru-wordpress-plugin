@@ -1667,8 +1667,8 @@ function sailthru_verify_twitter() {
 
 	$option   = get_option( 'sailthru_integrations_options' );
 		$twitter_enabled = $option['sailthru_twitter_enabled'];
-		$endpoint    = $sailthru['sailthru_twitter_url'];
-		$salt = $sailthru['sailthru_twitter_url'];
+		$endpoint    = $option['sailthru_twitter_url'];
+		$salt = $option['sailthru_twitter_salt'];
 
 	if( !empty( $twitter_enabled ) ) {
 
@@ -1703,8 +1703,8 @@ function sailthru_verify_gigya() {
 
 	$option   = get_option( 'sailthru_integrations_options' );
 		$gigya_enabled = $option['sailthru_gigya_enabled'];
-		$secret_key    = $sailthru['sailthru_gigya_key'];
-		$endpoint= $sailthru['sailthru_gigya_url'];
+		$secret_key    = $option['sailthru_gigya_key'];
+		$endpoint= $option['sailthru_gigya_url'];
 
 	if( !empty( $gigya_enabled ) ) {
 
