@@ -858,8 +858,24 @@ function sailthru_initialize_integrations_options(){
 					'sailthru_twitter_url',
 					'/sailthru/twitter/',
 					'sailthru_twitter_url',
+					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
 				)
 			);
+
+		add_settings_field(
+				'sailthru_twitter_salt',	// ID used to identify the field throughout the theme
+				__( 'Twitter Shared Salt', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_twitter_salt',
+					'',
+					'sailthru_twitter_salt',
+					'Twitter salt is provided by ads platform. Copy and paste it here.'
+				)
+			);		
 
 
 		add_settings_field(
@@ -1462,7 +1478,13 @@ function sailthru_integrations_handler( $input ) {
 			}
 
 			$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
-
+			$output['sailthru_twitter_salt'] = filter_var( $input['sailthru_twitter_salt'], FILTER_SANITIZE_STRING );
+			if ( empty( $output['sailthru_twitter_url'] ) ) {
+				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter your desired endpoint. Example: <strong>sailthru/twitter/</strong>.' ), 'error' );
+			}
+			if ( empty( $output['sailthru_twitter_salt'] ) ) {
+				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-salt-fail', __( 'Copy your Twitter salt into the field below. You can get this by logging into ads.twitter.com.' ), 'error' );
+			}				
 		}
 
 
@@ -1483,9 +1505,6 @@ function sailthru_integrations_handler( $input ) {
 			if( empty( $output['sailthru_gigya_key'] ) ){
 				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Social Key.' ), 'error' );
 			}
-			if( !urlExists( $output['sailthru_gigya_url'] ) ){
-				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Gigya callback file does not exist @ '. $output['sailthru_gigya_url'] ), 'error' );	
-			} 
 		}
 	 
 	return $output;
@@ -1620,14 +1639,4 @@ function sailthru_verify_template( $tpl ) {
 	}
 
 	return $errors;
-}
-
-function urlExists( $url ) {
-	$response = wp_remote_head( $url, array( 'timeout' => 5, ));
-	$accepted_status_codes = array( 200, 301, 302 );
-	if ( !is_wp_error( $response ) && in_array( wp_remote_retrieve_response_code( $response ), $accepted_status_codes)) {
-		return true;
-	}
-
-	return false;
 }
