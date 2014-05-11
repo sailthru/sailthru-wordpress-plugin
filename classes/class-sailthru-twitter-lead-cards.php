@@ -54,14 +54,14 @@ class Sailthru_Twitter_Lead_Cards {
 
 			// create the endpoint using the user-specified url
 			add_rewrite_endpoint( $option['sailthru_twitter_url'], EP_ROOT);
-			//add_rewrite_rule( $option['sailthru_twitter_url'],'index.php?__api=1&twitter=1','top');
+
 		
 		}
 	
 	}	
 
 	/**	
-	* If $_GET['__api'] is set, we kill WP and capture Twitter Lead Cards
+	* If an endpoint is set by the user, we kill WP and capture Twitter Lead Cards
 	* @return die if API request
 	*/
 	public function sniff_requests() {

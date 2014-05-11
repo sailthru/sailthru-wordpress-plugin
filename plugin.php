@@ -86,9 +86,9 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 		$sailthru_twitter = new Sailthru_Twitter_Lead_Cards();
 	}
 
-	//if( class_exists( 'Sailthru_Gigya' ) ) {
-	//	$sailthru_gigya = new Sailthru_Gigya();
-	//}	
+	if( class_exists( 'Sailthru_Gigya' ) ) {
+		$sailthru_gigya = new Sailthru_Gigya();
+	}	
 
 }
 

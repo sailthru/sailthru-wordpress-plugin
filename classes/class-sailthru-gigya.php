@@ -12,6 +12,17 @@ class Sailthru_Gigya {
 	 *--------------------------------------------*/
 	function __construct() {
 
+		$option = get_option( 'sailthru_integrations_options' );	
+			if(! $option['sailthru_gigya_enabled'] )	
+				exit;
+
+		// hook up the endpoint
+		add_action('init', array($this, 'add_endpoint'), 0);
+
+		// do something if our endpoint matches
+		add_action('parse_request', array($this, 'sniff_requests'), 0);
+
+
 		// Register Gigya Javascripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_gigya_scripts' ) );
 
@@ -38,6 +49,47 @@ class Sailthru_Gigya {
 	} // end load_widget_text_domain
 
 
+	/**
+	 * Set up the end point according to user preferences (settings page)
+	 * This only matters if Twitter Lead Cards are turned on.
+	 */
+	public function add_endpoint(){
+
+
+		$option = get_option( 'sailthru_integrations_options' );
+		// twitter leads cards are enabled. check for endpoint
+		if ( ! empty( $option['sailthru_gigya_url'] ) ) {
+
+			// create the endpoint using the user-specified url
+			add_rewrite_endpoint( $option['sailthru_gigya_url'], EP_ROOT);
+		
+		}
+	
+	}	
+
+	/**	
+	* If an endpoint is set by the user, we kill WP and capture Gigya Data
+	* @return die if API request
+	*/
+	public function sniff_requests() {
+
+		global $wp;
+
+		$option = get_option( 'sailthru_integrations_options' );
+			$endpoint = $option['sailthru_gigya_url'];
+		$request = $wp->request;
+		
+		if( !empty( $wp->request ) ) {
+
+			if( stristr( $endpoint, $request ) ){
+				$this->handle_request();
+				exit;
+			}
+
+		}
+	
+	}	
+
 
 	/**
 	 * Add gigya. But only if gigya is turned on.
@@ -45,7 +97,7 @@ class Sailthru_Gigya {
 	public function register_gigya_scripts() {
 
 		// Is Gigya turned on?
-		if( isset($params['sailthru_twitter_enabled']) &&  $params['sailthru_twitter_enabled']) {
+		if( isset($params['sailthru_gigya_enabled']) &&  $params['sailthru_gigya_enabled']) {
 
 			// Check first, otherwise js could throw errors
 			if( get_option('sailthru_setup_complete') ) {
@@ -58,8 +110,108 @@ class Sailthru_Gigya {
 
 		} // end if gigya is on
 
-
 	} // register_gigya_scripts
+
+
+
+	/*--------------------------------------------------*/
+	/* Protected Functions
+	/*--------------------------------------------------*/
+	/** 
+	*	This is where we send off the lead card data to Sailthru.
+	*	@return void 
+	*/
+	protected function handle_request(){
+
+		$option = get_option( 'sailthru_integrations_options' );
+		//$salt = $option['sailthru_twitter_salt'];		
+
+		$social_data = json_decode($_POST['json']);	
+
+		if (isset($_POST['token'])) {
+
+		   if ($_POST['token'] == $token) {
+
+
+				$use_email_as_key = false;
+				$vars = array();
+				// find out what provider we're dealing with;
+				$provider = $social_data->provider;
+
+				// by default use an email address as the key
+				if (isset($social_data->user->email)) {
+
+					$data['key']  = 'email';
+					$data['id'] = $social_data->user->email;
+				
+				} else {
+
+					// need to do check to see if sharding is enabled on the account at setup
+					switch ($provider) {
+						case 'twitter':
+						$data['key'] = 'twitter';
+						break;
+
+						case 'facebook':
+						$data['key'] = 'facebook';
+						break;
+
+						default;
+						// post details on another provider
+						$data['key'] = 'extid';
+					}
+				
+					$data['id'] =  $social_data->loginProviderUID;
+				}
+
+				$data['options'] = array(
+					'login' => array(
+					'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+					'key' => $data['key'],
+					'ip' => $_SERVER['REMOTE_ADDR'],
+					'site' => $_SERVER['HTTP_HOST'],
+				),
+					'fields' => array('activity' => 1),
+				);
+
+				$data['vars'] = array();
+				$not_wanted = array('UID', 'UIDSig', 'UIDSignature');
+
+				foreach ($social_data->user as $key => $val) {
+					// remove Gigya identifiers and put them in a different var
+					if (!in_array($key, $not_wanted)) {
+						$data['vars'][$provider.'_'.$key] = $val;
+					}
+
+				}		   	
+
+			    try {
+
+					$sailthru = get_option('sailthru_setup_options');
+						$api_key = $sailthru['sailthru_api_key'];
+						$api_secret = $sailthru['sailthru_api_secret'];
+					$client = new WP_Sailthru_Client( $api_key, $api_secret);
+
+					$post = $this->apiPost('user', $data);
+
+				} catch (Sailthru_Client_Exception $e) {
+					// log this error for debugging
+					header('HTTP/1.1 500 Server Error');
+				}
+
+			} else {
+				// SEND A 403 Forbidden HTTP code, because the token didn't match
+				header('HTTP/1.1 403 Forbidden');
+			}
+
+		} else {
+			// SEND A 403 Forbidden HTTP code, because there was no token
+			header('HTTP/1.1 403 Forbidden');
+		}
+
+	} // end handle_request()
+
+
 
 	/*-------------------------------------------
 	 * Utility Functions
@@ -72,49 +224,17 @@ class Sailthru_Gigya {
 	 */
 	 function gigya_js() {
 
-	 	$options = get_option('sailthru_setup_options');
-		$horizon_domain = $options['sailthru_horizon_domain'];
-		$gigya = get_option('sailthru_gigya_options');
-		$gigya_params = array();
+		$option = get_option( 'sailthru_integrations_options' );
+			$endpoint = $option['sailthru_gigya_url'];	 	
 
-		// inlcudeConsumed?
-		if( isset($gigya['sailthru_gigya_includeConsumed']) ) {
-			$gigya_params[] = strlen( $gigya['sailthru_gigya_includeConsumed'] ) > 0 ?  'includeConsumed: '. (bool) $gigya['sailthru_gigya_includeConsumed'].'' : '';
-		} else {
-			$gigya['sailthru_gigya_includeConsumed'] = '';
-		}
+		echo '<script src="//ak.sailthru.com/gigya/sync.js"></script>';
 
-		// renderItem?
-		if( isset( $gigya['sailthru_gigya_renderItem']) ) {
-			$gigya_params[] = strlen($gigya['sailthru_gigya_renderItem']) > 0 ?  "renderItem: ". (bool) $gigya['sailthru_gigya_renderItem']."": '';
-		} else {
-			$gigya['sailthru_gigya_renderItem'] = '';
-		}
-
-		if( isset( $gigya['gigya_num_visible']) ) {
-			$gigya_params[] = strlen($gigya['gigya_num_visible']) > 0 ?  "numVisible:'". esc_js( $gigya['sailthru_gigya_number'] )."' ": '';
-		} else {
-			$gigya['gigya_num_visible'] = '';
-		}
-
-
-		if ($gigya['sailthru_gigya_is_on'] == 1) {
-			echo "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/gigya/v1.js\"></script>";
-		 	echo "<script type=\"text/javascript\">\n";
-	           echo "SailthruGigya.setup({\n";
-	           echo "domain: '". esc_js($options['sailthru_horizon_domain'])."',\n";
-				if( is_array($gigya_params) ) {
-					foreach ($gigya_params as $key => $val) {
-						if (strlen($val) >0)  {
-							echo esc_js($val).",\n";
-						}
-					}
-				}
-	           echo "});\n";
-
-		     echo " if(SailthruGigya.allContent.length == 0) { jQuery('#sailthru-gigya').hide() }";
-		     echo "</script>\n";
-		}
+		echo '<script type="text/javascript">';
+			echo 'SailthruGigya.callback_url = "' + get_bloginfo('url')  + '/' + $endpoint + '"';
+			echo 'gigya.socialize.addEventHandlers({';
+	    		echo 'onLogin:SailthruSync';
+			echo '});';
+		echo '</script>'
 
 	 }
 
