@@ -902,8 +902,9 @@ function sailthru_initialize_integrations_options(){
 				array(
 					'sailthru_integrations_options',
 					'sailthru_gigya_key',
-					'Your secret key is provided by Gigya. Copy and paste it here.',
+					'',
 					'sailthru_gigya_key',
+					'Your secret key is provided by Gigya. Copy and paste it here.'
 				)
 			);
 

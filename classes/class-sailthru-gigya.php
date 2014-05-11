@@ -123,14 +123,23 @@ class Sailthru_Gigya {
 	*/
 	protected function handle_request(){
 
+		include_once SAILTHRU_PLUGIN_PATH . "lib/gigya/GSSDK.php";
+
+
 		$option = get_option( 'sailthru_integrations_options' );
 		//$salt = $option['sailthru_twitter_salt'];		
 
 		$social_data = json_decode($_POST['json']);	
 
-		if (isset($_POST['token'])) {
+		$gigya_secret_key = $option['sailthru_gigya_key'];
+		
 
-		   if ($_POST['token'] == $token) {
+		if ( isset( $gigya_secret_key ) ) {
+
+		   	// The security signature check, 
+			//verifying the data's origin, will follow:
+			if ( SigUtils::validateUserSignature( $social_data->UID, $social_data->signatureTimestamp, $gigya_secret_key, $social_data->UIDSignature ) )
+			{
 
 
 				$use_email_as_key = false;
@@ -203,7 +212,7 @@ class Sailthru_Gigya {
 				}
 
 			} else {
-				// SEND A 403 Forbidden HTTP code, because the token didn't match
+				// SEND A 403 Forbidden HTTP code, because the security signature did not verify
 				header('HTTP/1.1 403 Forbidden');
 			}
 
