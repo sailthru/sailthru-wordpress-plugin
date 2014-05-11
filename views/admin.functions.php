@@ -895,14 +895,14 @@ function sailthru_initialize_integrations_options(){
 
 		add_settings_field(
 				'sailthru_gigya_key',	// ID used to identify the field throughout the theme
-				__( 'Gigya Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				__( 'Gigya Secret Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
 				'sailthru_html_text_input_callback',
 				'sailthru_integrations_options',
 				'sailthru_integrations_settings_section',
 				array(
 					'sailthru_integrations_options',
 					'sailthru_gigya_key',
-					'',
+					'Your secret key is provided by Gigya. Copy and paste it here.',
 					'sailthru_gigya_key',
 				)
 			);
@@ -916,8 +916,9 @@ function sailthru_initialize_integrations_options(){
 				array(
 					'sailthru_integrations_options',
 					'sailthru_gigya_url',
-					'',
+					'/sailthru/gigya/',
 					'sailthru_gigya_url',
+					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
 				)
 			);
 			

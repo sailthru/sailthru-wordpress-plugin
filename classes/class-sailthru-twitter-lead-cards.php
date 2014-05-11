@@ -14,7 +14,7 @@ class Sailthru_Twitter_Lead_Cards {
 
 		$option = get_option( 'sailthru_integrations_options' );	
 			if(! $option['sailthru_twitter_enabled'] )	
-				exit;
+				return;
 
 		// hook up the endpoint
 		add_action('init', array($this, 'add_endpoint'), 0);

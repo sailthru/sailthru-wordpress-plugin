@@ -14,7 +14,7 @@ class Sailthru_Gigya {
 
 		$option = get_option( 'sailthru_integrations_options' );	
 			if(! $option['sailthru_gigya_enabled'] )	
-				exit;
+				return;
 
 		// hook up the endpoint
 		add_action('init', array($this, 'add_endpoint'), 0);
@@ -135,6 +135,7 @@ class Sailthru_Gigya {
 
 				$use_email_as_key = false;
 				$vars = array();
+
 				// find out what provider we're dealing with;
 				$provider = $social_data->provider;
 
@@ -146,19 +147,20 @@ class Sailthru_Gigya {
 				
 				} else {
 
-					// need to do check to see if sharding is enabled on the account at setup
+					// need to do check to see if sharing is enabled on the account at setup
 					switch ($provider) {
 						case 'twitter':
-						$data['key'] = 'twitter';
+							$data['key'] = 'twitter';
 						break;
 
 						case 'facebook':
-						$data['key'] = 'facebook';
+							$data['key'] = 'facebook';
 						break;
 
 						default;
-						// post details on another provider
-						$data['key'] = 'extid';
+							// post details on another provider
+							$data['key'] = 'extid';
+						break;
 					}
 				
 					$data['id'] =  $social_data->loginProviderUID;
@@ -178,6 +180,7 @@ class Sailthru_Gigya {
 				$not_wanted = array('UID', 'UIDSig', 'UIDSignature');
 
 				foreach ($social_data->user as $key => $val) {
+
 					// remove Gigya identifiers and put them in a different var
 					if (!in_array($key, $not_wanted)) {
 						$data['vars'][$provider.'_'.$key] = $val;
@@ -234,7 +237,7 @@ class Sailthru_Gigya {
 			echo 'gigya.socialize.addEventHandlers({';
 	    		echo 'onLogin:SailthruSync';
 			echo '});';
-		echo '</script>'
+		echo '</script>';
 
 	 }
 
