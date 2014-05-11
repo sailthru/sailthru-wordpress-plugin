@@ -16,30 +16,7 @@ function sailthru_initialize_setup_options() {
 		'sailthru_setup_options'			// Page on which to add this section of options
 	);
 
-	/*
-		 * Add a new field for selecting the email template to use,
-		 * but don't do this until we have an API key & secret to use.
-		 */
-		$setup = get_option( 'sailthru_setup_options' );
-
-		if ( isset( $setup['sailthru_api_key']) && ! empty ( $setup['sailthru_api_key'] ) &&
-				isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
-
-			add_settings_field(
-				'sailthru_setup_email_template',	// ID used to identify the field throughout the theme
-				__( 'WordPress template', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_setup_email_template_callback',
-				'sailthru_setup_options',
-				'sailthru_setup_section',
-				array(
-					'sailthru_setup_options',
-					'sailthru_setup_email_template',
-					'',
-					'sailthru_setup_email_template',
-				)
-			);
-
-		}
+	
 		add_settings_field(
 			'sailthru_form_name',					// ID used to identify the field throughout the theme
 			__( 'Sailthru field name', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
@@ -111,12 +88,47 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-	   	/*
-		 * Sailthru options for overriding emails
-		*/
+   	/*
+	 * Sailthru options for overriding emails
+	 * Add a new field for selecting the email template to use,
+	 * but don't do this until we have an API key & secret to use.
+	 */
 		
+	$setup = get_option('sailthru_setup_options');
 	if ( isset( $setup['sailthru_api_key']) && ! empty ( $setup['sailthru_api_key'] ) &&
 		 isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
+
+		add_settings_field(
+			'sailthru_setup_email_template',	// ID used to identify the field throughout the theme
+			__( 'WordPress template', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+			'sailthru_setup_email_template_callback',
+			'sailthru_setup_options',
+			'sailthru_setup_section',
+			array(
+				'sailthru_setup_options',
+				'sailthru_setup_email_template',
+				'',
+				'sailthru_setup_email_template',
+			)
+		);
+
+
+
+		add_settings_field(
+			'sailthru_override_other_emails',
+			__( 'Override other Wordpress system emails?', 'sailthru-for-wordpress' ),
+			'sailthru_toggle_feature_callback',
+			'sailthru_setup_options',
+			'sailthru_setup_section',
+			array(
+				'sailthru_setup_options',
+				'sailthru_override_other_emails',
+				'1',
+				'sailthru_override_other_emails',
+				'Yes'
+			)
+		);
+
 
 		add_settings_field(
 				'sailthru_setup_new_user_override_template',	// ID used to identify the field throughout the theme
@@ -129,6 +141,7 @@ function sailthru_initialize_setup_options() {
 					'sailthru_setup_new_user_override_template',
 					'',
 					'sailthru_setup_new_user_override_template',
+					'If left blank, the default Wordpress system email will be used.'
 				)
 			);
 		
@@ -143,6 +156,7 @@ function sailthru_initialize_setup_options() {
 					'sailthru_setup_password_reset_override_template',
 					'',
 					'sailthru_setup_password_reset_override_template',
+					'If left blank, the default Wordpress system email will be used.'
 				)
 			);
 	}
@@ -1192,7 +1206,7 @@ function sailthru_setup_email_template_callback( $args ) {
 
 		//$client = new Sailthru_Client( $api_key, $api_secret );
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-		$sailthru_client = new Sailthru_Client( $api_key, $api_secret );
+			$sailthru_client = new Sailthru_Client( $api_key, $api_secret );
 			try {
 				if ( $client ) {
 					$res = $client->getTemplates();
@@ -1205,11 +1219,19 @@ function sailthru_setup_email_template_callback( $args ) {
 
 
 		if ( isset( $res['error'] ) ) {
+		
 			$tpl =  array();
-		} 
-			//if there are no templates available create a basic one
-			$tpl = $res['templates'];
+		
+		} else {
 
+			$tpl = $res['templates'];
+		}
+
+		// if there are no templates available create a basic one
+		// since multiple settings use this callback, we do this
+		// only if we're in setup mode:
+		if( $arg[1] == 'sailthru_setup_email_template' ) {
+			
 			if( isset($tpl) || $tpl != '') {
 				
 				$name = get_bloginfo('name');
@@ -1233,8 +1255,11 @@ function sailthru_setup_email_template_callback( $args ) {
 				}
 
 			} 
+		}
 		
 	}
+
+
 	if(isset($tpl)){
 		$html = sailthru_create_dropdown( $args, $tpl );
 	} else {
@@ -1553,6 +1578,7 @@ function sailthru_create_dropdown( $args, $values ) {
 	$option_name = $args[1];
 	$default     = $args[2];	// we're not using this yet
 	$html_id     = $args[3];
+	$instructions = $args[4];
 	$current     = get_option( $collection );
 
 	if ( isset( $current[ $option_name ] ) ) {
@@ -1576,6 +1602,10 @@ function sailthru_create_dropdown( $args, $values ) {
 	}
 
 	$html .= '</select>';
+
+	if( !empty($instructions) ) {
+		$html .= '<p class="description">' . $instructions . '</p>';
+	}
 
 	return $html;
 
