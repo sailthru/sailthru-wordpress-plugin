@@ -101,6 +101,70 @@ register_activation_hook( __FILE__, array( 'Sailthru_Horizon', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Sailthru_Horizon', 'deactivate' ) );
 register_uninstall_hook(  __FILE__, array( 'Sailthru_Horizon', 'uninstall' ) );
 
+
+// This is called from sailthru_setup_handler()
+function sailthru_create_wordpress_template(){
+
+	$wordpress_template = 'Wordpress Template';
+
+	if (get_option('sailthru_setup_complete')) {
+
+		$sailthru = get_option('sailthru_setup_options');
+		$api_key = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+
+		$client = new WP_Sailthru_Client( $api_key, $api_secret);
+
+		// Find out if 'Wordpress Template' already exists
+		$template_exists = false;
+
+		try {
+			if ($client) {
+				// if we try to grab a template by name that doesn't exist
+				// the world blows up. Grab them all and loop through
+				$response = $client->getTemplates();			
+				$templates = $response['templates'];
+				foreach($templates as $template) {
+					foreach($template as $key=>$value) {
+						if( $key == 'name' ) {
+							if( $value == $wordpress_template) {
+								$template_exists = true;
+							}
+						}
+					}
+				}				
+			}
+		}		
+		catch (Sailthru_Client_Exception $e) {
+			//silently fail					
+			return;
+		}		
+
+		// the Template doesn't exist, so we need to create it.
+		if( $template_exists === false ) {
+
+			try {
+				if ($client) {
+					$new_template = $client->saveTemplate('wordpress-template',
+						array(	'name' 			=> $wordpress_template,
+								'subject'		=> '{subject}',
+								'content_html'	=>  '{body}'
+						)
+					);
+				}			
+			}		
+			catch (Sailthru_Client_Exception $e) {
+				//silently fail
+				return;
+			}	
+
+		}
+
+	}
+
+}
+
+
 // Add and action to handle when a user logs in
 add_action('wp_login', 'sailthru_user_login', 10, 2);
 

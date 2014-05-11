@@ -880,7 +880,7 @@ function sailthru_initialize_integrations_options(){
 
 		add_settings_field(
 				'sailthru_gigya_enabled',	// ID used to identify the field throughout the theme
-				__( 'Gigya Social Login', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				__( 'Gigya Integration', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
 				'sailthru_gigya_enabled_callback',
 				'sailthru_integrations_options',
 				'sailthru_integrations_settings_section',
@@ -1446,6 +1446,10 @@ function sailthru_setup_handler( $input ) {
 	if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
 			isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
 
+
+		// creates an email template if one does not already exist
+		sailthru_create_wordpress_template();
+
 		// sitewide email template
 		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
 		$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
@@ -1505,10 +1509,10 @@ function sailthru_integrations_handler( $input ) {
 			$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
 
 			if( empty( $output['sailthru_gigya_url'] ) ){
-				 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Social Callback URL.' ), 'error' );
+				 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Callback URL.' ), 'error' );
 			}
 			if( empty( $output['sailthru_gigya_key'] ) ){
-				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Social Key.' ), 'error' );
+				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Secret Key.' ), 'error' );
 			}
 		}
 	 
