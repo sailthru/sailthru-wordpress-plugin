@@ -12,6 +12,10 @@ class Sailthru_Twitter_Lead_Cards {
 	 *--------------------------------------------*/
 	function __construct() {
 
+		$option = get_option( 'sailthru_integrations_options' );	
+			if(! $option['sailthru_twitter_enabled'] )	
+				exit;
+
 		// hook up the endpoint
 		add_action('init', array($this, 'add_endpoint'), 0);
 
@@ -60,17 +64,21 @@ class Sailthru_Twitter_Lead_Cards {
 	* If $_GET['__api'] is set, we kill WP and capture Twitter Lead Cards
 	* @return die if API request
 	*/
-	public function sniff_requests(){
+	public function sniff_requests() {
 
 		global $wp;
 
 		$option = get_option( 'sailthru_integrations_options' );
-		$endpoint = $option['sailthru_twitter_url'];
+			$endpoint = $option['sailthru_twitter_url'];
+		$request = $wp->request;
+		
+		if( !empty( $wp->request ) ) {
 
+			if( stristr( $endpoint, $request ) ){
+				$this->handle_request();
+				exit;
+			}
 
-		if( stristr( $endpoint, $wp->request ) ){
-			$this->handle_request();
-			exit;
 		}
 	
 	}
