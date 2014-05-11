@@ -208,13 +208,18 @@ function sailthru_user_login($user_login, $user) {
 
 /*
  * If this plugin is active, override native WP email functions
+ * sailthru_override_other_emails
  */
 if( get_option('sailthru_override_wp_mail')
 	  && get_option('sailthru_setup_complete')
 		&& !function_exists('wp_mail') ) {
 
-	function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
+	/*
+	 *	Override All Mail
+	 */
+	function wp_mail($to, $subject, $message, $headers = '', $attachments = array(), $vars = array(), $__template='') {
 
+	  $sailthru_options = get_option('sailthru_setup_options');
 	  // we'll be going through Sailthru so we'll handle text/html emails there already
 	  // replace the <> in the reset password message link to allow the link to display.
 	  // in HTML emails
@@ -231,21 +236,90 @@ if( get_option('sailthru_override_wp_mail')
 			'body' => $message
 		);
 
-		// template
-		$sailthru_configs = get_option('sailthru_setup_options');
-		  $template = $sailthru_configs['sailthru_setup_email_template'];
+		
+		// template to use
+		if( empty($__template) ) {
+			$template = $sailthru_configs['sailthru_setup_email_template'];
+		} else {
+			$template = $__template;
+		}
 
 
-		// SEND
+		// SEND (ALL EMAILS)
 		$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];
 			$api_secret = $sailthru['sailthru_api_secret'];
 		$client = new WP_Sailthru_Client( $api_key, $api_secret);
-		$r = $client->send($template, $recipients, $vars, array());
+		try {
+			if ($client) {
+				$r = $client->send($template, $recipients, $vars, array());
+			}
+		}		
+		catch (Sailthru_Client_Exception $e) {
+			//silently fail
+			echo '<pre>';
+			var_dump( $e );
+			echo '</pre>';
+			return;
+		}
 
 		return true;
 
 	}
 
+
+
+
+
+	$sailthru_options = get_option('sailthru_setup_options');
+	if( $sailthru_options['sailthru_override_other_emails'] ) {
+
+		if( !empty( $sailthru_options['sailthru_setup_new_user_override_template'] ) ) {
+			// Redefine user notification function
+			if ( !function_exists('wp_new_user_notification') ) {
+
+				function wp_new_user_notification( $user_id, $plaintext_pass = '' ) {
+				
+					if( !empty($template) ) {
+
+						$vars = array();
+
+						$to = '';
+							if ($user = new WP_User($user_id)) {
+								$vars['user_login'] = stripslashes($user->user_login);
+								$vars['user_email'] = stripslashes($user->user_email); 
+								$vars['first_name'] = $user->first_name;
+								$vars['last_name'] = $user->last_name;	
+								$to = stripslashes($user->user_email); 							
+							}
+						$subject = '{subject}';
+						$message = '{body}';
+						$headers = '';
+						$attachments = array();
+
+						$vars['subject'] = $subject;
+						$vars['body'] = $message;
+						$vars['plaintext_pass'] = $plaintext_pass;
+
+						echo '<h1>' . $template . '</h1>';
+						exit;
+
+						wp_mail($to, $subject, $message, $headers, $attachments, $vars, $template);
+
+					}
+
+				}
+
+			}
+
+		}	
+
+	}
+	
+
 }
+
+
+
+
 

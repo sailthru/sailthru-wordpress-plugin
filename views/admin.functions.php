@@ -1479,11 +1479,15 @@ function sailthru_setup_handler( $input ) {
 
 		// sitewide email template
 		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
-		$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
-		$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
 		if ( empty( $output['sailthru_setup_email_template'] ) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __( 'Please choose a template to use when sending emails sitewide.' ), 'error' );
 		}
+
+		// other email templates
+		if( $input['sailthru_override_other_emails'] == 1) {
+			$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
+			$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
+		}		
 	}
 
 
