@@ -894,6 +894,21 @@ function sailthru_initialize_integrations_options(){
 			);
 
 		add_settings_field(
+				'sailthru_gigya_url',	// ID used to identify the field throughout the theme
+				__( 'Gigya Callback URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+				'sailthru_html_text_input_callback',
+				'sailthru_integrations_options',
+				'sailthru_integrations_settings_section',
+				array(
+					'sailthru_integrations_options',
+					'sailthru_gigya_url',
+					'/sailthru/gigya/',
+					'sailthru_gigya_url',
+					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
+				)
+			);		
+
+		add_settings_field(
 				'sailthru_gigya_key',	// ID used to identify the field throughout the theme
 				__( 'Gigya Secret Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
 				'sailthru_html_text_input_callback',
@@ -908,20 +923,7 @@ function sailthru_initialize_integrations_options(){
 				)
 			);
 
-		add_settings_field(
-				'sailthru_gigya_url',	// ID used to identify the field throughout the theme
-				__( 'Gigya Callback URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
-					'sailthru_integrations_options',
-					'sailthru_gigya_url',
-					'/sailthru/gigya/',
-					'sailthru_gigya_url',
-					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
-				)
-			);
+
 			
 		
 	register_setting(
@@ -1649,3 +1651,75 @@ function sailthru_verify_template( $tpl ) {
 
 	return $errors;
 }
+
+
+
+/**
+ * This function verifies the Twitter integration is set up properly.
+ * But only if the user indicates that Twitter Lead Cards are turned on.
+ */
+function sailthru_verify_twitter() {
+
+	$error = array(
+		'error'	=> false,
+		'errormessage'	=> ''
+	);
+
+	$option   = get_option( 'sailthru_integrations_options' );
+		$twitter_enabled = $option['sailthru_twitter_enabled'];
+		$endpoint    = $sailthru['sailthru_twitter_url'];
+		$salt = $sailthru['sailthru_twitter_url'];
+
+	if( !empty( $twitter_enabled ) ) {
+
+		if( empty( $endpoint ) ) {
+			$error['error'] = true;
+			$error['errormessage'] = 'Please set a Twitter Submit URL for Twitter Lead Cards to work properly.';
+		}
+
+		if( empty( $salt ) ) {
+			$error['error'] = true;
+			$error['errormessage'] = 'Copy and paste your shared salt from ads.twitter.com for Twitter Lead Cards to work properly.';
+		}
+
+	}
+
+	return $error;
+}
+// end sailthru_verify_twitter
+
+
+
+/**
+ * This function verifies the Gigya integration is set up properly.
+ * But only if the user indicates that Twitter Lead Cards are turned on.
+ */
+function sailthru_verify_gigya() {
+
+	$error = array(
+		'error'	=> false,
+		'errormessage'	=> ''
+	);
+
+	$option   = get_option( 'sailthru_integrations_options' );
+		$gigya_enabled = $option['sailthru_gigya_enabled'];
+		$secret_key    = $sailthru['sailthru_gigya_key'];
+		$endpoint= $sailthru['sailthru_gigya_url'];
+
+	if( !empty( $gigya_enabled ) ) {
+
+		if( empty( $endpoint ) ) {
+			$error['error'] = true;
+			$error['errormessage'] = 'Please set a Gigya Callback URL for the Gigya integration to work properly.';
+		}
+
+		if( empty( $secret_key ) ) {
+			$error['error'] = true;
+			$error['errormessage'] = 'Copy and paste your secret key from Gigya for the Gigya integration to work properly.';
+		}
+
+	}
+
+	return $error;
+}
+// end sailthru_verify_twitter
