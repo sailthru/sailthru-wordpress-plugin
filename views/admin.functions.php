@@ -856,7 +856,7 @@ function sailthru_initialize_integrations_options(){
 				array(
 					'sailthru_integrations_options',
 					'sailthru_twitter_url',
-					'',
+					'/sailthru/twitter/',
 					'sailthru_twitter_url',
 				)
 			);
@@ -968,7 +968,7 @@ function sailthru_html_text_input_callback( $args ) {
 	$option_name   = $args[1];
 	$default_value = $args[2];
 	$html_id       = $args[3];
-	//$hint       = $args[4];
+	$hint          = $args[4];
 	$options       = get_option( $collection );
 
 	// Make sure the element is defined in the options. If not, we'll use the preferred default
@@ -980,7 +980,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
+	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" />';
 	if (isset($args[4])) {
 		echo '<div class="instructions">'.esc_html($args[4]).'</div>';
 	}
@@ -1447,34 +1447,32 @@ function sailthru_setup_handler( $input ) {
 function sailthru_integrations_handler( $input ) {
 		$output = array();
 
-	//if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
-	//	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
-		//twitter lead cards
+		/* 
+		 * Twitter 
+		 *
+		 * Pretty urls must be enabled in order for this to work properly.
+		 */
 		$output['sailthru_twitter_enabled'] = filter_var( $input['sailthru_twitter_enabled'], FILTER_SANITIZE_STRING );
 		$output['sailthru_twitter_enabled'] = $input['sailthru_twitter_enabled'] == '1' ? $input['sailthru_twitter_enabled'] : false;
 
-
 		if ( $output['sailthru_twitter_enabled'] ) {
-			$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
-			
 
-			// twitter leads cards are enabled. check for endpoint
-			if ( empty( $output['sailthru_twitter_url'] ) ) {
-				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Enter the address you wish to have your Lead Cards point to.' ), 'error' );
-			} else {
-
+			if ( ! get_option('permalink_structure') ) {
+				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-permalinks', __( 'Permalinks must be enabled for this feature to work. <a href="' . admin_url() . 'options-permalink.php">Go here to enable them</a>.' ), 'error' );
 			}
 
+			$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
+
 		}
-	//}
 
-	//if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
-	 //	isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
 
+
+		/*
+		 * Gigya
+		 */
 	 	$output['sailthru_gigya_enabled'] = filter_var( $input['sailthru_gigya_enabled'], FILTER_SANITIZE_STRING );
 	 	$output['sailthru_gigya_enabled'] = $input['sailthru_gigya_enabled'] == '1' ? $input['sailthru_gigya_enabled'] : false;
-		//Gigya Social
-
+		
 		if( $output['sailthru_gigya_enabled'] ){ 
 			$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
 			$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
@@ -1489,7 +1487,7 @@ function sailthru_integrations_handler( $input ) {
 				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Gigya callback file does not exist @ '. $output['sailthru_gigya_url'] ), 'error' );	
 			} 
 		}
-	 //}
+	 
 	return $output;
 
 }

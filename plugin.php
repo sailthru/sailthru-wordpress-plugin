@@ -49,8 +49,12 @@ require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php');
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
-//require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-social.php' );
-require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-integrations.php');
+
+/*
+ * Get Sailthru Integration classes
+ */
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-gigya.php');
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-twitter-lead-cards.php');
 
 
 
@@ -73,13 +77,19 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 
 	$sailthru_horizon = new Sailthru_Horizon();
 
-	//if( class_exists( 'Sailthru_Concierge' ) ) {
-	//	$sailthru_concierge = new Sailthru_Concierge();
-	//}
 
 	if( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();
 	}
+
+	if( class_exists( 'Sailthru_Twitter_Lead_Cards' ) ) {
+		$sailthru_twitter = new Sailthru_Twitter_Lead_Cards();
+	}
+
+	//if( class_exists( 'Sailthru_Gigya' ) ) {
+	//	$sailthru_gigya = new Sailthru_Gigya();
+	//}	
+
 }
 
 
