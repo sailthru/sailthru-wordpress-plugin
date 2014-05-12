@@ -129,36 +129,41 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-
-		add_settings_field(
-				'sailthru_setup_new_user_override_template',	// ID used to identify the field throughout the theme
-				__( 'Override New User Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_setup_email_template_callback',
-				'sailthru_setup_options',
-				'sailthru_setup_section',
-				array(
-					'sailthru_setup_options',
-					'sailthru_setup_new_user_override_template',
-					'',
-					'sailthru_setup_new_user_override_template',
-					'If left blank, the default Wordpress system email will be used.'
-				)
-			);
 		
-		add_settings_field(
-				'sailthru_setup_password_reset_override_template',	// ID used to identify the field throughout the theme
-				__( 'Override Password Reset Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_setup_email_template_callback',
-				'sailthru_setup_options',
-				'sailthru_setup_section',
-				array(
+
+		if ( isset( $setup['sailthru_override_other_emails'] ) &&  $setup['sailthru_override_other_emails'] ) {
+
+			add_settings_field(
+					'sailthru_setup_new_user_override_template',	// ID used to identify the field throughout the theme
+					__( 'Override New User Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_setup_email_template_callback',
 					'sailthru_setup_options',
-					'sailthru_setup_password_reset_override_template',
-					'',
-					'sailthru_setup_password_reset_override_template',
-					'If left blank, the default Wordpress system email will be used.'
-				)
-			);
+					'sailthru_setup_section',
+					array(
+						'sailthru_setup_options',
+						'sailthru_setup_new_user_override_template',
+						'',
+						'sailthru_setup_new_user_override_template',
+						'If left blank, the default Wordpress system email will be used.'
+					)
+				);
+			
+			add_settings_field(
+					'sailthru_setup_password_reset_override_template',	// ID used to identify the field throughout the theme
+					__( 'Override Password Reset Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_setup_email_template_callback',
+					'sailthru_setup_options',
+					'sailthru_setup_section',
+					array(
+						'sailthru_setup_options',
+						'sailthru_setup_password_reset_override_template',
+						'',
+						'sailthru_setup_password_reset_override_template',
+						'If left blank, the default Wordpress system email will be used.'
+					)
+				);
+
+		}
 	}
 
 		
@@ -1444,6 +1449,8 @@ add_action('wp_ajax_sailthru_update_field_order', 'sailthru_save_custom_field_or
 
 function sailthru_setup_handler( $input ) {
 
+
+
 	$output = array();
 
 	// api key
@@ -1497,10 +1504,10 @@ function sailthru_setup_handler( $input ) {
 		}
 
 		// other email templates
-		if( $input['sailthru_override_other_emails'] == 1) {
-			$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
-			$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
-		}		
+		$output['sailthru_override_other_emails'] = trim( $input['sailthru_override_other_emails'] );
+		$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
+		$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
+				
 	}
 
 

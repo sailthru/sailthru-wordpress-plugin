@@ -252,14 +252,11 @@ if( get_option('sailthru_override_wp_mail')
 		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 		try {
 			if ($client) {
-				$r = $client->send($template, $recipients, $vars, array());
+				$r = $client->send($template, $recipients, $vars, array());			
 			}
 		}		
 		catch (Sailthru_Client_Exception $e) {
 			//silently fail
-			echo '<pre>';
-			var_dump( $e );
-			echo '</pre>';
 			return;
 		}
 
@@ -275,38 +272,45 @@ if( get_option('sailthru_override_wp_mail')
 	if( $sailthru_options['sailthru_override_other_emails'] ) {
 
 		if( !empty( $sailthru_options['sailthru_setup_new_user_override_template'] ) ) {
+
 			// Redefine user notification function
 			if ( !function_exists('wp_new_user_notification') ) {
 
 				function wp_new_user_notification( $user_id, $plaintext_pass = '' ) {
 				
-					if( !empty($template) ) {
+					if ( empty( $plaintext_pass ) )
+						return;
 
-						$vars = array();
+					$sailthru_options = get_option('sailthru_setup_options');
+					$template = $sailthru_options['sailthru_setup_new_user_override_template'];
 
-						$to = '';
-							if ($user = new WP_User($user_id)) {
-								$vars['user_login'] = stripslashes($user->user_login);
-								$vars['user_email'] = stripslashes($user->user_email); 
-								$vars['first_name'] = $user->first_name;
-								$vars['last_name'] = $user->last_name;	
-								$to = stripslashes($user->user_email); 							
-							}
-						$subject = '{subject}';
-						$message = '{body}';
-						$headers = '';
-						$attachments = array();
+					$vars = array();
 
-						$vars['subject'] = $subject;
-						$vars['body'] = $message;
-						$vars['plaintext_pass'] = $plaintext_pass;
+					$to = '';
+						if ($user = new WP_User($user_id)) {
+							$vars['user_login'] = stripslashes($user->user_login);
+							$vars['user_email'] = stripslashes($user->user_email); 
+							$vars['first_name'] = $user->first_name;
+							$vars['last_name'] = $user->last_name;	
+							$to = stripslashes($user->user_email); 							
+						}
+					$subject = sprintf( __('[%s] Your username and password'), get_option('blogname') );
+					
+					$message  = __('Hi there,') . "\r\n\r\n";
+						$message .= sprintf( __("Welcome to %s! Here's how to log in:"), get_option('blogname')) . "\r\n\r\n";
+						$message .= wp_login_url() . "\r\n";
+						$message .= sprintf( __('Username: %s'), $user_login ) . "\r\n";
+						$message .= sprintf( __('Password: %s'), $plaintext_pass ) . "\r\n\r\n";
+						$message .= sprintf( __('If you have any problems, please contact me at %s.'), get_option('admin_email') ) . "\r\n\r\n";
+						$message .= __('Adios!');
+					$headers = '';
+					
+					$attachments = array();
 
-						echo '<h1>' . $template . '</h1>';
-						exit;
 
-						wp_mail($to, $subject, $message, $headers, $attachments, $vars, $template);
+					wp_mail($to, $subject, $message, $headers, $attachments, $vars, $template);
 
-					}
+				
 
 				}
 
@@ -315,7 +319,7 @@ if( get_option('sailthru_override_wp_mail')
 		}	
 
 	}
-	
+
 
 }
 
