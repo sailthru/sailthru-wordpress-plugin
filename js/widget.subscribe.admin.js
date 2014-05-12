@@ -23,17 +23,23 @@ jQuery(function() {
 	var sort = jQuery( ".sortable" ).sortable({
 		axis: 'y',
 		cursor: 'move',
-		update: function () {
+		update: function (event, ui) {
 			var order = jQuery( this ).sortable("serialize") + "&action=sailthru_update_field_order";
+
 			jQuery.post( ajaxurl, order, function(response){
-
-				//alert(response);
-
+				alert(response);
+				//renumber(ui.item)
 			});
 		}
 	});
 });
 
+	function renumber(item) {
+		table = item[0].parentNode;
+		jQuery('.field_order',table).each(function(index,element) {
+			jQuery(this).val( index );
+		});
+	}
 
 //Updates value of hidden value for deletion of widget value
 jQuery(function() {
