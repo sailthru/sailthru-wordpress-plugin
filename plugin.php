@@ -318,6 +318,29 @@ if( get_option('sailthru_override_wp_mail')
 
 		}	
 
+
+		if( !empty( $sailthru_options['sailthru_setup_password_reset_override_template'] ) ) {
+
+			// Redefine admin notification function for password reset
+			if ( !function_exists('wp_password_change_notification') ) {
+
+				function wp_password_change_notification(&$user) {
+					// send a copy of password change notification to the admin
+					// but check to see if it's the admin whose password we're changing, and skip this
+					if ( 0 !== strcasecmp( $user->user_email, get_option( 'admin_email' ) ) ) {
+						$message = sprintf(__('Password Lost and Changed for user: %s'), $user->user_login) . "\r\n";
+						// The blogname option is escaped with esc_html on the way into the database in sanitize_option
+						// we want to reverse this for the plain text arena of emails.
+						$blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
+						wp_mail(get_option('admin_email'), sprintf(__('[%s] Password Lost/Changed'), $blogname), $message);
+					}
+
+				}
+
+			}
+
+		} // end check to override password reset email		
+
 	}
 
 
