@@ -335,7 +335,7 @@ if( get_option('sailthru_override_wp_mail')
 						wp_mail(get_option('admin_email'), sprintf(__('[%s] Password Lost/Changed'), $blogname), $message);
 					}
 
-				}
+				} // end wp_password_change_notification()
 
 			}
 

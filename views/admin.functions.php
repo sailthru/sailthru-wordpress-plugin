@@ -1642,8 +1642,8 @@ function sailthru_create_dropdown( $args, $values ) {
 function sailthru_verify_setup() {
 
   $sailthru   = get_option( 'sailthru_setup_options' );
-  $api_key    = $sailthru['sailthru_api_key'];
-  $api_secret = $sailthru['sailthru_api_secret'];
+  $api_key    = @$sailthru['sailthru_api_key'];
+  $api_secret = @$sailthru['sailthru_api_secret'];
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
 
@@ -1720,9 +1720,23 @@ function sailthru_verify_twitter() {
 	);
 
 	$option   = get_option( 'sailthru_integrations_options' );
-		$twitter_enabled = $option['sailthru_twitter_enabled'];
-		$endpoint    = $option['sailthru_twitter_url'];
-		$salt = $option['sailthru_twitter_salt'];
+		if( isset( $option['sailthru_twitter_enabled'] ) ) {
+			$twitter_enabled = $option['sailthru_twitter_enabled'];
+		} else {
+			$twitter_enabled = false;
+		}
+
+		if( isset($option['sailthru_twitter_url']) ) {
+			$endpoint = $option['sailthru_twitter_url'];
+		} else {
+			$endpoint = false;
+		}
+
+		if( isset( $option['sailthru_twitter_salt'] ) ) {
+			$salt = $option['sailthru_twitter_salt'];
+		} else {
+			$salt = false;
+		}
 
 	if( !empty( $twitter_enabled ) ) {
 
@@ -1756,9 +1770,24 @@ function sailthru_verify_gigya() {
 	);
 
 	$option   = get_option( 'sailthru_integrations_options' );
+		if( isset( $option['sailthru_gigya_enabled'] ) ) {
 		$gigya_enabled = $option['sailthru_gigya_enabled'];
-		$secret_key    = $option['sailthru_gigya_key'];
-		$endpoint= $option['sailthru_gigya_url'];
+		} else {
+			$gigya_enabled = false;
+		}
+
+		if( isset( $option['sailthru_gigya_key'] ) ) {
+			$secret_key    = $option['sailthru_gigya_key'];
+		} else {
+			$secret_key = false;
+		}
+
+		if( isset( $option['sailthru_gigya_url'] ) ) {
+			$endpoint= $option['sailthru_gigya_url'];	
+		} else {
+			$endpoint = false;
+		}
+		
 
 	if( !empty( $gigya_enabled ) ) {
 

@@ -103,6 +103,11 @@ class Sailthru_Horizon {
 			delete_option( 'sailthru_forms_options' );
 		}
 
+		// remove integrations options
+		if( false != get_option('sailthru_integrations_options') ) {
+			delete_option( 'sailthru_integrations_options' );
+		}
+
 
 
 	} // end deactivate

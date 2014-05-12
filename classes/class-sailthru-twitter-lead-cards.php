@@ -13,7 +13,7 @@ class Sailthru_Twitter_Lead_Cards {
 	function __construct() {
 
 		$option = get_option( 'sailthru_integrations_options' );	
-			if(! $option['sailthru_twitter_enabled'] )	
+			if( ! isset( $option['sailthru_twitter_enabled'] ) || ! $option['sailthru_twitter_enabled'] )	
 				return;
 
 		// hook up the endpoint

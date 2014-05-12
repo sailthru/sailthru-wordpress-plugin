@@ -13,7 +13,7 @@ class Sailthru_Gigya {
 	function __construct() {
 
 		$option = get_option( 'sailthru_integrations_options' );	
-			if(! $option['sailthru_gigya_enabled'] )	
+			if(! isset( $option['sailthru_gigya_enabled'] ) || ! $option['sailthru_gigya_enabled'] )	
 				return;
 
 		// hook up the endpoint
