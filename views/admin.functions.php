@@ -1431,7 +1431,6 @@ function sailthru_save_custom_field_order(){
 			$order[$value]['sailthru_customfield_order'] = $key;
 		} 
 
-
 		print_r($order);
 		var_dump( update_option( 'sailthru_forms_options', $order ) );
 
