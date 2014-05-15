@@ -34,19 +34,3 @@ jQuery(function() {
 	});
 });
 
-	function renumber(item) {
-		table = item[0].parentNode;
-		jQuery('.field_order',table).each(function(index,element) {
-			jQuery(this).val( index );
-		});
-	}
-
-//Updates value of hidden value for deletion of widget value
-jQuery(function() {
-	jQuery( ".delete" ).click(function(e) {
-		
-		e.preventDefault();
-		var value = jQuery( this ).val();
-		jQuery( "#delete_value" ).val( value );
-	});
-});

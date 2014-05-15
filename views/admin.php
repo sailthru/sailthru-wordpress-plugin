@@ -108,8 +108,7 @@
 								// show welcome page
 								} elseif ( $active_tab == 'integrations_configuration_page') {
 
-									settings_fields( 'sailthru_integrations_options' );
-									do_settings_sections( 'sailthru_integrations_options' );
+									echo 'there will be neat stuff here';
 
 								// fallback to welcome
 								} else {
