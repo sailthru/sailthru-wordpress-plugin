@@ -6,6 +6,7 @@ jQuery(function() {
 		stop: function (event, ui) {
     		var data = sort.sortable("serialize");
 			
+			// sends GET to current page
 			jQuery.ajax({
 				data: data,
 			});
@@ -36,17 +37,18 @@ jQuery(document).ready(function() {
     	axis: 'y',
 		stop: function (event, ui) {
     		var data = jQuery( this ).sortable("serialize");
-			//console.log( data );
-			//retrieves the numbered position of the field
+ 		
+			var id = ui.item.parents('#sortable_widget').find('.sailthru_field_order').attr('id');
+			//retrieves the numbered position of the field			
 			data = data.match(/\d(\d?)*/g);
 			jQuery(function () {
-				jQuery( "#widget-sailthru-subscribe-id-2-field_order" ).val( data );
+				jQuery( "#" + id ).val( data );
 			});
-				
+
+
 		}
     });
 });
-
 
 
 //Enables accordion funcionality on objects IDed by accordion

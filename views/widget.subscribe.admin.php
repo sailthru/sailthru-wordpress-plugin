@@ -109,7 +109,7 @@
 			echo '</table>';
 			echo '<div>';
 			echo '<p id="field_order" value=""></p>';
-			echo '<input type="hidden" value="" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
+			echo '<input type="hidden" class="sailthru_field_order" value="" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
 			echo '</div>';
 			echo '</div>';
 			
