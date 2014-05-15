@@ -101,14 +101,13 @@
 								// show custom forms page
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
 
-									settings_fields( 'sailthru_forms_options' );
-									do_settings_sections( 'sailthru_forms_options' );
-									//echo '</div>'; // ends the half column begun in delete_field()
+									require( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.subscribe.options.php' );
 
 								// show welcome page
 								} elseif ( $active_tab == 'integrations_configuration_page') {
 
-									echo 'there will be neat stuff here';
+									settings_fields( 'sailthru_integrations_options' );
+									do_settings_sections( 'sailthru_integrations_options' );									
 
 								// fallback to welcome
 								} else {

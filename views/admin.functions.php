@@ -4,7 +4,7 @@
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.concierge.options.php');
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.scout.options.php');
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.integrations.options.php');
-
+	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.subscribe.options.php');
 
 
 
