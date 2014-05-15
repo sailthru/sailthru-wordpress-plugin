@@ -5,7 +5,12 @@
 
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
-		$order 		  = get_option( 'sailthru_customfields_order' );
+		$order 		  = get_option( 'sailthru_customfields_order_widget' );
+
+			if( empty( $order ) ) {
+				$order		   = get_option( 'sailthru_customfields_order' );
+			}
+
 		$key 		  = get_option( 'sailthru_forms_key' );
 
 		if ( ! is_array( $sailthru ) )

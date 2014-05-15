@@ -103,6 +103,15 @@ class Sailthru_Horizon {
 			delete_option( 'sailthru_forms_options' );
 		}
 
+			if( false != get_option('sailthru_customfields_order_widget') ) {
+				delete_option('sailthru_customfields_order_widget');
+			}
+
+			if( false != get_option('sailthru_customfields_order') ) {
+				delete_option('sailthru_customfields_order');
+			}
+
+
 		// remove integrations options
 		if( false != get_option('sailthru_integrations_options') ) {
 			delete_option( 'sailthru_integrations_options' );

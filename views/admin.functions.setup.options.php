@@ -396,7 +396,11 @@ function sailthru_setup_handler( $input ) {
 		sailthru_create_wordpress_template();
 
 		// sitewide email template
-		$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
+		if( isset($input['sailthru_setup_email_template'] )) {
+			$output['sailthru_setup_email_template'] = trim( $input['sailthru_setup_email_template'] );
+		} else {
+			$output['sailthru_setup_email_template'] = false;
+		}
 		if ( empty( $output['sailthru_setup_email_template'] ) ) {
 			add_settings_error( 'sailthru-notices', 'sailthru-config-email-template-fail', __( 'Please choose a template to use when sending emails sitewide.' ), 'error' );
 		}
