@@ -5,54 +5,13 @@
 			<h2><?php _e( 'Sailthru for WordPress', 'sailthru-for-wordpress' ); ?></h2>
 
 			<?php
-				/* Check to see if everything is set up correctly */
+				//Check to see if everything is set up correctly 
 				$verify_setup = sailthru_verify_setup();
 				$verify_twitter = sailthru_verify_twitter();
 				$verify_gigya = sailthru_verify_gigya();
-			?>
 
 
-			<?php if ( $verify_setup['error'] ): ?>
-				<?php if ( $verify_setup['errormessage'] == 'template not configured' ):?>
-					
-					<div class="error settings-error">
-						<p>The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions.</p>
-					</div>
-
-				<?php elseif ( $verify_setup['errormessage'] == 'select a template' ): ?>
-			
-				<div class="error settings-error">
-					<p><a href="?page=settings_configuration_page#sailthru_setup_email_template">Select a Sailthru template</a> to use for all WordPress emails.</p>
-				</div>
-
-				<?php else: ?>
-				
-					<div class="error settings-error">
-						<p>Sailthru is not correctly configured, please check your API key and template settings.</p>
-					</div>
-
-				<?php endif; ?>
-			<?php endif; ?>
-
-			<?php if ( $verify_twitter['error'] ): ?>
-
-				<div class="error settings-error">
-					<p><?php echo $verify_twitter['errormessage']; ?></p>
-				</div>
-
-			<?php endif; ?>	
-
-			<?php if ( $verify_gigya['error'] ): ?>
-
-				<div class="error settings-error">
-					<p><?php echo $verify_gigya['errormessage']; ?></p>
-				</div>
-
-			<?php endif; ?>	
-
-			<?php
-
-
+				// Determine the right settings_section
 				if ( isset( $_GET[ 'page' ] ) ) {
 					$active_tab = $_GET[ 'page' ];
 				} else if ( $active_tab == 'concierge_configuration_page' ) {

@@ -853,6 +853,10 @@ function sailthru_initialize_integrations_options(){
 			'sailthru_integrations_options'			// Page on which to add this section of options
 		);
 
+	$integrations_options = get_option('sailthru_integrations_options');
+
+
+
 		add_settings_field(
 				'sailthru_twitter_enabled',	// ID used to identify the field throughout the theme
 				__( 'Twitter Lead Cards', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
@@ -867,36 +871,42 @@ function sailthru_initialize_integrations_options(){
 					'Enable Twitter Lead Cards',
 				)
 			);
-		add_settings_field(
-				'sailthru_twitter_url',	// ID used to identify the field throughout the theme
-				__( 'Twitter Submit URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
-					'sailthru_integrations_options',
-					'sailthru_twitter_url',
-					'/sailthru/twitter/',
-					'sailthru_twitter_url',
-					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
-				)
-			);
 
-		add_settings_field(
-				'sailthru_twitter_salt',	// ID used to identify the field throughout the theme
-				__( 'Twitter Shared Salt', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
-					'sailthru_integrations_options',
-					'sailthru_twitter_salt',
-					'',
-					'sailthru_twitter_salt',
-					'Twitter salt is provided by ads platform. Copy and paste it here.'
-				)
-			);		
+		if( isset( $integrations_options['sailthru_twitter_enabled']) && $integrations_options['sailthru_twitter_enabled']) {
 
+			add_settings_field(
+					'sailthru_twitter_url',	// ID used to identify the field throughout the theme
+					__( 'Twitter Submit URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_html_text_input_callback',
+					'sailthru_integrations_options',
+					'sailthru_integrations_settings_section',
+					array(
+						'sailthru_integrations_options',
+						'sailthru_twitter_url',
+						'/sailthru/twitter/',
+						'sailthru_twitter_url',
+						'The address you enter is automatically prefixed with ' . get_bloginfo('url')
+					)
+				);
+
+			add_settings_field(
+					'sailthru_twitter_salt',	// ID used to identify the field throughout the theme
+					__( 'Twitter Shared Salt', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_html_text_input_callback',
+					'sailthru_integrations_options',
+					'sailthru_integrations_settings_section',
+					array(
+						'sailthru_integrations_options',
+						'sailthru_twitter_salt',
+						'',
+						'sailthru_twitter_salt',
+						'Twitter salt is provided by ads platform. Copy and paste it here.'
+					)
+				);		
+
+		}		
+
+		
 
 		add_settings_field(
 				'sailthru_gigya_enabled',	// ID used to identify the field throughout the theme
@@ -913,35 +923,39 @@ function sailthru_initialize_integrations_options(){
 				)
 			);
 
-		add_settings_field(
-				'sailthru_gigya_url',	// ID used to identify the field throughout the theme
-				__( 'Gigya Callback URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
-					'sailthru_integrations_options',
-					'sailthru_gigya_url',
-					'/sailthru/gigya/',
-					'sailthru_gigya_url',
-					'The address you enter is automatically prefixed with ' . get_bloginfo('url')
-				)
-			);		
+		if( isset( $integrations_options['sailthru_gigya_enabled']) && $integrations_options['sailthru_gigya_enabled']) {
 
-		add_settings_field(
-				'sailthru_gigya_key',	// ID used to identify the field throughout the theme
-				__( 'Gigya Secret Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
-				'sailthru_html_text_input_callback',
-				'sailthru_integrations_options',
-				'sailthru_integrations_settings_section',
-				array(
+			add_settings_field(
+					'sailthru_gigya_url',	// ID used to identify the field throughout the theme
+					__( 'Gigya Callback URL', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_html_text_input_callback',
 					'sailthru_integrations_options',
-					'sailthru_gigya_key',
-					'',
-					'sailthru_gigya_key',
-					'Your secret key is provided by Gigya. Copy and paste it here.'
-				)
-			);
+					'sailthru_integrations_settings_section',
+					array(
+						'sailthru_integrations_options',
+						'sailthru_gigya_url',
+						'/sailthru/gigya/',
+						'sailthru_gigya_url',
+						'The address you enter is automatically prefixed with ' . get_bloginfo('url')
+					)
+				);		
+
+			add_settings_field(
+					'sailthru_gigya_key',	// ID used to identify the field throughout the theme
+					__( 'Gigya Secret Key', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
+					'sailthru_html_text_input_callback',
+					'sailthru_integrations_options',
+					'sailthru_integrations_settings_section',
+					array(
+						'sailthru_integrations_options',
+						'sailthru_gigya_key',
+						'',
+						'sailthru_gigya_key',
+						'Your secret key is provided by Gigya. Copy and paste it here.'
+					)
+				);
+
+		}
 
 
 			
@@ -1008,7 +1022,11 @@ function sailthru_html_text_input_callback( $args ) {
 	$option_name   = $args[1];
 	$default_value = $args[2];
 	$html_id       = $args[3];
-	$hint          = $args[4];
+	if (isset($args[4])) {
+		$hint          = $args[4];
+	} else {
+		$hint = '';
+	}
 	$options       = get_option( $collection );
 
 	// Make sure the element is defined in the options. If not, we'll use the preferred default
@@ -1021,8 +1039,8 @@ function sailthru_html_text_input_callback( $args ) {
 
 	// Render the output
 	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
-	if (isset($args[4])) {
-		echo '<div class="instructions">'.esc_html($args[4]).'</div>';
+	if ( isset($hint) ) {
+		echo '<div class="instructions">'.esc_html( $hint ).'</div>';
 	}
 
 } // end sandbox_twitter_callback
@@ -1249,7 +1267,12 @@ function sailthru_setup_email_template_callback( $args ) {
 		// if there are no templates available create a basic one
 		// since multiple settings use this callback, we do this
 		// only if we're in setup mode:
-		if( $arg[1] == 'sailthru_setup_email_template' ) {
+		if( isset($arg[1]) ) {
+			$has_default_template = 'sailthru_setup_email_template';
+		} else {
+			$has_default_template = false;
+		}
+		if( $has_default_template ) {
 			
 			if( isset($tpl) || $tpl != '') {
 				
@@ -1261,10 +1284,10 @@ function sailthru_setup_email_template_callback( $args ) {
 						
 						$template = 'default-template';
 						$options = array(
-							'from_name' => '',
-							'from_email' => '',
-							'content_html' => '',
-							'subject' => '' );
+							'from_name' => $name,
+							'from_email' => $email,
+							'content_html' => '{body}',
+							'subject' => '{subject}' );
 						$response = $client->saveTemplate($template, $options);
 						
 					}		
@@ -1334,10 +1357,7 @@ function sailthru_sanitize_text_input( $input ) {
 
 
 
-/**
- * Sanitize the text inputs, and don't let the horizon
- * domain get saved with either http:// https:// or www
- */
+
  function sailthru_forms_handler( $input ) {
 
 	$fields = get_option( 'sailthru_forms_options' );
@@ -1442,29 +1462,56 @@ function sailthru_save_custom_field_order(){
 add_action('wp_ajax_sailthru_update_field_order', 'sailthru_save_custom_field_order');
 
 
-function sailthru_setup_handler( $input ) {
 
+/**
+ * Sanitize the text inputs, and don't let the horizon
+ * domain get saved with either http:// https:// or www
+ */
+function sailthru_setup_handler( $input ) {
 
 
 	$output = array();
 
 	// api key
-	$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
-	$output['sailthru_horizon_load_type'] = filter_var( $input['sailthru_horizon_load_type'], FILTER_SANITIZE_STRING );
-	$output['sailthru_horizon_load_type'] = $input['sailthru_horizon_load_type'] == '1' ? $input['sailthru_horizon_load_type'] : false;
-	
-
-	if ( empty( $output['sailthru_api_key'] ) ) {
-		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __( 'Sailthru will not function without an API key.' ), 'error' );
+	if( isset( $input['sailthru_api_key'] ) ) {
+		$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_api_key'] = false;
 	}
 
+
 	// api secret
-	$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
+	if( isset( $input['sailthru_api_secret'] ) ) {
+		$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_api_secret'] = false;
+	}
+
+
+	// horizon load type
+	if( isset( $input['sailthru_horizon_load_type'] ) ) {
+		$output['sailthru_horizon_load_type'] = 1;
+	} else {
+ 		$output['sailthru_horizon_load_type'] = false;		
+	}
+
+	// horizon domain
+	if( isset( $input['sailthru_horizon_domain']) ) {
+		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_horizon_domain'] = '';
+	}
+	
+
+	// set errors
 	if ( empty( $output['sailthru_api_secret'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-secret-fail', __( 'Sailthru will not function without an API secret.' ), 'error' );
 	}
 
-	$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+	if ( empty( $output['sailthru_api_key'] ) ) {
+		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __( 'Sailthru will not function without an API key.' ), 'error' );
+	}
+	
 	if ( empty( $output['sailthru_horizon_domain'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Horizon domain.' ), 'error' );
 	} else {
@@ -1473,6 +1520,7 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $output['sailthru_horizon_domain'] );
 		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
 
+		// remove trailing 
 		if ( substr( $output['sailthru_horizon_domain'], -1 ) == '/' ) {
 		    $output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
@@ -1499,9 +1547,23 @@ function sailthru_setup_handler( $input ) {
 		}
 
 		// other email templates
-		$output['sailthru_override_other_emails'] = trim( $input['sailthru_override_other_emails'] );
-		$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
-		$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
+		if( isset( $input['sailthru_override_other_emails']) ) {
+			$output['sailthru_override_other_emails'] = trim( $input['sailthru_override_other_emails'] );	
+		} else {
+			$output['sailthru_override_other_emails'] = false;
+		}
+		
+		if( isset( $input['sailthru_setup_new_user_override_template'] ) ) {
+			$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
+		} else {
+			$output['sailthru_setup_new_user_override_template'] = false;
+		}
+
+		if( isset( $input['sailthru_setup_password_reset_override_template'] ) ) {
+			$output['sailthru_setup_password_reset_override_template'] = trim( $input['sailthru_setup_password_reset_override_template'] );
+		} else {
+			$output['sailthru_setup_password_reset_override_template'] = false;
+		}
 				
 	}
 
@@ -1523,23 +1585,28 @@ function sailthru_integrations_handler( $input ) {
 		 *
 		 * Pretty urls must be enabled in order for this to work properly.
 		 */
-		$output['sailthru_twitter_enabled'] = filter_var( $input['sailthru_twitter_enabled'], FILTER_SANITIZE_STRING );
-		$output['sailthru_twitter_enabled'] = $input['sailthru_twitter_enabled'] == '1' ? $input['sailthru_twitter_enabled'] : false;
+		if( isset( $input['sailthru_twitter_enabled'] ) ) {
+			$output['sailthru_twitter_enabled'] = '1';
+		} else { 
+			$output['sailthru_twitter_enabled'] = false;
+		}
+
 
 		if ( $output['sailthru_twitter_enabled'] ) {
 
-			if ( ! get_option('permalink_structure') ) {
-				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-permalinks', __( 'Permalinks must be enabled for this feature to work. <a href="' . admin_url() . 'options-permalink.php">Go here to enable them</a>.' ), 'error' );
+
+			if( isset( $input['sailthru_twitter_url'] ) ) {
+				$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
+			} else {
+				$output['sailthru_twitter_url'] = false;
 			}
 
-			$output['sailthru_twitter_url'] = filter_var( $input['sailthru_twitter_url'], FILTER_SANITIZE_STRING );
-			$output['sailthru_twitter_salt'] = filter_var( $input['sailthru_twitter_salt'], FILTER_SANITIZE_STRING );
-			if ( empty( $output['sailthru_twitter_url'] ) ) {
-				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter your desired endpoint. Example: <strong>sailthru/twitter/</strong>.' ), 'error' );
+			if( isset( $input['sailthru_twitter_salt']) ) {
+				$output['sailthru_twitter_salt'] = filter_var( $input['sailthru_twitter_salt'], FILTER_SANITIZE_STRING );
+			} else {
+				$output['sailthru_twitter_salt'] = false;
 			}
-			if ( empty( $output['sailthru_twitter_salt'] ) ) {
-				add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-salt-fail', __( 'Copy your Twitter salt into the field below. You can get this by logging into ads.twitter.com.' ), 'error' );
-			}				
+			
 		}
 
 
@@ -1547,19 +1614,27 @@ function sailthru_integrations_handler( $input ) {
 		/*
 		 * Gigya
 		 */
-	 	$output['sailthru_gigya_enabled'] = filter_var( $input['sailthru_gigya_enabled'], FILTER_SANITIZE_STRING );
-	 	$output['sailthru_gigya_enabled'] = $input['sailthru_gigya_enabled'] == '1' ? $input['sailthru_gigya_enabled'] : false;
+		if( isset( $input['sailthru_gigya_enabled'] ) ) {
+	 		$output['sailthru_gigya_enabled'] = 1;
+	 	} else {
+	 		$output['sailthru_gigya_enabled'] = false;
+	 	}
+
 		
 		if( $output['sailthru_gigya_enabled'] ){ 
-			$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
-			$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
 
-			if( empty( $output['sailthru_gigya_url'] ) ){
-				 add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Callback URL.' ), 'error' );
+			if ( isset( $input['sailthru_gigya_key'] ) ) {
+				$output['sailthru_gigya_key'] = filter_var( $input['sailthru_gigya_key'], FILTER_SANITIZE_STRING );
+			} else {
+				$output['sailthru_gigya_key'] = false;
 			}
-			if( empty( $output['sailthru_gigya_key'] ) ){
-				add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Secret Key.' ), 'error' );
+
+			if( isset( $input['sailthru_gigya_url']) ) {
+				$output['sailthru_gigya_url'] = filter_var( $input['sailthru_gigya_url'], FILTER_SANITIZE_STRING );
+			} else {
+				$output['sailthru_gigya_url'] = false;
 			}
+
 		}
 	 
 	return $output;
@@ -1597,7 +1672,11 @@ function sailthru_create_dropdown( $args, $values ) {
 	$option_name = $args[1];
 	$default     = $args[2];	// we're not using this yet
 	$html_id     = $args[3];
-	$instructions = $args[4];
+	if (isset ($args[4]) ) {
+		$instructions = $args[4];
+	} else {
+		$instructions = false;
+	}
 	$current     = get_option( $collection );
 
 	if ( isset( $current[ $option_name ] ) ) {
@@ -1643,9 +1722,7 @@ function sailthru_verify_setup() {
   $res        = array();
 
   if ( $template == '' ) {
-	  $res['error'] = true;
-	  $res['errormessage'] = 'select a template';
-
+		add_settings_error( 'sailthru-notices', 'sailthru-verify-settings-fail', __( '<a href="?page=settings_configuration_page#sailthru_setup_email_template">Select a Sailthru template</a> to use for all WordPress emails.' ), 'error' );
   } else {
 
   	// now check to see if we can make an API call
@@ -1659,16 +1736,10 @@ function sailthru_verify_setup() {
   		$tpl_errors = sailthru_verify_template( $tpl );
 
   		if ( count( $tpl_errors ) > 0 ) {
-  			// add errors to the error message
-  			$res['error'] = true;
-  			$res['errormessage'] = 'template not configured';
-  		} else {
-  			$res['error'] = false;
-  		}
-
+			add_settings_error( 'sailthru-notices', 'sailthru-verify-template-fail', __( 'The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions.' ), 'error' );
+  		} 
   	} else {
-  		$res['error'] = true;
-  		$res['errormessage'] = 'not configured';
+  		add_settings_error( 'sailthru-notices', 'sailthru-verify-config-fail', __( 'Sailthru is not correctly configured, please check your API key and template settings.' ), 'error' );
   	}
 
   }
@@ -1709,10 +1780,11 @@ function sailthru_verify_template( $tpl ) {
  */
 function sailthru_verify_twitter() {
 
-	$error = array(
-		'error'	=> false,
-		'errormessage'	=> ''
-	);
+
+	if ( ! get_option('permalink_structure') ) {
+		add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-permalinks', __( 'Permalinks must be enabled for this feature to work. <a href="' . admin_url() . 'options-permalink.php">Go here to enable them</a>.' ), 'error' );
+	}	
+
 
 	$option   = get_option( 'sailthru_integrations_options' );
 		if( isset( $option['sailthru_twitter_enabled'] ) ) {
@@ -1736,18 +1808,16 @@ function sailthru_verify_twitter() {
 	if( !empty( $twitter_enabled ) ) {
 
 		if( empty( $endpoint ) ) {
-			$error['error'] = true;
-			$error['errormessage'] = 'Please set a Twitter Submit URL for Twitter Lead Cards to work properly.';
+			add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter your desired endpoint. Example: <strong>sailthru/twitter/</strong>.' ), 'error' );
 		}
 
 		if( empty( $salt ) ) {
-			$error['error'] = true;
-			$error['errormessage'] = 'Copy and paste your shared salt from ads.twitter.com for Twitter Lead Cards to work properly.';
+			add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-salt-fail', __( 'Copy your Twitter salt into the field below. You can get this by logging into ads.twitter.com.' ), 'error' );
 		}
 
 	}
 
-	return $error;
+	return;
 }
 // end sailthru_verify_twitter
 
@@ -1759,10 +1829,6 @@ function sailthru_verify_twitter() {
  */
 function sailthru_verify_gigya() {
 
-	$error = array(
-		'error'	=> false,
-		'errormessage'	=> ''
-	);
 
 	$option   = get_option( 'sailthru_integrations_options' );
 		if( isset( $option['sailthru_gigya_enabled'] ) ) {
@@ -1787,17 +1853,15 @@ function sailthru_verify_gigya() {
 	if( !empty( $gigya_enabled ) ) {
 
 		if( empty( $endpoint ) ) {
-			$error['error'] = true;
-			$error['errormessage'] = 'Please set a Gigya Callback URL for the Gigya integration to work properly.';
+			add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Callback URL.' ), 'error' );
 		}
 
 		if( empty( $secret_key ) ) {
-			$error['error'] = true;
-			$error['errormessage'] = 'Copy and paste your secret key from Gigya for the Gigya integration to work properly.';
+			add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Secret Key.' ), 'error' );
 		}
 
 	}
 
-	return $error;
+	return;
 }
 // end sailthru_verify_twitter

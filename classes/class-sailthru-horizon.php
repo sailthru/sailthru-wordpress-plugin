@@ -48,7 +48,7 @@ class Sailthru_Horizon {
 	 * 			uses "Network Activate" action, false if WPMU is
 	 * 			disabled or plugin is activated on an individual blog
 	 */
-	public function activate( $network_wide ) {
+	public static function activate( $network_wide ) {
 
 		if ( ! current_user_can( 'activate_plugins' ) )
             return;
@@ -67,7 +67,7 @@ class Sailthru_Horizon {
 	 * 			uses "Network Activate" action, false if WPMU is
 	 * 			disabled or plugin is activated on an individual blog
 	 */
-	public function deactivate( $network_wide ) {
+	public static function deactivate( $network_wide ) {
 
 		if ( ! current_user_can( 'activate_plugins' ) )
             return;
@@ -119,7 +119,7 @@ class Sailthru_Horizon {
 	 * 			uses "Network Activate" action, false if WPMU is
 	 * 			disabled or plugin is activated on an individual blog
 	 */
-	public function uninstall( $network_wide ) {
+	public static function uninstall( $network_wide ) {
 		// nothing to see here.
 	} // end uninstall
 

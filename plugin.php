@@ -77,7 +77,6 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 
 	$sailthru_horizon = new Sailthru_Horizon();
 
-
 	if( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();
 	}
@@ -93,6 +92,7 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 }
 
 
+
 /**
  * Register hooks that are fired when the plugin is activated,
  * deactivated, and uninstalled, respectively.
@@ -100,6 +100,7 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 register_activation_hook( __FILE__, array( 'Sailthru_Horizon', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Sailthru_Horizon', 'deactivate' ) );
 register_uninstall_hook(  __FILE__, array( 'Sailthru_Horizon', 'uninstall' ) );
+
 
 
 // This is called from sailthru_setup_handler()
