@@ -101,8 +101,10 @@
 								// show custom forms page
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
 
-									settings_fields( 'sailthru_forms_options' );
-									do_settings_sections( 'sailthru_forms_options' );									
+									//echo '<div id="poststuff"  class="metabox-holder columns-1">'; // helps style boxes
+										settings_fields( 'sailthru_forms_options' );
+										do_settings_sections( 'sailthru_forms_options' );									
+									//echo '</div>';
 
 								// show welcome page
 								} elseif ( $active_tab == 'integrations_configuration_page') {

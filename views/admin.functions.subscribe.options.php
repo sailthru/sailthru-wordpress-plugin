@@ -13,13 +13,12 @@ function sailthru_initialize_forms_options() {
 		** Begin the column here. It ends in delete_field()
 		*/
 		echo '<div class="wrap">';
-		echo '<h3>Custom fields</h3>';
+		echo '<h2>Custom fields</h2>';
 		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>';
 
 		$customfields  = get_option( 'sailthru_forms_options' );
 		$key           = get_option( 'sailthru_forms_key' );
 		$order		   = get_option( 'sailthru_customfields_order' );
-		echo '<p><strong>Existing fields</strong></p>';
 		echo '<table class="wp-list-table widefat">';
 		echo '<thead>';
 		echo '<th scope="col" class=manage-column">&nbsp;</th>';
@@ -69,6 +68,9 @@ function sailthru_initialize_forms_options() {
 		echo '</tbody>';
 		echo '</table>';
 		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
+		
+
+		echo '<h2>Add new custom fields to your Subscribe Widget';
 		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 
 
@@ -109,7 +111,7 @@ function sailthru_initialize_forms_options() {
 		** Delete and Existing Sections should be in a second column.
 		** Begin the column here. It ends in views/admin.php (unfortunately)
 		*/
-		echo '</div></div><div class="wrap">';
+		echo '';
 	}
 
 	function delete_field ( $args ) {
@@ -156,11 +158,21 @@ function sailthru_initialize_forms_options() {
 			$message = $customfields['sailthru_customfield_success'];
 		}
 
-		echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
-		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="30">'.esc_textarea($message).'</textarea></p>';
-		echo '<div>'.submit_button('Update') .'</div>';
-	}
+		echo '<div  id="postbox-container-1" class="postbox-container">';
+			echo '<div id="normal-sortables" class="meta-box-sortables ui-sortable">';
+				echo '<div id="dashboard_right_now" class="postbox ">';
+					echo '<h3 class="hndle"><span>Custom Thank You Message</span></h3>';	
+					echo '<div class="inside">';
+						echo '<div class="main">';	
+						echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
+						echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="80">'.esc_textarea($message).'</textarea></p>';
+						echo '<div style="text-align:left;"><input type="submit" name="submit" id="submit" class="button button-primary" value="Update Thank You Message"></div>';
+					echo '</div>';
+				echo '</div>';
+			echo '</div>';
+		echo '</div>';
 
+	}
 
 
 
@@ -261,9 +273,13 @@ function sailthru_initialize_forms_options() {
 		add_option( 'sailthru_forms_options' );
 	} // end if
 
-
 	$forms = get_option( 'sailthru_forms_options' );
 
+
+
+	/* ------------------------------------------------------------------------ *
+	 * Show Options for Adding Custom Fields
+	 * ------------------------------------------------------------------------ */	
 	add_settings_section(
 		'sailthru_forms_section',							// ID used to identify this section and with which to register options
 		__( '', 'sailthru-for-wordpress' ),	// Title to be displayed on the administration page
@@ -345,11 +361,13 @@ function sailthru_initialize_forms_options() {
 		);
 
 
-		
 
+	/* ------------------------------------------------------------------------ *
+	 * Show Existing Advanced Fields
+	 * ------------------------------------------------------------------------ */
 	add_settings_section(
 		'sailthru_adv_section',								// ID used to identify this section and with which to register options
-		__( 'Additional HTML Attributes', 'sailthru-for-wordpress' ),	     // Title to be displayed on the administration page
+		__( '', 'sailthru-for-wordpress' ),	     // Title to be displayed on the administration page
 		'sailthru_html_fields_options_callback',							// Callback used to render the description of the section
 		'sailthru_forms_options'							// Page on which to add this section of options
 	);
@@ -381,14 +399,21 @@ function sailthru_initialize_forms_options() {
 					'sailthru_customfield_attr'
 				)
 		);
-	
+
+
+
+		
+
+	/* ------------------------------------------------------------------------ *
+	 * Custom Success Message
+	 * ------------------------------------------------------------------------ */	
 	add_settings_section(
 		'sailthru_delete_section',							// ID used to identify this section and with which to register options
 		__( '', 'sailthru-for-wordpress' ),					// Title to be displayed on the administration page
 		'sailthru_create_second_column',					// Callback used to render the description of the section
 		'sailthru_forms_options'							// Page on which to add this section of options
 	);
-		
+
 			
 		add_settings_field(
 				'sailthru_customfield_success',				// ID used to identify the field throughout the theme
@@ -403,6 +428,8 @@ function sailthru_initialize_forms_options() {
 					'sailthru_customfield_success'
 				)
 		);
+
+
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_forms_options',
@@ -427,7 +454,7 @@ add_action( 'admin_init', 'sailthru_initialize_forms_options' );
 
 
 function sailthru_html_fields_options_callback() {
-	echo '<div id="accordion"><h3>Advanced HTML options</h3><div>';
+	echo '<h2>Advanced HTML options</h2>';
 	//Add additional HTML attributes such as CSS classes and data attributes to the form field. These are optional fields to allow theme developers to integrate with their own themes.
 }
 

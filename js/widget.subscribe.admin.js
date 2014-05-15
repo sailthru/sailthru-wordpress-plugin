@@ -51,14 +51,6 @@ jQuery(document).ready(function() {
 });
 
 
-//Enables accordion funcionality on objects IDed by accordion
-jQuery(function() {
-	jQuery( "#accordion" ).accordion({
-	 	collapsible: true,
-	 	active: false
-	 });
-});
-
 
 
 
