@@ -1431,7 +1431,12 @@ function sailthru_sanitize_text_input( $input ) {
 			unset($output[$input['sailthru_customfield_delete']]);
 			update_option( 'sailthru_forms_options', $output);
 		}
-		$output['sailthru_customfield_success'] = sanitize_text_field($input['sailthru_customfield_success']);
+
+		if( isset( $input['sailthru_customfield_success'] ) ) {
+			$output['sailthru_customfield_success'] = sanitize_text_field($input['sailthru_customfield_success']);
+		} else {
+			$output['sailthru_customfield_success'] = false;
+		}
 
 	return $output;
 
@@ -1451,9 +1456,7 @@ function sailthru_save_custom_field_order(){
 			$order[$value]['sailthru_customfield_order'] = $key;
 		} 
 
-		print_r($order);
 		var_dump( update_option( 'sailthru_forms_options', $order ) );
-
 
 	die();
 	
