@@ -50,22 +50,28 @@
 			echo '<div id="sortable_widget">';
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
-			echo '<tr><th align="left">Field</th><th align="left">Active</th><th>Req</th></tr>';
+				echo '<tr>';
+					echo '<th>&nbsp;</th>';
+					echo '<th align="left">Field</th>';
+					echo '<th align="left">Active</th>';
+					echo '<th>Req</th>';
+				echo '</tr>';
 			echo '</thead>';
 			echo '<tbody class="ui-sortable">';
-			echo '<tr id="not_sortable"><td>Email</td><td colspan="2">Always displayed</td></tr>';
+			echo '<tr id="not_sortable"><td>&nbsp;</td><td>Email</td><td colspan="2">Always displayed</td></tr>';
 			if ( isset($customfields) && !empty($customfields)){
 			//If these were sorted display in proper order
 			if( isset($order ) && $order != '' ){
 				$order_list = explode(',', $order);
 			}
 			if( isset($order_list) ){
-			for ( $j = 0; $j < count($order_list); $j++ ) {
-						$field_key = (int)$order_list[$j];
-						for ( $i = 0; $i <= $key; $i++ ) {
-							if ( $i == $field_key ) {
-								echo '<tr id="pos_' . $field_key . '">';
-								if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+				for ( $j = 0; $j < count($order_list); $j++ ) {
+					$field_key = (int)$order_list[$j];
+					for ( $i = 0; $i <= $key; $i++ ) {
+						if ( $i == $field_key ) {
+							echo '<tr id="pos_' . $field_key . '">';
+							if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+								echo '<td><span class="icon-sort">&nbsp;</span></td>';
 								$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
 
 								if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
@@ -79,15 +85,15 @@
 									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
 								}
 								echo '</tr>';
-							}
-						} //if field name exists
+							} //if field name exists
+						} 
 					} //for loop
 				} //for loop
 			} else {
 				 for ( $i = 0; $i <= $key; $i++ ) {
-				// 		//if ( $i == $field_key ) {
-				 			echo '<tr id="pos_' . $i . '">';
-				 			if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+			 			echo '<tr id="pos_' . $i . '">';
+			 			if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name']);
 
 							if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
@@ -101,10 +107,7 @@
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
 							}
 						}
-	
-				 			echo '</tr>';
-
-				// 		//} //if field name exists
+			 			echo '</tr>';
 				 	} //for loop
 				} //for loop
 			}

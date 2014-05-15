@@ -22,6 +22,7 @@ function sailthru_initialize_forms_options() {
 		echo '<p><strong>Existing fields</strong></p>';
 		echo '<table class="wp-list-table widefat">';
 		echo '<thead>';
+		echo '<th scope="col" class=manage-column">&nbsp;</th>';
 		echo '<th scope="col" class="manage-column">Display Label</th>';
 		echo '<th scope="col" class="manage-column">Field Value</th>';
 		echo '<th scope="col" class="manage-column">Field Type</th>';
@@ -40,6 +41,7 @@ function sailthru_initialize_forms_options() {
 						if($i == (int)$pos){	
 							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
 								echo '<tr id="pos_'. $i.'">';
+								echo '<td><span class="icon-sort">&nbsp;</span></td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
@@ -53,6 +55,7 @@ function sailthru_initialize_forms_options() {
 				for ( $i = 1; $i <= $key; $i++ ) {
 					if( isset($customfields[$i]) && !empty($customfields[$i])){
 						echo '<tr id="pos_'. $i.'">';
+						echo '<td><span class="icon-sort">&nbsp;</span></td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
@@ -106,7 +109,7 @@ function sailthru_initialize_forms_options() {
 		** Delete and Existing Sections should be in a second column.
 		** Begin the column here. It ends in views/admin.php (unfortunately)
 		*/
-		echo '</div></div><div class="column-half">';
+		echo '</div></div><div class="wrap">';
 	}
 
 	function delete_field ( $args ) {
