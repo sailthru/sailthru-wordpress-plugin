@@ -5,7 +5,7 @@
 
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
-		$order 		  = get_option( 'sailthru_customfield_order' );
+		$order 		  = get_option( 'sailthru_customfields_order' );
 		$key 		  = get_option( 'sailthru_forms_key' );
 
 		if ( ! is_array( $sailthru ) )
@@ -42,13 +42,13 @@
             </p>
             <p>
 			<?php
-			echo '<div class="sortable_widget">';
+			echo '<div id="sortable_widget">';
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
-			echo '<tr><th style="width:20px"></th><th align="left">Field</th><th align="left">Active</th><th>Required</th></tr>';
+			echo '<tr><th align="left">Field</th><th align="left">Active</th><th>Req</th></tr>';
 			echo '</thead>';
-			echo '<tbody>';
-			echo '<tr id="not_sortable"><td>&nbsp;</td><td>Email</td><td colspan="2">Always displayed</td></tr>';
+			echo '<tbody class="ui-sortable">';
+			echo '<tr id="not_sortable"><td>Email</td><td colspan="2">Always displayed</td></tr>';
 			if ( isset($customfields) && !empty($customfields)){
 			//If these were sorted display in proper order
 			if( isset($order ) && $order != '' ){
@@ -64,13 +64,11 @@
 								$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
 
 								if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
-									echo '<td><span class="dashicons icon-sort"></span></td>';
 									echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</td>';
 									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
 									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
 								}
 								else{
-									echo '<td><span class="dashicons icon-sort"></span></td>';
 									echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</td>';
 									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
 									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
@@ -88,13 +86,11 @@
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name']);
 
 							if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
-								echo '<td><span class="dashicons icon-sort"></span></td>';
 								echo '<td>'. esc_html($customfields[ $i ]['sailthru_customfield_label']) . '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
 							}
 							else{
-								echo '<td><span class="dashicons icon-sort"></span></td>';
 								echo '<td>'. esc_html($customfields[ $i ]['sailthru_customfield_label'] ). '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';

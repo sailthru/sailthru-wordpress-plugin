@@ -56,7 +56,10 @@ require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-gigya.php');
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-twitter-lead-cards.php');
 
-
+/*
+ * Get Sailthru Custom Subscribe Fields classes
+ */
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-subscribe-fields.php');
 
 /*
  * Sailthru for Wordpress admin view settings and registrations.
@@ -88,6 +91,10 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 	if( class_exists( 'Sailthru_Gigya' ) ) {
 		$sailthru_gigya = new Sailthru_Gigya();
 	}	
+
+	//if( class_exists( 'Sailthru_Subscribe_Fields' ) ) {
+	//	$sailthru_subscribe_fields = new Sailthru_Subscribe_Fields();
+	//}
 
 }
 

@@ -119,14 +119,14 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				$instance['show_'.$name_stripped.'_name']     = (bool) $new_instance['show_'.$name_stripped.'_name'];
 				$instance['show_'.$name_stripped.'_required'] = (bool) $new_instance['show_'.$name_stripped.'_required'];
 				$instance['show_'.$name_stripped.'_type']     = $new_instance['show_'.$name_stripped.'_type'];
-				$instance['sailthru_customfield_order'] = sanitize_text_field($new_instance['field_order']);
+				$instance['sailthru_customfields_order'] = sanitize_text_field($new_instance['field_order']);
 
 			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
-		//if ( isset($new_instance['field_order']) && $new_instance['field_order'] != '' ){
-		//	update_option( 'sailthru_customfield_order', sanitize_text_field($new_instance['field_order']));
-		//}
+		if ( isset($new_instance['field_order']) && $new_instance['field_order'] != '' ){
+			update_option( 'sailthru_customfield_order', sanitize_text_field($new_instance['field_order']));
+		}
 		return $instance;
 
 	} // end widget

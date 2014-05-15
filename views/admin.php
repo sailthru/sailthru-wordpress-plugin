@@ -101,7 +101,8 @@
 								// show custom forms page
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
 
-									require( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.subscribe.options.php' );
+									settings_fields( 'sailthru_forms_options' );
+									do_settings_sections( 'sailthru_forms_options' );									
 
 								// show welcome page
 								} elseif ( $active_tab == 'integrations_configuration_page') {
