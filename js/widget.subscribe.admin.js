@@ -30,25 +30,7 @@ jQuery(function() {
 	});
 });
 
-//Enables sortable funcionality on objects IDed by sortable
-jQuery(document).ready(function() {
-    jQuery("#sortable_widget tbody").disableSelection();
-    var sort = jQuery("#sortable_widget tbody").sortable({
-    	axis: 'y',
-		stop: function (event, ui) {
-    		var data = jQuery( this ).sortable("serialize");
- 		
-			var id = ui.item.parents('#sortable_widget').find('.sailthru_field_order').attr('id');
-			//retrieves the numbered position of the field			
-			data = data.match(/\d(\d?)*/g);
-			jQuery(function () {
-				jQuery( "#" + id ).val( data );
-			});
 
-
-		}
-    });
-});
 
 
 
