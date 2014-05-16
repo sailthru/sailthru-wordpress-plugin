@@ -30,28 +30,3 @@ jQuery(function() {
 	});
 });
 
-
-
-
-
-
-
-/*
-// Enables sortable funcionality on objects IDed by sortable
-// This happens on the 'Subscribe Widget Fields'
-jQuery(function() {
-	jQuery( ".sortable" ).disableSelection();
-	var sort = jQuery( ".sortable" ).sortable({
-		axis: 'y',
-		cursor: 'move',
-		update: function (event, ui) {
-			var order = jQuery( this ).sortable("serialize") + "&action=sailthru_update_field_order";
-
-			jQuery.post( ajaxurl, order, function(response){
-				alert(response);
-				//renumber(ui.item)
-			});
-		}
-	});
-});
-*/

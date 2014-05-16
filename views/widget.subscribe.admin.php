@@ -5,10 +5,10 @@
 
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
-		$order 		  = get_option( 'sailthru_customfields_order_widget' );
+//		$order = get_option( 'sailthru_customfields_order_widget' );
 
 			if( empty( $order ) ) {
-				$order		   = get_option( 'sailthru_customfields_order' );
+				$order = get_option( 'sailthru_customfields_order' );
 			}
 
 		$key 		  = get_option( 'sailthru_forms_key' );
@@ -47,7 +47,7 @@
             </p>
             <p>
 			<?php
-			echo '<div id="sortable_widget">';
+			echo '<div class="sortable_widget">';
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
 				echo '<tr>';
@@ -129,12 +129,12 @@
 				<?php _e( 'Subscribe to list(s): ' ); ?>
 				<?php
 					foreach ( $lists as $key => $list ) {
-					if( ! empty( $instance['sailthru_list'][ $key ] ) ) {
-						$list_key = $instance['sailthru_list'][ $key ];
-					}
-					else{
-						$list_key = '';
-					}
+						if( ! empty( $instance['sailthru_list'][ $key ] ) ) {
+							$list_key = $instance['sailthru_list'][ $key ];
+						}
+						else{
+							$list_key = '';
+						}
 						?>
 						<br />
 						<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo $this->get_field_name( 'sailthru_list' ); ?>[<?php echo $key; ?>]" id="<?php echo esc_attr( $this->get_field_id( 'sailthru_list' ) . '-' . $key ); ?>" <?php checked( $list_key, $list['name'] ); ?>  />
@@ -148,13 +148,13 @@
         <script type="text/javascript">
 			//Enables sortable funcionality on objects IDed by sortable
 			jQuery(document).ready(function() {
-			    jQuery("#sortable_widget tbody").disableSelection();
-			    var sort = jQuery("#sortable_widget tbody").sortable({
+			    jQuery(".sortable_widget tbody").disableSelection();
+			    var sort = jQuery(".sortable_widget tbody").sortable({
 			    	axis: 'y',
 					stop: function (event, ui) {
 			    		var data = jQuery( this ).sortable("serialize");
 			 		
-						var id = ui.item.parents('#sortable_widget').find('.sailthru_field_order').attr('id');
+						var id = ui.item.parents('.sortable_widget').find('.sailthru_field_order').attr('id');
 						//retrieves the numbered position of the field			
 						data = data.match(/\d(\d?)*/g);
 						jQuery(function () {
