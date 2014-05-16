@@ -247,7 +247,7 @@ if( get_option('sailthru_override_wp_mail')
 		
 		// template to use
 		if( empty($__template) ) {
-			$template = $sailthru_configs['sailthru_setup_email_template'];
+			$template = $sailthru_options['sailthru_setup_email_template'];
 		} else {
 			$template = $__template;
 		}
