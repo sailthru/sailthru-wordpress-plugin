@@ -44,10 +44,11 @@
 				if ( ! empty ( $sailthru['sailthru_api_key'] )
 						&& ! empty( $sailthru['sailthru_api_secret'] ) ){
 
-
+					
 					// sitewide template is picked
 					if ( ! empty( $setup['sailthru_setup_email_template'] ) )	{
 
+					
 						/*
 						 *
 						 * This is pretty important.
@@ -133,6 +134,10 @@
 
 					<?php } else { /* if no sitewide template is chosen */ ?>
 
+						<?php 
+							/* force the active tab if no template has been configured yet */
+							$active_tab = 'settings_configuration_page'; 
+						?>
 
 						<h2 class="nav-tab-wrapper">
 							<a href="?page=sailthru_configuration_page" class="nav-tab <?php echo $active_tab == 'sailthru_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sailthru-for-wordpress' ); ?></a>
