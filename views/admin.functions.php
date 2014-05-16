@@ -210,9 +210,16 @@ function sailthru_create_dropdown( $args, $values ) {
  */
 function sailthru_verify_setup() {
 
+
+
   $sailthru   = get_option( 'sailthru_setup_options' );
-  $api_key    = @$sailthru['sailthru_api_key'];
-  $api_secret = @$sailthru['sailthru_api_secret'];
+		if (  ! isset($sailthru['sailthru_api_key'] )
+				|| ! isset( $sailthru['sailthru_api_secret'] ) ){
+				return;
+		}  
+		
+  $api_key    = $sailthru['sailthru_api_key'];
+  $api_secret = $sailthru['sailthru_api_secret'];
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
 
