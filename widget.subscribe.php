@@ -393,9 +393,12 @@ function sailthru_widget_shortcode( $atts ) {
 		'text'   => 'Subscribe',
 		'field_order' => ''
 	), $atts ) );
+	
 	if ( empty($atts['text'] ) ) {
 		$atts['text'] = 'Subscribe to our newsletter';
 	}
+
+
 	if ( ! empty($atts['modal'] ) ) {
 		if ( $atts['modal'] == 'true' ) {
 			$before_widget = '<div id="mask"></div><a id="show_shortcode" href="#">' . esc_html($atts['text']) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
@@ -405,7 +408,11 @@ function sailthru_widget_shortcode( $atts ) {
 			$before_widget = '<div class="sailthru_shortcode">';
 			$after_widget = '</div>';
 		}
+	} else {
+		$before_widget = '<div class="sailthru_shortcode">';
+		$after_widget = '</div>';			
 	}
+
 	$args = array(
 		'before_widget' => $before_widget,
 		'after_widget'  => '</div>',
