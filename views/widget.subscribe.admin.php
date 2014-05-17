@@ -5,13 +5,12 @@
 
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
-//		$order = get_option( 'sailthru_customfields_order_widget' );
 
-			if( empty( $order ) ) {
-				$order = get_option( 'sailthru_customfields_order' );
-			}
+		if( empty( $order ) ) {
+			$order = get_option( 'sailthru_customfields_order' );
+		}
 
-		$key 		  = get_option( 'sailthru_forms_key' );
+		$key = get_option( 'sailthru_forms_key' );
 
 		if ( ! is_array( $sailthru ) )
 		{
@@ -38,7 +37,7 @@
 			$lists = $res['lists'];
 
 	?>
-                <div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
+        <div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
             <p>
             	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
             		<?php _e( 'Widget Title:' ); ?>
@@ -117,7 +116,7 @@
 			echo '</table>';
 			echo '<div>';
 			echo '<p id="field_order" value=""></p>';
-			echo '<input type="hidden" class="sailthru_field_order" value="" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
+			echo '<input type="hidden" class="sailthru_field_order" value="' . $order . '" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
 			echo '</div>';
 			echo '</div>';
 			
