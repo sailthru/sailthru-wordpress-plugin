@@ -4,6 +4,7 @@
     * Grab the settings from $instance and fill out default
     * values as needed.
     */
+    $widget_id = $this->id;
     $title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
     if ( ! empty( $instance['sailthru_list'] ) ) {
         if ( is_array( $instance['sailthru_list'] ) ) {
@@ -39,11 +40,13 @@
                     echo $before_title . esc_html( trim( $title ) ) . $after_title;
                 }
                 
+                // success message
                 if ( empty( $customfields['sailthru_customfield_success'] ) ) {
                     $success = 'Thank you for subscribing!';
                 } else {
                     $success = $customfields['sailthru_customfield_success'];
                 }
+
 
             ?>
 
@@ -59,19 +62,25 @@
                 </div>
 
                 <?php
+
+
                     $key = get_option( 'sailthru_forms_key' );
-                    if ( ! empty( $instance['fields'] ) ) {
-                        $order = "";
-                        $fields = explode( ',', $instance['fields'] );
+
                 
-                        foreach ( $fields as $field ) {
+                        foreach ( $instance as $field ) {
+
+                            if( is_array( $field) )
+                                continue;
+
                             $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
                             $instance['show_'.$name_stripped.'_name']     = true;
                             $instance['show_'.$name_stripped.'_required'] = false;
                 
+                            
                             for ( $i = 1; $i <= $key ; $i++ ){
                     
                                 if( isset($customfields[ $i ] ) ){
+                                    
                                     $db_name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name'] );
 
                                     if( $name_stripped == $db_name_stripped ){
@@ -80,19 +89,27 @@
                                     }
                                 }
                             }
+                            
                         } // end foreach
 
-                        $order_list = explode(',', $order);
-                    
-                    } else {
+
+                    // determine order of fields.    
+                    if (empty($order) ) {
+                        $order = $instance['field_order'];
+                    }
+
+                    if( empty( $order) ) {
                         $order = get_option( 'sailthru_customfield_order' );
-                    }
-                
-                    if( isset($order ) && $order != '' ){
+                    }                    
+
+
+                    if( isset( $order ) && $order != '' ){
                         $order_list = explode(',', $order);
                     }
+                        
                 
                     if (isset($order_list)) {
+
                         //for ($j = 0; $j < count($order_list); $j++){
                         for ( $i = 0; $i < count($order_list); $i++ ) {
                             $field_key = (int)$order_list[$i];
