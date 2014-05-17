@@ -23,8 +23,9 @@ function sailthru_initialize_forms_options() {
 		echo '<thead>';
 		echo '<th scope="col" class=manage-column">&nbsp;</th>';
 		echo '<th scope="col" class="manage-column">Display Label</th>';
-		echo '<th scope="col" class="manage-column">Field Value</th>';
+		echo '<th scope="col" class="manage-column">Field Name</th>';
 		echo '<th scope="col" class="manage-column">Field Type</th>';
+		
 		echo '<th scope="col" class="manage-column"> </th>';
 		echo '</thead>';
 		echo '<tbody id="sortable">';
