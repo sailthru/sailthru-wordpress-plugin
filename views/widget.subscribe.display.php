@@ -66,7 +66,32 @@
 
                     $key = get_option( 'sailthru_forms_key' );
 
-                
+                    
+                    if( isset( $instance['using_shortcode']) && $instance['using_shortcode'] ) {
+                    
+                        if ( ! empty( $instance['fields'] ) ) {
+                            $order = "";
+                            $fields = explode( ',', $instance['fields'] );
+                            foreach ( $fields as $field ) {
+                                $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
+                                $instance['show_'.$name_stripped.'_name']     = true;
+                                $instance['show_'.$name_stripped.'_required'] = false;
+                                for ( $i = 1; $i <= $key ; $i++ ){
+                                    if( isset($customfields[ $i ] ) ){
+                                        $db_name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name'] );
+
+                                        if( $name_stripped == $db_name_stripped ){
+                                          $order .= $i . ",";
+                                          break;
+                                        }
+                                    }
+                                }
+                            }
+                            $order_list = explode(',', $order);
+                        }
+                        
+                    } else {                    
+                        // figure out which fields we need to show when NOT using shortcodde
                         foreach ( $instance as $field ) {
 
                             if( is_array( $field) )
@@ -75,39 +100,29 @@
                             $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
                             $instance['show_'.$name_stripped.'_name']     = true;
                             $instance['show_'.$name_stripped.'_required'] = false;
-                
-                            
-                            for ( $i = 1; $i <= $key ; $i++ ){
-                    
-                                if( isset($customfields[ $i ] ) ){
-                                    
-                                    $db_name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name'] );
-
-                                    if( $name_stripped == $db_name_stripped ){
-                                        $order .= $i . ",";
-                                        break;
-                                    }
-                                }
-                            }
                             
                         } // end foreach
 
 
-                    // determine order of fields.    
-                    if (empty($order) ) {
-                        $order = $instance['field_order'];
-                    }
+                        // determine order of fields.    
+                        if ( empty( $order ) && isset( $instance['field_order'] ) ) {
+                            $order = $instance['field_order'];
+                        }
 
-                    if( empty( $order) ) {
-                        $order = get_option( 'sailthru_customfield_order' );
-                    }                    
+                        if( empty( $order) ) {
+                            $order = get_option( 'sailthru_customfield_order' );
+                        }                    
 
 
-                    if( isset( $order ) && $order != '' ){
-                        $order_list = explode(',', $order);
+                        if( isset( $order ) && $order != '' ){
+                            $order_list = explode(',', $order);
+                        }
+
+
                     }
                         
                 
+                    // widget is rendered using Appearance > Widget
                     if (isset($order_list)) {
 
                         //for ($j = 0; $j < count($order_list); $j++){
@@ -220,6 +235,10 @@
                         
                         }// end for loop    
                 
+                    
+                    // widget is rendered using shortcode.
+                    // $order is specified in the way the user listed the fields
+                    // not by some saved fields_order
                     } else {
                 
                         for ( $i = 0; $i < $key; $i++ ) {

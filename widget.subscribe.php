@@ -85,6 +85,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
+
 		if ( empty( $instance['sailthru_list'] ) ) {
 			return false;
 		}		
@@ -391,11 +392,25 @@ function sailthru_widget_shortcode( $atts ) {
 		'fields' => 'name',
 		'modal'  => 'false',
 		'text'   => 'Subscribe',
-		'field_order' => ''
+		'sailthru_list' => array(),
+		'field_order' => '',
+		'using_shortcode' => true
 	), $atts ) );
+
+
+
+	if( empty( $atts['using_shortcode'] ) ) {
+		$atts['using_shortcode'] = true;
+	}
+
 	
 	if ( empty($atts['text'] ) ) {
 		$atts['text'] = 'Subscribe to our newsletter';
+	}
+
+	// the widget doesn't render if there is no email list specified.
+	if( empty( $atts['sailthru_list']) ) {
+		$atts['sailthru_list'] = array('Sailthru Wordpress Shortcode');
 	}
 
 
