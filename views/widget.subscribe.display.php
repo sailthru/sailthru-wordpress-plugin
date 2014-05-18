@@ -67,12 +67,14 @@
                     $key = get_option( 'sailthru_forms_key' );
 
                     
+                    // figure out display needs and order when using short code
                     if( isset( $instance['using_shortcode']) && $instance['using_shortcode'] ) {
                     
                         if ( ! empty( $instance['fields'] ) ) {
                             $order = "";
                             $fields = explode( ',', $instance['fields'] );
                             foreach ( $fields as $field ) {
+                                $field = trim( $field );
                                 $name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
                                 $instance['show_'.$name_stripped.'_name']     = true;
                                 $instance['show_'.$name_stripped.'_required'] = false;
@@ -89,7 +91,7 @@
                             }
                             $order_list = explode(',', $order);
                         }
-                        
+
                     } else {                    
                         // figure out which fields we need to show when NOT using shortcodde
                         foreach ( $instance as $field ) {
