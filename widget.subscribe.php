@@ -85,12 +85,17 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 
+
 		if ( empty( $instance['sailthru_list'] ) ) {
 			return false;
-		}
+		}		
+
 		extract( $args, EXTR_SKIP );
+
 		echo $before_widget;
+
 		include( SAILTHRU_PLUGIN_PATH . 'views/widget.subscribe.display.php' );
+
 		echo $after_widget;
 
 	} // end widget
@@ -115,11 +120,15 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				$instance['show_'.$name_stripped.'_name']     = (bool) $new_instance['show_'.$name_stripped.'_name'];
 				$instance['show_'.$name_stripped.'_required'] = (bool) $new_instance['show_'.$name_stripped.'_required'];
 				$instance['show_'.$name_stripped.'_type']     = $new_instance['show_'.$name_stripped.'_type'];
-
+				$instance['field_order']     = $new_instance['field_order'];
+				//$instance['sailthru_customfields_order_widget'] = sanitize_text_field($new_instance['field_order']);
 
 			}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
 
+		//if ( isset($new_instance['field_order']) && $new_instance['field_order'] != '' ){
+		//	update_option( 'sailthru_customfields_order_widget', sanitize_text_field($new_instance['field_order']));
+		//}
 		return $instance;
 
 	} // end widget
@@ -131,16 +140,21 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
+
 		// Default values for a widget instance
         $instance = wp_parse_args(
         	(array) $instance, array(
                 'title' => '',
-                'sailthru_list' => array( '' )
+                'sailthru_list' => array( '' ),
+                'field_order' => ''
             )
         );
 
+
         $title = $instance['title'];
         $sailthru_list = $instance['sailthru_list'];
+        $order = $field_order = $instance['field_order'];
+        $widget_id = $this->id;
 
 
 
@@ -202,9 +216,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function register_admin_scripts() {
 
-		//wp_enqueue_script( 'sailthru-subscribe-admin-script', SAILTHRU_PLUGIN_URL .'js/widget.subscribe.admin.js' , array('jquery') );
 		wp_enqueue_style( 'sailthru-subscribe-admin-styles', SAILTHRU_PLUGIN_URL . 'css/widget.subscribe.admin.css' );
 
+		wp_enqueue_script( 'jquery' );
+		wp_enqueue_script( 'sailthru-subscribe-widget-admin-jquery-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.admin.js', array( 'jquery' ) );
+		wp_enqueue_script( 'jquery-ui-sortable' );
 	} // end register_admin_scripts
 
 	/**
@@ -222,6 +238,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function register_widget_scripts() {
 
 		wp_enqueue_script( 'sailthru-subscribe-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.js' , array( 'jquery' ) );
+		
 
 	} // end register_widget_scripts
 
@@ -374,11 +391,29 @@ function sailthru_widget_shortcode( $atts ) {
 	extract( shortcode_atts( array(
 		'fields' => 'name',
 		'modal'  => 'false',
-		'text'   => 'Subscribe'
+		'text'   => 'Subscribe',
+		'sailthru_list' => array(),
+		'field_order' => '',
+		'using_shortcode' => true
 	), $atts ) );
+
+
+
+	if( empty( $atts['using_shortcode'] ) ) {
+		$atts['using_shortcode'] = true;
+	}
+
+	
 	if ( empty($atts['text'] ) ) {
 		$atts['text'] = 'Subscribe to our newsletter';
 	}
+
+	// the widget doesn't render if there is no email list specified.
+	if( empty( $atts['sailthru_list']) ) {
+		$atts['sailthru_list'] = array('Sailthru Wordpress Shortcode');
+	}
+
+
 	if ( ! empty($atts['modal'] ) ) {
 		if ( $atts['modal'] == 'true' ) {
 			$before_widget = '<div id="mask"></div><a id="show_shortcode" href="#">' . esc_html($atts['text']) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
@@ -388,7 +423,11 @@ function sailthru_widget_shortcode( $atts ) {
 			$before_widget = '<div class="sailthru_shortcode">';
 			$after_widget = '</div>';
 		}
+	} else {
+		$before_widget = '<div class="sailthru_shortcode">';
+		$after_widget = '</div>';			
 	}
+
 	$args = array(
 		'before_widget' => $before_widget,
 		'after_widget'  => '</div>',
@@ -402,3 +441,4 @@ function sailthru_widget_shortcode( $atts ) {
 	return $output;
 }
 add_shortcode( 'sailthru_widget', 'sailthru_widget_shortcode' );
+

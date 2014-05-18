@@ -3,9 +3,15 @@
 
 			<div id="icon-sailthru" class="icon32"></div>
 			<h2><?php _e( 'Sailthru for WordPress', 'sailthru-for-wordpress' ); ?></h2>
+
 			<?php
+				//Check to see if everything is set up correctly 
+				$verify_setup = sailthru_verify_setup();
+				$verify_twitter = sailthru_verify_twitter();
+				$verify_gigya = sailthru_verify_gigya();
 
 
+				// Determine the right settings_section
 				if ( isset( $_GET[ 'page' ] ) ) {
 					$active_tab = $_GET[ 'page' ];
 				} else if ( $active_tab == 'concierge_configuration_page' ) {
@@ -14,11 +20,11 @@
 					$active_tab = 'scout_configuration_page';
 				} else if ( $active_tab == 'settings_configuration_page') {
 					$active_tab = 'settings_configuration_page';
-				}
-				else if ( $active_tab == 'customforms_configuration_page') {
+				} else if ( $active_tab == 'customforms_configuration_page') {
 					$active_tab = 'customforms_configuration_page';
-				}
-				else {
+				} else if( $active_tab == 'integrations_configuration_page') {
+					$active_tab == 'integrations_configuration_page';
+				} else {
 					$active_tab = 'customforms_configuration_page';
 				} // end if/else
 
@@ -38,10 +44,11 @@
 				if ( ! empty ( $sailthru['sailthru_api_key'] )
 						&& ! empty( $sailthru['sailthru_api_secret'] ) ){
 
-
+					
 					// sitewide template is picked
 					if ( ! empty( $setup['sailthru_setup_email_template'] ) )	{
 
+					
 						/*
 						 *
 						 * This is pretty important.
@@ -64,17 +71,19 @@
 							<a href="?page=concierge_configuration_page" class="nav-tab <?php echo $active_tab == 'concierge_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Concierge', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=scout_configuration_page" class="nav-tab <?php echo $active_tab == 'scout_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Scout', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=custom_fields_configuration_page" class="nav-tab <?php echo $active_tab == 'custom_fields_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ); ?></a>
+							<a href="?page=integrations_configuration_page" class="nav-tab <?php echo $active_tab == 'integrations_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Integrations', 'sailthru-for-wordpress' ); ?></a>
 
 						</h2>
 
 						<form method="post" action="options.php">
 							<?php
+								// welcome
 								if ( $active_tab == 'sailthru_configuration_page' ) {
 
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
 
 								// general settings
-								}elseif ( $active_tab == 'settings_configuration_page' ) {
+								} elseif ( $active_tab == 'settings_configuration_page' ) {
 
 									require( SAILTHRU_PLUGIN_PATH . '/views/settings.html.php' );
 
@@ -92,16 +101,26 @@
 
 								// show custom forms page
 								} elseif ( $active_tab == 'custom_fields_configuration_page') {
-										settings_fields( 'sailthru_forms_options' );
-										do_settings_sections( 'sailthru_forms_options' );
-										echo '</div>'; // ends the half column begun in delete_field()
-								// show welcome page
-								}
-								else {
 
+									//echo '<div id="poststuff"  class="metabox-holder columns-1">'; // helps style boxes
+										settings_fields( 'sailthru_forms_options' );
+										do_settings_sections( 'sailthru_forms_options' );									
+									//echo '</div>';
+
+								// show welcome page
+								} elseif ( $active_tab == 'integrations_configuration_page') {
+
+									settings_fields( 'sailthru_integrations_options' );
+									do_settings_sections( 'sailthru_integrations_options' );									
+
+								// fallback to welcome
+								} else {
+									
 									require( SAILTHRU_PLUGIN_PATH . 'views/welcome.html.php' );
 
 								} // end if/else
+
+								
 
 								echo '<div style="clear:both;">';
 								submit_button();
@@ -111,8 +130,14 @@
 							?>
 						</form>
 
+
+
 					<?php } else { /* if no sitewide template is chosen */ ?>
 
+						<?php 
+							/* force the active tab if no template has been configured yet */
+							$active_tab = 'settings_configuration_page'; 
+						?>
 
 						<h2 class="nav-tab-wrapper">
 							<a href="?page=sailthru_configuration_page" class="nav-tab <?php echo $active_tab == 'sailthru_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sailthru-for-wordpress' ); ?></a>
