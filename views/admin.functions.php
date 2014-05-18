@@ -1283,9 +1283,5 @@ function sailthru_verify_template( $tpl ) {
 		$errors = 'Your template needs to have {body} variable.';
 	}
 
-	if ( ! strstr( $tpl['content_text'], '{body}' ) ) {
-		$errors = 'Your template needs to have {body} variable.';
-	}
-
 	return $errors;
 }
