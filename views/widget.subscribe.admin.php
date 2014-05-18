@@ -60,42 +60,49 @@
 			echo '</thead>';
 			echo '<tbody class="ui-sortable">';
 			echo '<tr id="not_sortable"><td>&nbsp;</td><td>Email</td><td colspan="2">Always displayed</td></tr>';
+			
+			// if there are custom fields...
 			if ( isset($customfields) && !empty($customfields)){
 			//If these were sorted display in proper order
-			if( isset($order ) && $order != '' ){
-				$order_list = explode(',', $order);
-			}
+				if( isset($order ) && $order != '' ){
+					$order_list = explode(',', $order);
+				}
 
-			if( isset($order_list) ){
-				for ( $j = 0; $j < count($order_list); $j++ ) {
-					$field_key = (int)$order_list[$j];
-					for ( $i = 0; $i <= $key; $i++ ) {
-						if ( $i == $field_key ) {
-							echo '<tr id="pos_' . $field_key . '">';
-							if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
-								echo '<td><span class="icon-sort">&nbsp;</span></td>';
-								$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
+				$order_as_listed = ''; // used if there's been no order set for these fields
+				$last_listed = 0; // used to show fields that were added after the widget was created.
+				
+				// if they are in order
+				if( isset($order_list) ){				
+					for ( $j = 0; $j < count($order_list); $j++ ) {
+						$field_key = (int)$order_list[$j];
+						for ( $i = 0; $i <= $key; $i++ ) {
+							if ( $i == $field_key ) {
+								echo '<tr id="pos_' . $field_key . '">';
+								if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+									echo '<td><span class="icon-sort">&nbsp;</span></td>';
+									$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
 
-								if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
-									echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</td>';
-									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
-									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
-								}
-								else{
-									echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</td>';
-									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
-									echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
-								}
-								echo '</tr>';
-							} //if field name exists
-						} 
+									if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+										echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
+									}
+									else{
+										echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
+									}
+									echo '</tr>';
+									$last_listed = $i;
+								} //if field name exists							
+							} 
+						} //for loop
 					} //for loop
-				} //for loop
-			} else {
-				$order_as_listed = '';
-				 for ( $i = 0; $i <= $key; $i++ ) {
-			 			echo '<tr id="pos_' . $i . '">';
-			 			if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+				// they are have not been ordered.
+				} else {
+					 for ( $i = 0; $i <= $key; $i++ ) {
+				 		echo '<tr id="pos_' . $i . '">';
+				 		if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name']);
 							$order_as_listed .= $i . ',';
@@ -110,16 +117,50 @@
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
 							}
+							$last_listed = $i;
+						}
+				 		echo '</tr>';			 			
+					 } //for loop
+				} // else (not ordered )
+
+				// show custom fields that were added after this
+				// widget was created.
+				foreach( $customfields as $index => $customfield ) {
+					if( is_numeric( $index ) && $index > $last_listed ) {
+						echo '<tr id="pos_' . $index . '">';
+				 		if( isset( $customfields[ $index ]['sailthru_customfield_name'] )){
+							echo '<td><span class="icon-sort">&nbsp;</span></td>';
+							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $index ]['sailthru_customfield_name']);
+							
+							if( empty( $order ) ) {
+								$order_as_listed .= $index . ',';
+							} else {
+								$order .= ',' . $index;
+							}
+
+							if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+								echo '<td>'. esc_html($customfields[ $index ]['sailthru_customfield_label']) . '</td>';
+								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
+								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
+								$order_as_listed .= $i . ',';
+							}
+							else{
+								echo '<td>'. esc_html($customfields[ $index ]['sailthru_customfield_label'] ). '</td>';
+								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
+								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
+							}
 							
 						}
-			 			echo '</tr>';			 			
-				 	} //for loop
-				} //for loop
-			}
+				 		echo '</tr>';			 			
+					}
+				}
+			} // end if there are custom fields
 		
+
 
 			echo '</tbody>';
 			echo '</table>';
+
 			echo '<div>';
 				if( empty( $order ) && ! empty( $order_as_listed) ) {
 					$order = rtrim( $order_as_listed, ',');
