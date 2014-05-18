@@ -10,6 +10,8 @@
 			$order = get_option( 'sailthru_customfields_order' );
 		}
 
+
+
 		$key = get_option( 'sailthru_forms_key' );
 
 		if ( ! is_array( $sailthru ) )
@@ -63,6 +65,7 @@
 			if( isset($order ) && $order != '' ){
 				$order_list = explode(',', $order);
 			}
+
 			if( isset($order_list) ){
 				for ( $j = 0; $j < count($order_list); $j++ ) {
 					$field_key = (int)$order_list[$j];
@@ -89,24 +92,27 @@
 					} //for loop
 				} //for loop
 			} else {
+				$order_as_listed = '';
 				 for ( $i = 0; $i <= $key; $i++ ) {
 			 			echo '<tr id="pos_' . $i . '">';
 			 			if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name']);
-
+							$order_as_listed .= $i . ',';
 							if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
 								echo '<td>'. esc_html($customfields[ $i ]['sailthru_customfield_label']) . '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
+								$order_as_listed .= $i . ',';
 							}
 							else{
 								echo '<td>'. esc_html($customfields[ $i ]['sailthru_customfield_label'] ). '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
 							}
+							
 						}
-			 			echo '</tr>';
+			 			echo '</tr>';			 			
 				 	} //for loop
 				} //for loop
 			}
@@ -115,8 +121,11 @@
 			echo '</tbody>';
 			echo '</table>';
 			echo '<div>';
-			echo '<p id="field_order" value=""></p>';
-			echo '<input type="hidden" class="sailthru_field_order" value="' . $order . '" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
+				if( empty( $order ) && ! empty( $order_as_listed) ) {
+					$order = rtrim( $order_as_listed, ',');
+				}
+				//echo '<p id="field_order"></p>';
+				echo '<input type="hidden" class="sailthru_field_order" value="' . $order . '" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
 			echo '</div>';
 			echo '</div>';
 			
