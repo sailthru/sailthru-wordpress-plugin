@@ -78,7 +78,8 @@
 						for ( $i = 0; $i <= $key; $i++ ) {
 							if ( $i == $field_key ) {
 								echo '<tr id="pos_' . $field_key . '">';
-								if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+								if( isset( $customfields[ $i ]['sailthru_customfield_name'] ) 
+										&& !empty( $customfields[ $i ]['sailthru_customfield_name'] ) ){
 									echo '<td><span class="icon-sort">&nbsp;</span></td>';
 									$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
 
@@ -102,7 +103,8 @@
 				} else {
 					 for ( $i = 0; $i <= $key; $i++ ) {
 				 		echo '<tr id="pos_' . $i . '">';
-				 		if( isset( $customfields[ $i ]['sailthru_customfield_name'] )){
+				 		if( isset( $customfields[ $i ]['sailthru_customfield_name'] ) 
+				 				&& !empty( $customfields[ $i ]['sailthru_customfield_name'] ) ){
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $i ]['sailthru_customfield_name']);
 							$order_as_listed .= $i . ',';
@@ -128,7 +130,8 @@
 				foreach( $customfields as $index => $customfield ) {
 					if( is_numeric( $index ) && $index > $last_listed ) {
 						echo '<tr id="pos_' . $index . '">';
-				 		if( isset( $customfields[ $index ]['sailthru_customfield_name'] )){
+				 		if(  isset($customfields[$index]['sailthru_customfield_label']) && !empty($customfields[$index]['sailthru_customfield_label'])
+								&& isset($customfields[$index]['sailthru_customfield_name']) && !empty($customfields[$index]['sailthru_customfield_name']) ){
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $index ]['sailthru_customfield_name']);
 							

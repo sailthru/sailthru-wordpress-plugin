@@ -39,7 +39,8 @@ function sailthru_initialize_forms_options() {
 				foreach ($order_list as $pos) {
 					for ($i=1; $i <= (int)$key; $i++) {
 						if($i == (int)$pos){	
-							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])){
+							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
+								&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
 								echo '<tr id="pos_'. $i.'">';
 								echo '<td><span class="icon-sort">&nbsp;</span></td>';
 								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
@@ -53,7 +54,8 @@ function sailthru_initialize_forms_options() {
 				}
 			} else {
 				for ( $i = 1; $i <= $key; $i++ ) {
-					if( isset($customfields[$i]) && !empty($customfields[$i])){
+					if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
+								&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
 						echo '<tr id="pos_'. $i.'">';
 						echo '<td><span class="icon-sort">&nbsp;</span></td>';
 						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
