@@ -126,10 +126,17 @@
 					 } //for loop
 				} // else (not ordered )
 
+
+
+
+				$order_list = array_unique( $order_list );
+
+
 				// show custom fields that were added after this
 				// widget was created.
 				foreach( $customfields as $index => $customfield ) {
-					if( is_numeric( $index ) && $index > $last_listed ) {
+					
+					if( is_numeric( $index ) && $index > $last_listed && !in_array($index, $order_list) ) {
 						echo '<tr id="pos_' . $index . '">';
 				 		if(  isset($customfields[$index]['sailthru_customfield_label']) && !empty($customfields[$index]['sailthru_customfield_label'])
 								&& isset($customfields[$index]['sailthru_customfield_name']) && !empty($customfields[$index]['sailthru_customfield_name']) ){
