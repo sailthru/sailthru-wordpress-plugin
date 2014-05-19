@@ -66,6 +66,7 @@
 			//If these were sorted display in proper order
 				if( isset($order ) && $order != '' ){
 					$order_list = explode(',', $order);
+					$order_list = array_unique( $order_list );
 				}
 
 				$order_as_listed = ''; // used if there's been no order set for these fields
@@ -145,12 +146,13 @@
 								echo '<td>'. esc_html($customfields[ $index ]['sailthru_customfield_label']) . '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
-								$order_as_listed .= $i . ',';
+							
 							}
 							else{
 								echo '<td>'. esc_html($customfields[ $index ]['sailthru_customfield_label'] ). '</td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
 								echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
+							
 							}
 							
 						}
@@ -167,6 +169,12 @@
 			echo '<div>';
 				if( empty( $order ) && ! empty( $order_as_listed) ) {
 					$order = rtrim( $order_as_listed, ',');
+				}
+
+				if( !is_array( $order) ) {
+					$order = explode(',', $order );
+						$order = array_unique( $order );
+					$order = implode(',', $order );
 				}
 				//echo '<p id="field_order"></p>';
 				echo '<input type="hidden" class="sailthru_field_order" value="' . $order . '" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
