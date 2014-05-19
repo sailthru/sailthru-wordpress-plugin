@@ -174,15 +174,25 @@
 			echo '</table>';
 
 			echo '<div>';
+
+
 				if( empty( $order ) && ! empty( $order_as_listed) ) {
 					$order = rtrim( $order_as_listed, ',');
+					$order = explode(',', $order);
 				}
 
-				if( !is_array( $order) ) {
-					$order = explode(',', $order );
-						$order = array_unique( $order );
+				if( isset($order ) && isset( $order_list) ) {
+					$order = explode(',', $order);
+					$order = array_merge( $order_list, $order);
+				}
+
+				if( is_array( $order) ) {
+
+					$order = array_unique( $order );
 					$order = implode(',', $order );
 				}
+
+
 				//echo '<p id="field_order"></p>';
 				echo '<input type="hidden" class="sailthru_field_order" value="' . $order . '" name="'. $this->get_field_name( 'field_order' ) .'" id="' . $this->get_field_id( 'field_order' ) . '"></input>';
 			echo '</div>';
