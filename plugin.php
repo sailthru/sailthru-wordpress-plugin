@@ -50,11 +50,6 @@ require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
 
-/*
- * Get Sailthru Integration classes
- */
-require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-gigya.php');
-require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-twitter-lead-cards.php');
 
 /*
  * Get Sailthru Custom Subscribe Fields classes
@@ -83,19 +78,6 @@ if( class_exists( 'Sailthru_Horizon' ) ) {
 	if( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();
 	}
-
-	if( class_exists( 'Sailthru_Twitter_Lead_Cards' ) ) {
-		$sailthru_twitter = new Sailthru_Twitter_Lead_Cards();
-	}
-
-	if( class_exists( 'Sailthru_Gigya' ) ) {
-		$sailthru_gigya = new Sailthru_Gigya();
-	}	
-
-	//if( class_exists( 'Sailthru_Subscribe_Fields' ) ) {
-	//	$sailthru_subscribe_fields = new Sailthru_Subscribe_Fields();
-	//}
-
 }
 
 
@@ -130,7 +112,7 @@ function sailthru_create_wordpress_template(){
 			if ($client) {
 				// if we try to grab a template by name that doesn't exist
 				// the world blows up. Grab them all and loop through
-				$response = $client->getTemplates();			
+				$response = $client->getTemplates();
 				$templates = $response['templates'];
 				foreach($templates as $template) {
 					foreach($template as $key=>$value) {
@@ -140,13 +122,13 @@ function sailthru_create_wordpress_template(){
 							}
 						}
 					}
-				}				
+				}
 			}
-		}		
+		}
 		catch (Sailthru_Client_Exception $e) {
-			//silently fail					
+			//silently fail
 			return;
-		}		
+		}
 
 		// the Template doesn't exist, so we need to create it.
 		if( $template_exists === false ) {
@@ -156,15 +138,15 @@ function sailthru_create_wordpress_template(){
 					$new_template = $client->saveTemplate('wordpress-template',
 						array(	'name' 			=> $wordpress_template,
 								'subject'		=> '{subject}',
-								'content_html'	=>  '{body}'
+								'content_html'	=>  "<html>\n<head>\n<body>\n{body}\n</body>\n</html>",
 						)
 					);
-				}			
-			}		
+				}
+			}
 			catch (Sailthru_Client_Exception $e) {
 				//silently fail
 				return;
-			}	
+			}
 
 		}
 
@@ -244,7 +226,7 @@ if( get_option('sailthru_override_wp_mail')
 			'body' => $message
 		);
 
-		
+
 		// template to use
 		if( empty($__template) ) {
 			$template = $sailthru_options['sailthru_setup_email_template'];
@@ -260,9 +242,9 @@ if( get_option('sailthru_override_wp_mail')
 		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 		try {
 			if ($client) {
-				$r = $client->send($template, $recipients, $vars, array());			
+				$r = $client->send($template, $recipients, $vars, array());
 			}
-		}		
+		}
 		catch (Sailthru_Client_Exception $e) {
 			//silently fail
 			return;
@@ -285,7 +267,7 @@ if( get_option('sailthru_override_wp_mail')
 			if ( !function_exists('wp_new_user_notification') ) {
 
 				function wp_new_user_notification( $user_id, $plaintext_pass = '' ) {
-				
+
 					if ( empty( $plaintext_pass ) )
 						return;
 
@@ -297,13 +279,13 @@ if( get_option('sailthru_override_wp_mail')
 					$to = '';
 						if ($user = new WP_User($user_id)) {
 							$vars['user_login'] = stripslashes($user->user_login);
-							$vars['user_email'] = stripslashes($user->user_email); 
+							$vars['user_email'] = stripslashes($user->user_email);
 							$vars['first_name'] = $user->first_name;
-							$vars['last_name'] = $user->last_name;	
-							$to = stripslashes($user->user_email); 							
+							$vars['last_name'] = $user->last_name;
+							$to = stripslashes($user->user_email);
 						}
 					$subject = sprintf( __('[%s] Your username and password'), get_option('blogname') );
-					
+
 					$message  = __('Hi there,') . "\r\n\r\n";
 						$message .= sprintf( __("Welcome to %s! Here's how to log in:"), get_option('blogname')) . "\r\n\r\n";
 						$message .= wp_login_url() . "\r\n";
@@ -312,19 +294,19 @@ if( get_option('sailthru_override_wp_mail')
 						$message .= sprintf( __('If you have any problems, please contact me at %s.'), get_option('admin_email') ) . "\r\n\r\n";
 						$message .= __('Adios!');
 					$headers = '';
-					
+
 					$attachments = array();
 
 
 					wp_mail($to, $subject, $message, $headers, $attachments, $vars, $template);
 
-				
+
 
 				}
 
 			}
 
-		}	
+		}
 
 
 		if( !empty( $sailthru_options['sailthru_setup_password_reset_override_template'] ) ) {
@@ -347,7 +329,7 @@ if( get_option('sailthru_override_wp_mail')
 
 			}
 
-		} // end check to override password reset email		
+		} // end check to override password reset email
 
 	}
 

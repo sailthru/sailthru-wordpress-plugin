@@ -36,8 +36,6 @@
 			e.preventDefault();
 		});
 		// set up form. make the email template more prominent
-		$("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
-		
 		// datepicker for meta box
 		// but since Datepicker causes a jQuery conflict, wrap it
 		// and prevent from initializing unless necessary
@@ -59,7 +57,7 @@
 		});
 
 		$('#type').on("change", (function() {
-			
+
 			if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'hidden' || $(this).attr('value') == 'checkbox') {
 				$(this).closest('table').find("tr").last().show();
 				$('#add_value').show();
@@ -89,7 +87,7 @@
 			$('#value_amount').attr('value',second_val);
 		}));
 
-		$('#add_attr').on("click", (function(e) {			
+		$('#add_attr').on("click", (function(e) {
 			e.preventDefault();
 			var new_val = parseInt($('#attr_amount').attr('value'),10);
 			new_val = new_val + 1;
@@ -97,7 +95,7 @@
 			$('#sailthru_attr_fields_block').append('<div><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="attribute"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/></div>');
 			$('#attr_amount').attr('value',second_val);
 		}));
-		
+
 	});
 
 }(jQuery));

@@ -3,7 +3,6 @@
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.setup.options.php');
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.concierge.options.php');
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.scout.options.php');
-	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.integrations.options.php');
 	require_once( SAILTHRU_PLUGIN_PATH . 'views/admin.functions.subscribe.options.php');
 
 
@@ -210,14 +209,12 @@ function sailthru_create_dropdown( $args, $values ) {
  */
 function sailthru_verify_setup() {
 
-
-
   $sailthru   = get_option( 'sailthru_setup_options' );
 		if (  ! isset($sailthru['sailthru_api_key'] )
 				|| ! isset( $sailthru['sailthru_api_secret'] ) ){
 				return;
-		}  
-		
+		}
+
   $api_key    = $sailthru['sailthru_api_key'];
   $api_secret = $sailthru['sailthru_api_secret'];
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
@@ -234,12 +231,17 @@ function sailthru_verify_setup() {
 
   	if ( !isset( $res['error'] ) ) {
   		// we can make a call, now check the template is configured
-  		$tpl = $client->getTemplate( $template );
-  		$tpl_errors = sailthru_verify_template( $tpl );
+  		try {
+  			$tpl = $client->getTemplate( $template );
+  			$tpl_errors = sailthru_verify_template( $tpl );
 
-  		if ( count( $tpl_errors ) > 0 ) {
-			add_settings_error( 'sailthru-notices', 'sailthru-verify-template-fail', __( 'The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions.' ), 'error' );
-  		} 
+	  		if ( count( $tpl_errors ) > 0 ) {
+				add_settings_error( 'sailthru-notices', 'sailthru-verify-template-fail', __( 'The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions. If you have enabled double opt-in there are additional steps.' ), 'error' );
+	  		}
+	  	} catch (Exception $e) {
+	  		// fail silently, someone may have deleted the template on the sailthru side and
+	  		// they will need to re-select.
+	  	}
   	} else {
   		add_settings_error( 'sailthru-notices', 'sailthru-verify-config-fail', __( 'Sailthru is not correctly configured, please check your API key and template settings.' ), 'error' );
   	}
@@ -270,96 +272,3 @@ function sailthru_verify_template( $tpl ) {
 	return $errors;
 }
 
-
-
-/**
- * This function verifies the Twitter integration is set up properly.
- * But only if the user indicates that Twitter Lead Cards are turned on.
- */
-function sailthru_verify_twitter() {
-
-
-	if ( ! get_option('permalink_structure') ) {
-		add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-permalinks', __( 'Permalinks must be enabled for this feature to work. <a href="' . admin_url() . 'options-permalink.php">Go here to enable them</a>.' ), 'error' );
-	}	
-
-
-	$option   = get_option( 'sailthru_integrations_options' );
-		if( isset( $option['sailthru_twitter_enabled'] ) ) {
-			$twitter_enabled = $option['sailthru_twitter_enabled'];
-		} else {
-			$twitter_enabled = false;
-		}
-
-		if( isset($option['sailthru_twitter_url']) ) {
-			$endpoint = $option['sailthru_twitter_url'];
-		} else {
-			$endpoint = false;
-		}
-
-		if( isset( $option['sailthru_twitter_salt'] ) ) {
-			$salt = $option['sailthru_twitter_salt'];
-		} else {
-			$salt = false;
-		}
-
-	if( !empty( $twitter_enabled ) ) {
-
-		if( empty( $endpoint ) ) {
-			add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-url-fail', __( 'Please enter your desired endpoint. Example: <strong>sailthru/twitter/</strong>.' ), 'error' );
-		}
-
-		if( empty( $salt ) ) {
-			add_settings_error( 'sailthru-notices', 'sailthru-config-twitter-salt-fail', __( 'Copy your Twitter salt into the field below. You can get this by logging into ads.twitter.com.' ), 'error' );
-		}
-
-	}
-
-	return;
-}
-// end sailthru_verify_twitter
-
-
-
-/**
- * This function verifies the Gigya integration is set up properly.
- * But only if the user indicates that Twitter Lead Cards are turned on.
- */
-function sailthru_verify_gigya() {
-
-
-	$option   = get_option( 'sailthru_integrations_options' );
-		if( isset( $option['sailthru_gigya_enabled'] ) ) {
-		$gigya_enabled = $option['sailthru_gigya_enabled'];
-		} else {
-			$gigya_enabled = false;
-		}
-
-		if( isset( $option['sailthru_gigya_key'] ) ) {
-			$secret_key    = $option['sailthru_gigya_key'];
-		} else {
-			$secret_key = false;
-		}
-
-		if( isset( $option['sailthru_gigya_url'] ) ) {
-			$endpoint= $option['sailthru_gigya_url'];	
-		} else {
-			$endpoint = false;
-		}
-		
-
-	if( !empty( $gigya_enabled ) ) {
-
-		if( empty( $endpoint ) ) {
-			add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-url-fail', __( 'Please enter a Gigya Callback URL.' ), 'error' );
-		}
-
-		if( empty( $secret_key ) ) {
-			add_settings_error( 'sailthru-notices', 'sailthru-config-gigya-key-fail', __( 'Please enter a Gigya Secret Key.' ), 'error' );
-		}
-
-	}
-
-	return;
-}
-// end sailthru_verify_twitter

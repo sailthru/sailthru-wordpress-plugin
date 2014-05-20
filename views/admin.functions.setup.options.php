@@ -17,7 +17,7 @@ function sailthru_initialize_setup_options() {
 		'sailthru_setup_options'			// Page on which to add this section of options
 	);
 
-	
+
 		add_settings_field(
 			'sailthru_form_name',					// ID used to identify the field throughout the theme
 			__( 'Sailthru field name', 'sailthru-for-wordpress' ),					// The label to the left of the option interface element
@@ -75,6 +75,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
+
 		add_settings_field(
 		    'sailthru_horizon_load_type',
 		    'Horizon Loading',
@@ -94,7 +95,7 @@ function sailthru_initialize_setup_options() {
 	 * Add a new field for selecting the email template to use,
 	 * but don't do this until we have an API key & secret to use.
 	 */
-		
+
 	$setup = get_option('sailthru_setup_options');
 	if ( isset( $setup['sailthru_api_key']) && ! empty ( $setup['sailthru_api_key'] ) &&
 		 isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
@@ -113,8 +114,6 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-
-
 		add_settings_field(
 			'sailthru_override_other_emails',
 			__( 'Override other Wordpress system emails?', 'sailthru-for-wordpress' ),
@@ -130,7 +129,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		
+
 
 		if ( isset( $setup['sailthru_override_other_emails'] ) &&  $setup['sailthru_override_other_emails'] ) {
 
@@ -148,7 +147,7 @@ function sailthru_initialize_setup_options() {
 						'If left blank, the default Wordpress system email will be used.'
 					)
 				);
-			
+
 			add_settings_field(
 					'sailthru_setup_password_reset_override_template',	// ID used to identify the field throughout the theme
 					__( 'Override Password Reset Email', 'sailthru-for-wordpress' ),		// The label to the left of the option interface element
@@ -167,7 +166,7 @@ function sailthru_initialize_setup_options() {
 		}
 	}
 
-		
+
 	// Finally, we register the fields with WordPress
 	register_setting(
 		'sailthru_setup_options',
@@ -207,7 +206,20 @@ function sailthru_horizon_loadtype_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$load_type = isset($options['sailthru_horizon_load_type']) ? $options['sailthru_horizon_load_type'] : '';
 	echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_horizon_load_type]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
-	echo 'Use synchronous loading for Horizon';
+	echo '<small>Use synchronous loading for Horizon</small>';
+
+}
+
+/**
+ * Creates a checkbox for the double opt in
+ *
+ */
+function sailthru_double_opt_in_callback() {
+
+	$options = get_option( 'sailthru_setup_options' );
+	$load_type = isset($options['sailthru_double_opt_in']) ? $options['sailthru_double_opt_in'] : '';
+	echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_double_opt_in]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
+	echo '<small>Double opt-in email subscribers </small>';
 
 }
 
@@ -220,12 +232,12 @@ function sailthru_override_other_emails_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$override_on = isset($options['sailthru_override_other_emails']) ? $options['sailthru_override_other_emails'] : '';
 	echo '<input type="checkbox" id="sailthru_override_other_emails" name="sailthru_setup_options[sailthru_override_other_emails]" value="1"' . checked( 1, esc_attr($override_on), false ) . '/>';
-	echo 'Yes';
+	echo '<small>Yes</small>';
 
 }
 
 
-/** 
+/**
  * Creates a default template if there are none yet.
  *
  */
@@ -235,12 +247,8 @@ function sailthru_setup_email_template_callback( $args ) {
 	if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
 		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
-	
-	
 
-		//$client = new Sailthru_Client( $api_key, $api_secret );
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-			$sailthru_client = new Sailthru_Client( $api_key, $api_secret );
 			try {
 				if ( $client ) {
 					$res = $client->getTemplates();
@@ -253,9 +261,9 @@ function sailthru_setup_email_template_callback( $args ) {
 
 
 		if ( isset( $res['error'] ) ) {
-		
+
 			$tpl =  array();
-		
+
 		} else {
 
 			$tpl = $res['templates'];
@@ -270,15 +278,15 @@ function sailthru_setup_email_template_callback( $args ) {
 			$has_default_template = false;
 		}
 		if( $has_default_template ) {
-			
+
 			if( isset($tpl) || $tpl != '') {
-				
+
 				$name = get_bloginfo('name');
 				$email = get_bloginfo('admin_email');
 				try {
-					
+
 					if ( $sailthru_client ){
-						
+
 						$template = 'default-template';
 						$options = array(
 							'from_name' => $name,
@@ -286,16 +294,16 @@ function sailthru_setup_email_template_callback( $args ) {
 							'content_html' => '{body}',
 							'subject' => '{subject}' );
 						$response = $client->saveTemplate($template, $options);
-						
-					}		
+
+					}
 				} catch ( Sailthru_Client_Exception $e ) {
 						//silently fail
 						return;
 				}
 
-			} 
+			}
 		}
-		
+
 	}
 
 
@@ -307,7 +315,7 @@ function sailthru_setup_email_template_callback( $args ) {
 	}
 
 	echo $html;
-	
+
 }
 
 
@@ -342,13 +350,21 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_api_secret'] = false;
 	}
 
+	// double opt-in load type
+	if( isset( $input['sailthru_double_opt_in'] ) ) {
+		$output['sailthru_double_opt_in'] = 1;
+	} else {
+ 		$output['sailthru_double_opt_in'] = false;
+	}
+
 
 	// horizon load type
 	if( isset( $input['sailthru_horizon_load_type'] ) ) {
 		$output['sailthru_horizon_load_type'] = 1;
 	} else {
- 		$output['sailthru_horizon_load_type'] = false;		
+ 		$output['sailthru_horizon_load_type'] = false;
 	}
+
 
 	// horizon domain
 	if( isset( $input['sailthru_horizon_domain']) ) {
@@ -356,7 +372,7 @@ function sailthru_setup_handler( $input ) {
 	} else {
 		$output['sailthru_horizon_domain'] = '';
 	}
-	
+
 
 	// set errors
 	if ( empty( $output['sailthru_api_secret'] ) ) {
@@ -366,7 +382,7 @@ function sailthru_setup_handler( $input ) {
 	if ( empty( $output['sailthru_api_key'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __( 'Sailthru will not function without an API key.' ), 'error' );
 	}
-	
+
 	if ( empty( $output['sailthru_horizon_domain'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Horizon domain.' ), 'error' );
 	} else {
@@ -375,7 +391,7 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_horizon_domain'] = str_ireplace( 'https://', '', $output['sailthru_horizon_domain'] );
 		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
 
-		// remove trailing 
+		// remove trailing
 		if ( substr( $output['sailthru_horizon_domain'], -1 ) == '/' ) {
 		    $output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
@@ -407,11 +423,11 @@ function sailthru_setup_handler( $input ) {
 
 		// other email templates
 		if( isset( $input['sailthru_override_other_emails']) ) {
-			$output['sailthru_override_other_emails'] = trim( $input['sailthru_override_other_emails'] );	
+			$output['sailthru_override_other_emails'] = trim( $input['sailthru_override_other_emails'] );
 		} else {
 			$output['sailthru_override_other_emails'] = false;
 		}
-		
+
 		if( isset( $input['sailthru_setup_new_user_override_template'] ) ) {
 			$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
 		} else {
@@ -423,7 +439,7 @@ function sailthru_setup_handler( $input ) {
 		} else {
 			$output['sailthru_setup_password_reset_override_template'] = false;
 		}
-				
+
 	}
 
 

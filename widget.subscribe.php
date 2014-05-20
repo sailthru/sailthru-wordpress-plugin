@@ -88,7 +88,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		if ( empty( $instance['sailthru_list'] ) ) {
 			return false;
-		}		
+		}
 
 		extract( $args, EXTR_SKIP );
 
@@ -238,7 +238,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function register_widget_scripts() {
 
 		wp_enqueue_script( 'sailthru-subscribe-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.js' , array( 'jquery' ) );
-		
+
 
 	} // end register_widget_scripts
 
@@ -251,9 +251,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
 			$result['error'] = true;
-			$result['message'] = "No naughty business please";
+			$result['message'] = "This form does not appear to have been posted your website and has not been submitted.";
 		}
-
 
 		$email = trim( $_POST['email'] );
 		if ( ! filter_var( $email , FILTER_VALIDATE_EMAIL ) || empty ( $email ) ) {
@@ -403,7 +402,7 @@ function sailthru_widget_shortcode( $atts ) {
 		$atts['using_shortcode'] = true;
 	}
 
-	
+
 	if ( empty($atts['text'] ) ) {
 		$atts['text'] = 'Subscribe to our newsletter';
 	}
@@ -425,7 +424,7 @@ function sailthru_widget_shortcode( $atts ) {
 		}
 	} else {
 		$before_widget = '<div class="sailthru_shortcode">';
-		$after_widget = '</div>';			
+		$after_widget = '</div>';
 	}
 
 	$args = array(

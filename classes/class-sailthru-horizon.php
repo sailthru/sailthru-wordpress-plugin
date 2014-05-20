@@ -412,17 +412,6 @@ class Sailthru_Horizon {
 				array( &$this, 'load_sailthru_admin_display')
 			);
 			$this->admin_views[$forms_menu] = 'customforms_configuration_page';
-			
-			$integrations_menu = add_submenu_page(
-				'sailthru_configuration_page',
-				__( 'Integrations', 'sailthru-for-wordpress' ),
-				__( 'Integrations', 'sailthru-for-wordpress' ),
-				'manage_options',
-				'integrations_configuration_page',
-				array( &$this, 'load_sailthru_admin_display')
-			);
-			$this->admin_views[$integrations_menu] = 'integrations_configuration_page';
-
 
 	} // end sailthru_menu
 
@@ -473,7 +462,7 @@ class Sailthru_Horizon {
 	    		if( empty( $post_tags ) ) {
 		    		$post_tags = get_the_tags();
 		    		if( $post_tags ) {
-						$post_tags = esc_attr(implode( ', ', wp_list_pluck( $post_tags, 'name' )) );		    			
+						$post_tags = esc_attr(implode( ', ', wp_list_pluck( $post_tags, 'name' )) );
 		    		}
 	    		}
 
@@ -576,7 +565,7 @@ class Sailthru_Horizon {
 			'side',
 			'high'
 		);
-	
+
 	} // sailthru_post_metabox
 
 	/**
@@ -591,25 +580,25 @@ class Sailthru_Horizon {
 		$sailthru_meta_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true);
 
 		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
-		
-		// post expiration		
+
+		// post expiration
 		$html  = '<p><strong>Sailthru Post Expiration</strong></p>';
 		$html .= '<input id="sailthru_post_expiration" type="text" placeholder="YYYY-MM-DD" name="sailthru_post_expiration" value="' . esc_attr($sailthru_post_expiration) . '" size="25" class="datepicker" />';
 		$html .= '<p class="description">';
-		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';		
+		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
 		$html .= '</p><!-- /.description -->';
-		
+
 
 		// post meta tags
 		$html .= '<p>&nbsp;</p>';
-		$html .= '<p><strong>Sailthru Meta Tags</strong></p>';		
-		$html .= '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr($sailthru_meta_tags) . '" size="25"  />';	
+		$html .= '<p><strong>Sailthru Meta Tags</strong></p>';
+		$html .= '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr($sailthru_meta_tags) . '" size="25"  />';
 		$html .= '<p class="description">';
 		$html .= 'Tags are used to measure user interests and later to send them content customized to their tastes.';
 		$html .= '</p><!-- /.description -->';
 		$html .= '<p class="howto">Separate tags with commas</p>';
-		
-		
+
+
 
 		echo $html;
 
@@ -627,7 +616,7 @@ class Sailthru_Horizon {
 		if( $this->user_can_save( $post_id, $this->nonce ) ) {
 
 			// Did the user set an expiry date, or are they clearing an old one?
-			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) 
+			if( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] )
 					|| get_post_meta($post_id, 'sailthru_post_expiration', TRUE) ) {
 
 				$expiry_time = strtotime( $_POST['sailthru_post_expiration'] );
@@ -641,14 +630,14 @@ class Sailthru_Horizon {
 			} // end if
 
 			// Did the user set some meta tags, or are they clearing out old tags?
-			if( ! empty( $_POST['sailthru_meta_tags'] ) && isset( $_POST['sailthru_meta_tags'] ) 
+			if( ! empty( $_POST['sailthru_meta_tags'] ) && isset( $_POST['sailthru_meta_tags'] )
 					|| get_post_meta($post_id, 'sailthru_meta_tags', TRUE) ) {
-				
+
 				//remove trailing comma
-				$meta_tags = rtrim( $_POST['sailthru_meta_tags'], ','); 
+				$meta_tags = rtrim( $_POST['sailthru_meta_tags'], ',');
 				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
-				
-			} 		
+
+			}
 
 		} // end if
 
