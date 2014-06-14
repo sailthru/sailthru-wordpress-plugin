@@ -249,6 +249,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function add_subscriber() {
 
+		// add the lists to the vars so it can be used for double opt in
+		if ( isset( $_POST['sailthru_email_list']) ) {
+			$vars['lists'] = filter_var( trim( $_POST['sailthru_email_list'] ), FILTER_SANITIZE_STRING );
+		} else {
+			$vars['lists'] = '';
+		}
+
 		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
 			$result['error'] = true;
 			$result['message'] = "This form does not appear to have been posted your website and has not been submitted.";
@@ -345,7 +352,14 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$client = new WP_Sailthru_Client( $api_key, $api_secret);
 				try {
 					if ( $client ) {
+						if ( isset ($customfields['sailthru_welcome_template']) && !empty ($customfields['sailthru_welcome_template']) ) {
+
+							$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars);
+
+						}
+
 						$res = $client->saveUser( $email, $options );
+
 					}
 				}
 				catch (Sailthru_Client_Exception $e) {
