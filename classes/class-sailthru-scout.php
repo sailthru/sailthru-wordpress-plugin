@@ -32,7 +32,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 	} // end constructor
 
-
 	/*--------------------------------------------------*/
 	/* Public Functions
 	/*--------------------------------------------------*/
@@ -57,6 +56,9 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		// is scout turned on?
 		if( isset($params['sailthru_scout_is_on']) &&  $params['sailthru_scout_is_on']) {
+
+			wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
+
 
 			// Check first, otherwise js could throw errors
 			if( get_option('sailthru_setup_complete') ) {
@@ -120,6 +122,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 
 		if ($scout['sailthru_scout_is_on'] == 1) {
+
 			echo "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/scout/v1.js\"></script>";
 		 	echo "<script type=\"text/javascript\">\n";
 	           echo "SailthruScout.setup({\n";
@@ -132,8 +135,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 					}
 				}
 	           echo "});\n";
-
-		     echo " if(SailthruScout.allContent.length == 0) { jQuery('#sailthru-scout').hide() }";
 		     echo "</script>\n";
 		}
 
