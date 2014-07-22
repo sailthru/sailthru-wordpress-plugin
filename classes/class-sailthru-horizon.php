@@ -265,6 +265,11 @@ class Sailthru_Horizon {
 	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: {tags: '". esc_js($tags_filtered) ."'}" : '';
 	 		}
 
+	 		// Sailthru Spidering
+	 		$sailthru_spider = '1';
+	 		if ( is_preview() || is_404()) {
+	 			$sailthru_spider = '0';
+	 		}
 
 	 	// check if concierge is on
 	 	if ( isset($concierge['sailthru_concierge_is_on']) && $concierge['sailthru_concierge_is_on'] == 1 ) {
@@ -272,13 +277,14 @@ class Sailthru_Horizon {
 	 			from: '". esc_js( $concierge_from ) ."',
 	 			". esc_js( $concierge_threshold ) ."
 	 			delay: ". esc_js( $concierge_delay ) .",
+	 			spider: ". esc_js( $sailthru_spider ) .",
 	 			offsetBottom: ". esc_js( $concierge_offset ) .",
 	 			cssPath: '". esc_js( $concierge_css ) ."',
 	 			$concierge_filter
 	 		}";
 
 		} else {
-			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "'";
+			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "', spider: ".$sailthru_spider."";
 		}
 
 		if ($options['sailthru_horizon_load_type'] == '1') {
@@ -319,11 +325,7 @@ class Sailthru_Horizon {
 			$horizon_js .= " </script>\n";
 		}
 
-
-
 		echo $horizon_js;
-
-
 
 	 } // end sailthru_client_horizon
 
