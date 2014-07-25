@@ -354,10 +354,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			//$client = new Sailthru_Client( $api_key, $api_secret );
 			$client = new WP_Sailthru_Client( $api_key, $api_secret);
 				try {
+
 					if ( $client ) {
 
 						// first we check to see if this user exists for this list
-						$user_exists = $client->getEmail($email);
+						$user_exists = $client->apiGet('user', array('id' => urlencode($email) ) );
 
 						if ($user_exists) {
 
@@ -408,8 +409,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 							unset( $options['lists'] );
 						}
 
+						var_dump($options);
 						$res = $client->saveUser( $email, $options );
-
+						die();
 					}
 				}
 				catch (Sailthru_Client_Exception $e) {
