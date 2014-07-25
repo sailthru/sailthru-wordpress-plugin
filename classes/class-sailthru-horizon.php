@@ -265,11 +265,6 @@ class Sailthru_Horizon {
 	 			$concierge_filter = strlen($concierge['sailthru_concierge_filter']) >  0 ? "filter: {tags: '". esc_js($tags_filtered) ."'}" : '';
 	 		}
 
-	 		// Sailthru Spidering
-	 		$sailthru_spider = '1';
-	 		if ( is_preview() || is_404()) {
-	 			$sailthru_spider = '0';
-	 		}
 
 	 	// check if concierge is on
 	 	if ( isset($concierge['sailthru_concierge_is_on']) && $concierge['sailthru_concierge_is_on'] == 1 ) {
