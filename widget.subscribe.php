@@ -409,9 +409,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 							unset( $options['lists'] );
 						}
 
-						var_dump($options);
 						$res = $client->saveUser( $email, $options );
-						die();
 					}
 				}
 				catch (Sailthru_Client_Exception $e) {
