@@ -174,29 +174,6 @@ function sailthru_initialize_forms_options() {
 		echo '';
 	}
 
-	function delete_field ( $args ) {
-		$customfields  = get_option( 'sailthru_forms_options' );
-		$collection    = $args[0];
-		$option_name   = $args[1];
-		$default_value = $args[2];
-		$html_id       = $args[3];
-		$options       = get_option( $collection );
-		$key           = get_option( 'sailthru_forms_key' );
-
-
-		echo '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">
-				<option value="select">Select...</option>';
-				for ( $i = 0; $i < $key; $i++ ) {
-					 $field_key = $i + 1;
-					 if ( ! empty ( $customfields[ $field_key ][ 'sailthru_customfield_name' ] ) ) {
-					 echo '<option value="'.esc_attr($field_key).'" >'.esc_html($customfields[ $field_key ][ 'sailthru_customfield_label' ]).'</option>';
-					 }
-				} //end for loop
-		echo '</select>';
-		echo '<div>'.submit_button('Delete Field') .'</div>';
-
-	}
-
 
 	function field_order( $args ){
 
