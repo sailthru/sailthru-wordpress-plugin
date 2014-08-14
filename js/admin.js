@@ -83,8 +83,8 @@
 			var new_val = parseInt($('#value_amount').attr('value'),10);
 			new_val = new_val + 1;
 			var second_val = new_val +1;
-			$('#sailthru_value_fields_block').append('<div><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + new_val + ']" type="text"  placeholder="display value"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value' + second_val + ']" type="text"  placeholder="value"/></div>');
-			$('#value_amount').attr('value',second_val);
+			$('#sailthru_value_fields_block').append('<div><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][value]" type="text"  placeholder="display value"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][label]" type="text"  placeholder="value"/></div>');
+			$('#value_amount').attr('value',new_val);
 		}));
 
 		$('#add_attr').on("click", (function(e) {

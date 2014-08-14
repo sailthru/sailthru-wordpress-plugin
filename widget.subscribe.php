@@ -249,17 +249,17 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function add_subscriber() {
 
+		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
+			$result['error'] = true;
+			$result['message'] = "This form does not appear to have been posted your website and has not been submitted.";
+		}
+
+
 		// add the lists to the vars so it can be used for double opt in
 		if ( isset( $_POST['sailthru_email_list']) ) {
 			$vars['lists'] = explode( ',', filter_var( trim( $_POST['sailthru_email_list'] ), FILTER_SANITIZE_STRING ) );
 		} else {
 			$vars['lists'] = array();
-		}
-
-
-		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
-			$result['error'] = true;
-			$result['message'] = "This form does not appear to have been posted your website and has not been submitted.";
 		}
 
 		$email = trim( $_POST['email'] );
@@ -294,7 +294,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 
 		$subscribe_to_lists = array();
-			if( !empty($_POST['sailthru_email_list'] ) ) {
+		if( !empty($_POST['sailthru_email_list'] ) ) {
 		//add the custom fields info to the api call! This is where the magic happens
 		$customfields = get_option( 'sailthru_forms_options' );
 		$key = get_option( 'sailthru_forms_key' );
@@ -358,7 +358,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 					if ( $client ) {
 
 						// first we check to see if this user exists for this list
-						$user_exists = $client->apiGet('user', array('id' => urlencode($email) ) );
+						$user_exists = $client->apiGet('user', array('id' => $email, 'key' => 'email'));
 
 						if ($user_exists) {
 
@@ -379,13 +379,18 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 										}
 
 									}
+
 								} else {
 									// all of the lists are new lists
 									$new_lists = $options['lists'];
 								}
 
+								// if there's any lists the user is not a member of send the welcome email
 								if ( count( $new_lists ) > 0) {
-									$vars['lists'] = $new_lists;
+									$save_lists = true;
+									if ( !isset ( $customfields['sailthru_double_opt_in']) && !empty ($customfields['sailthru_double_opt_in'] ) ) {
+										$save_lists = false;
+									}
 									$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars);
 								}
 
@@ -395,15 +400,15 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 							if ( isset ( $customfields['sailthru_welcome_template']) && !empty ($customfields['sailthru_welcome_template'] ) ) {
 
-								$save_lists = false;
+								if ( isset ( $customfields['sailthru_double_opt_in']) && !empty ($customfields['sailthru_double_opt_in'] ) ) {
+									$save_lists = false;
+								}
+
 								$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars);
 
 							}
 
 						}
-
-						// unset the var for the list used in the welcome email
-						unset( $options['vars']['lists'] );
 
 						if ( !$save_lists ) {
 							unset( $options['lists'] );

@@ -55,7 +55,7 @@
 					echo '<th>&nbsp;</th>';
 					echo '<th align="left">Field</th>';
 					echo '<th align="left">Active</th>';
-					echo '<th>Req</th>';
+					echo '<th>Required</th>';
 				echo '</tr>';
 			echo '</thead>';
 			echo '<tbody class="ui-sortable">';

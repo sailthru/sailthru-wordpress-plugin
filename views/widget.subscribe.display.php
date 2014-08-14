@@ -151,10 +151,12 @@
                                             <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_id" class="form-control">';
 
                                         $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-
+                                        echo '<option value=""></option>';
                                         foreach( $items as $item ) {
-                                            $vals = explode( ':', $item );
-                                            echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+                                            if ( !empty( $item ) ) {
+                                                $vals = explode( ':', $item );
+                                                echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+                                            }
                                         }
 
                                         echo '</select>';
@@ -166,15 +168,16 @@
                                         echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
 
                                         foreach ( $items as $item ) {
-                                            $vals = explode( ':', $item );
-                                            echo '<input ';
+                                            if ( !empty ( $item )) {
+                                                $vals = explode( ':', $item );
+                                                echo '<input ';
 
-                                            if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
-                                                echo 'required=required ';
+                                                if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                    echo 'required=required ';
+                                                }
+
+                                                echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[0]) . '';
                                             }
-
-                                            echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[0]) . '';
-
                                         }
 
                                         echo '</div>';
@@ -185,13 +188,15 @@
                                             echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
 
                                             foreach ( $items as $item ) {
-                                                $vals = explode( ':', $item );
-                                                echo '<input ';
+                                                if ( !empty ( $item )) {
+                                                    $vals = explode( ':', $item );
+                                                    echo '<input ';
 
-                                                if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
-                                                    echo 'required=required ';
+                                                    if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                        echo 'required=required ';
+                                                    }
+                                                    echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]) . '';
                                                 }
-                                                echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]) . '';
                                             }
                                         echo '</div>';
 
