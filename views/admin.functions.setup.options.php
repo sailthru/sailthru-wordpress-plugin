@@ -337,13 +337,6 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_api_secret'] = false;
 	}
 
-	// double opt-in load type
-	if( isset( $input['sailthru_double_opt_in'] ) ) {
-		$output['sailthru_double_opt_in'] = 1;
-	} else {
- 		$output['sailthru_double_opt_in'] = false;
-	}
-
 
 	// horizon load type
 	if( isset( $input['sailthru_horizon_load_type'] ) ) {

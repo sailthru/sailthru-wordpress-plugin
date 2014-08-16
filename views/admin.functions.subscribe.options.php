@@ -61,7 +61,7 @@ function sailthru_initialize_forms_options() {
 		$options = get_option( 'sailthru_forms_options' );
 		$sailthru_double_opt_in = isset($options['sailthru_double_opt_in']) ? $options['sailthru_double_opt_in'] : '';
 		echo '<input type="checkbox" id="sailthru_double_opt_in" name="sailthru_forms_options[sailthru_double_opt_in]" value="1"' . checked( 1, esc_attr($sailthru_double_opt_in), false ) . '/>';
-		echo '<small><strong>Important:</strong> Ensure the template uses <code><a href="">signup_confirm</a></code> or the user will not be added to a list. </small><p><small>The welcome email will only be sent when a user does not belong to a list selected in the subscribe widget. </small></p>';
+		echo '<small><strong>Important:</strong> Ensure the template uses <code><a href="http://docs.sailthru.com/developers/zephyr-syntax/zephyr-functions/signupconfirm">signup_confirm</a></code> or the user will not be added to a list </small><p><small>The welcome email will only be sent when a user does not belong to a list selected in the subscribe widget. </small></p>';
 	}
 
 
@@ -554,6 +554,14 @@ function sailthru_html_fields_options_callback() {
 	} else {
 		$output['sailthru_welcome_template'] = false;
 	}
+
+	// double opt-in load type
+	if( isset( $input['sailthru_double_opt_in'] ) ) {
+		$output['sailthru_double_opt_in'] = 1;
+	} else {
+ 		$output['sailthru_double_opt_in'] = false;
+	}
+
 
 	if( isset( $input['sailthru_customfield_field_order']) ) {
 		$order = sanitize_text_field($input['sailthru_customfield_field_order']);
