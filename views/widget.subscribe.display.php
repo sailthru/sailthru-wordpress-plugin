@@ -176,7 +176,7 @@
                                                     echo 'required=required ';
                                                 }
 
-                                                echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[0]) . '';
+                                                echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '" ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . '> ' . esc_html($vals[0]) . '';
                                             }
                                         }
 
@@ -195,7 +195,7 @@
                                                     if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
                                                         echo 'required=required ';
                                                     }
-                                                    echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]) . '';
+                                                    echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"  ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . '> ' . esc_html($vals[1]) . '';
                                                 }
                                             }
                                         echo '</div>';
