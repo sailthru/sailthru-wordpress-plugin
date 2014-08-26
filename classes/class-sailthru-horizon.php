@@ -278,7 +278,7 @@ class Sailthru_Horizon {
 	 		}";
 
 		} else {
-			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] );
+			$horizon_params =   "domain:'" . esc_js( $options['sailthru_horizon_domain'] ) ."'";
 		}
 
 		if ($options['sailthru_horizon_load_type'] == '1') {
