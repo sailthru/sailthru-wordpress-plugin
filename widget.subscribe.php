@@ -254,6 +254,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$result['message'] = "This form does not appear to have been posted from your website and has not been submitted.";
 		}
 
+		// add the lists to the vars so it can be used for double opt in
+		if ( isset( $_POST['sailthru_email_list']) ) {
+			$vars['wp_widget_lists'] = explode( ',', filter_var( trim( $_POST['sailthru_email_list'] ), FILTER_SANITIZE_STRING ) );
+		} else {
+			$vars['wp_widget_lists'] = array();
+		}
+
 		$email = trim( $_POST['email'] );
 		if ( ! filter_var( $email , FILTER_VALIDATE_EMAIL ) || empty ( $email ) ) {
 			$result['error'] = true;
@@ -437,7 +444,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$result['result'] = $res;
 
 		}
-
 
 		// did this request come from an ajax call?
 		if ( !empty ( $_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest') {
