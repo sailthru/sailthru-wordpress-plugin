@@ -12,9 +12,13 @@ if ( ! empty( $attribute_list ) ) {
 }
 return '';
 }
-function sailthru_field_class ( $class ) {
+function sailthru_field_class ( $class, $type = '' ) {
 if ( ! empty( $class ) ) {
-	return 'class="form-control ' . esc_attr($class).'"';
+	if ($type =='radio' || $type =='checkbox') {
+		return 'class="' . esc_attr($class).'"';
+	} else {
+		return 'class="form-control ' . esc_attr($class).'"';
+	}
 }
 return '';
 }
