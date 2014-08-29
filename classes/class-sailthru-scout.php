@@ -64,7 +64,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			if( get_option('sailthru_setup_complete') ) {
 
 				//wp_enqueue_script( 'sailthru-scout', '//ak.sail-horizon.com/scout/v1.js', array('jquery', 'sailthru-horizon') );
-
 				//wp_enqueue_script( 'sailthru-scout-params', SAILTHRU_PLUGIN_URL .'/js/scout.params.js' , array('sailthru-scout') );
 
 				// if conceirge is on, we want noPageView to be set to true
@@ -98,6 +97,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 	$options = get_option('sailthru_setup_options');
 		$horizon_domain = $options['sailthru_horizon_domain'];
 		$scout = get_option('sailthru_scout_options');
+
+		var_dump($scout );
 		$scout_params = array();
 
 		// inlcudeConsumed?
@@ -114,12 +115,11 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			$scout['sailthru_scout_renderItem'] = '';
 		}
 
-		if( isset( $scout['scout_num_visible']) ) {
-			$scout_params[] = strlen($scout['scout_num_visible']) > 0 ?  "numVisible:'". esc_js( $scout['sailthru_scout_number'] )."' ": '';
-		} else {
-			$scout['scout_num_visible'] = '';
+		if( isset( $scout['sailthru_scout_numVisible']) ) {
+			$scout_params[] = strlen($scout['sailthru_scout_numVisible']) > 0 ?  "numVisible: ". (int) $scout['sailthru_scout_numVisible'] ." ": '';
 		}
 
+		var_dump($scout_params);
 
 		if ($scout['sailthru_scout_is_on'] == 1) {
 
