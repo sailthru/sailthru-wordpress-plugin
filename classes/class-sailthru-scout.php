@@ -98,7 +98,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		$horizon_domain = $options['sailthru_horizon_domain'];
 		$scout = get_option('sailthru_scout_options');
 
-		var_dump($scout );
 		$scout_params = array();
 
 		// inlcudeConsumed?
