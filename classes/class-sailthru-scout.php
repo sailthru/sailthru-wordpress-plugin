@@ -118,8 +118,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			$scout_params[] = strlen($scout['sailthru_scout_numVisible']) > 0 ?  "numVisible: ". (int) $scout['sailthru_scout_numVisible'] ." ": '';
 		}
 
-		var_dump($scout_params);
-
 		if ($scout['sailthru_scout_is_on'] == 1) {
 
 			echo "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/scout/v1.js\"></script>";
