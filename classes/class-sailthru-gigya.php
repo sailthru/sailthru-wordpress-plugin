@@ -12,8 +12,8 @@ class Sailthru_Gigya {
 	 *--------------------------------------------*/
 	function __construct() {
 
-		$option = get_option( 'sailthru_integrations_options' );	
-			if(! isset( $option['sailthru_gigya_enabled'] ) || ! $option['sailthru_gigya_enabled'] )	
+		$option = get_option( 'sailthru_integrations_options' );
+			if(! isset( $option['sailthru_gigya_enabled'] ) || ! $option['sailthru_gigya_enabled'] )
 				return;
 
 		// hook up the endpoint
@@ -26,7 +26,7 @@ class Sailthru_Gigya {
 		// Register Gigya Javascripts
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_gigya_scripts' ) );
 
-		
+
 		// load plugin text domain
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
 
@@ -62,12 +62,12 @@ class Sailthru_Gigya {
 
 			// create the endpoint using the user-specified url
 			add_rewrite_endpoint( $option['sailthru_gigya_url'], EP_ROOT);
-		
-		}
-	
-	}	
 
-	/**	
+		}
+
+	}
+
+	/**
 	* If an endpoint is set by the user, we kill WP and capture Gigya Data
 	* @return die if API request
 	*/
@@ -78,7 +78,7 @@ class Sailthru_Gigya {
 		$option = get_option( 'sailthru_integrations_options' );
 			$endpoint = $option['sailthru_gigya_url'];
 		$request = $wp->request;
-		
+
 		if( !empty( $wp->request ) ) {
 
 			if( stristr( $endpoint, $request ) ){
@@ -87,8 +87,8 @@ class Sailthru_Gigya {
 			}
 
 		}
-	
-	}	
+
+	}
 
 
 	/**
@@ -117,9 +117,9 @@ class Sailthru_Gigya {
 	/*--------------------------------------------------*/
 	/* Protected Functions
 	/*--------------------------------------------------*/
-	/** 
+	/**
 	*	This is where we send off the lead card data to Sailthru.
-	*	@return void 
+	*	@return void
 	*/
 	protected function handle_request(){
 
@@ -127,16 +127,15 @@ class Sailthru_Gigya {
 
 
 		$option = get_option( 'sailthru_integrations_options' );
-		//$salt = $option['sailthru_twitter_salt'];		
 
-		$social_data = json_decode($_POST['json']);	
+		$social_data = json_decode($_POST['json']);
 
 		$gigya_secret_key = $option['sailthru_gigya_key'];
-		
+
 
 		if ( isset( $gigya_secret_key ) ) {
 
-		   	// The security signature check, 
+		   	// The security signature check,
 			//verifying the data's origin, will follow:
 			if ( SigUtils::validateUserSignature( $social_data->UID, $social_data->signatureTimestamp, $gigya_secret_key, $social_data->UIDSignature ) )
 			{
@@ -153,7 +152,7 @@ class Sailthru_Gigya {
 
 					$data['key']  = 'email';
 					$data['id'] = $social_data->user->email;
-				
+
 				} else {
 
 					// need to do check to see if sharing is enabled on the account at setup
@@ -171,7 +170,7 @@ class Sailthru_Gigya {
 							$data['key'] = 'extid';
 						break;
 					}
-				
+
 					$data['id'] =  $social_data->loginProviderUID;
 				}
 
@@ -195,7 +194,7 @@ class Sailthru_Gigya {
 						$data['vars'][$provider.'_'.$key] = $val;
 					}
 
-				}		   	
+				}
 
 			    try {
 
@@ -237,12 +236,12 @@ class Sailthru_Gigya {
 	 function gigya_js() {
 
 		$option = get_option( 'sailthru_integrations_options' );
-			$endpoint = $option['sailthru_gigya_url'];	 	
+			$endpoint = $option['sailthru_gigya_url'];
 
 		echo '<script src="//ak.sailthru.com/gigya/sync.js"></script>';
 
 		echo '<script type="text/javascript">';
-			echo 'SailthruGigya.callback_url = "' + get_bloginfo('url')  + '/' + $endpoint + '"';
+			echo 'SailthruGigya.callback_url = "' + esc_attr(get_bloginfo('url'))  + '/' + $endpoint + '"';
 			echo 'gigya.socialize.addEventHandlers({';
 	    		echo 'onLogin:SailthruSync';
 			echo '});';
