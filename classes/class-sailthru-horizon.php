@@ -622,7 +622,7 @@ class Sailthru_Horizon {
 					$expiry_date = date( 'Y-m-d', $expiry_time );
 
 					// Save the date. hehe.
-					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
+					update_post_meta( $post_id, 'sailthru_post_expiration', esc_attr( $expiry_date) );
 				}
 
 			} // end if
@@ -633,7 +633,7 @@ class Sailthru_Horizon {
 
 				//remove trailing comma
 				$meta_tags = rtrim( $_POST['sailthru_meta_tags'], ',');
-				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
+				update_post_meta( $post_id, 'sailthru_meta_tags', esc_attr( $meta_tags ) );
 
 			}
 
