@@ -1,4 +1,4 @@
-=== Plugin Name ===
+=== Sailthru for WordPress ===
 Contributors: nickgundry, automattic, irms, zackify, natebot
 Tags: personalization, email,
 Requires at least: 3.6
