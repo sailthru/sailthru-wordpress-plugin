@@ -63,7 +63,7 @@ if(!class_exists('Sailthru')) {
 				echo <<<EOT
 <!-- Sailthru Horizon --> 
 <script type="text/javascript">sailthru_horizon = { domain: '{$subdomain}', tag: {$tags}}</script> 
-<script type="text/javascript" src="http://cdn.sailthru.com/js/horizon.js"></script>
+<script type="text/javascript" src="http://ak.sail-horizon.com/horizon/v1.js"></script>
 EOT;
 			}
 		}
