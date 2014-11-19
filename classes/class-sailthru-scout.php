@@ -23,7 +23,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			'sailthru-recommends-id',
 			__( 'Sailthru Recommends Widget', 'sailthru-for-wordpress' ),
 			array(
-				'classname'	  => 'Sailthru_Scout',
+				'classname'   => 'Sailthru_Scout',
 				'description' => __( 'Sailthru Scout but in a compact sidebar widget.', 'sailthru-for-wordpress' )
 			)
 		);
@@ -208,7 +208,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 					'post_name'      => $slug,
 					'post_title'     => $title,
 					'post_status'    => 'publish',
-					'post_type'	     => $post_type,
+					'post_type'      => $post_type,
 					'post_content'   => $post_content,
 				)
 			);
