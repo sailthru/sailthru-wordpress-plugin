@@ -27,27 +27,28 @@ License:
 */
 
 
-if( ! defined('SAILTHRU_PLUGIN_PATH') )
+if ( ! defined('SAILTHRU_PLUGIN_PATH') ) {
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
+}
 
-if( ! defined('SAILTHRU_PLUGIN_URL') )
+if ( ! defined('SAILTHRU_PLUGIN_URL') ) {
 	define( 'SAILTHRU_PLUGIN_URL', plugin_dir_url(__FILE__) );
+}
 
 
 /*
- * Sailthru PHP5 Developer Library
- * Source: http://getstarted.sailthru.com/developers/client-libraries/set-config-file/php5
+ * Sailthru PHP5 Developer Library.
+ * Source: http://getstarted.sailthru.com/developers/client-libraries/set-config-file/php5.
  */
 require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Util.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Client.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'lib/Sailthru_Client_Exception.php' );
-require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php');
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php' );
 
 /*
  * Get Sailthru for Wordpress plugin classes
  */
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
-require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
 
 
@@ -67,15 +68,11 @@ require_once( SAILTHRU_PLUGIN_PATH . 'widget.subscribe.php' );
  * Horizon handles the foundational actions like adding menus, meta tags,
  * and javascript files.
  */
-if( class_exists( 'Sailthru_Horizon' ) ) {
+if ( class_exists( 'Sailthru_Horizon' ) ) {
 
 	$sailthru_horizon = new Sailthru_Horizon();
 
-	//if( class_exists( 'Sailthru_Concierge' ) ) {
-	//	$sailthru_concierge = new Sailthru_Concierge();
-	//}
-
-	if( class_exists( 'Sailthru_Scout' ) ) {
+	if ( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();
 	}
 }
@@ -89,87 +86,79 @@ register_activation_hook( __FILE__, array( 'Sailthru_Horizon', 'activate' ) );
 register_deactivation_hook( __FILE__, array( 'Sailthru_Horizon', 'deactivate' ) );
 register_uninstall_hook(  __FILE__, array( 'Sailthru_Horizon', 'uninstall' ) );
 
-// Add and action to handle when a user logs in
-add_action('wp_login', 'sailthru_user_login', 10, 2);
+// Add and action to handle when a user logs in.
+add_action( 'wp_login', 'sailthru_user_login', 10, 2 );
 
 
-function sailthru_user_login($user_login, $user) {
-
-	if (get_option('sailthru_setup_complete')) {
-
-		$sailthru = get_option('sailthru_setup_options');
-		$api_key = $sailthru['sailthru_api_key'];
+function sailthru_user_login( $user_login, $user ) {
+	if ( get_option( 'sailthru_setup_complete' ) ) {
+		$sailthru   = get_option( 'sailthru_setup_options' );
+		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
 
-		//$client = new Sailthru_Client( $api_key, $api_secret );
-		$client = new WP_Sailthru_Client( $api_key, $api_secret);
+		$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 		$id = $user->user_email;
 		$options = array(
-				'login' => array(
+			'login' => array(
 				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-				'key' => 'email',
-				'ip' => $_SERVER['SERVER_ADDR'],
-				'site' => $_SERVER['HTTP_HOST'],
+				'key'        => 'email',
+				'ip'         => $_SERVER['SERVER_ADDR'],
+				'site'       => $_SERVER['HTTP_HOST'],
 			),
-			'fields' => array('keys' => 1),
+			'fields' => array( 'keys' => 1 ),
 		);
 
 		try {
-			if ($client) {
-				$st = $client->saveUser($id, $options);
+			if ( $client ) {
+				$st = $client->saveUser( $id, $options );
 			}
 		}
-		catch (Sailthru_Client_Exception $e) {
-			//silently fail
+		catch ( Sailthru_Client_Exception $e ) {
+			//silently fail.
 			return;
 		}
-
 	}
-
 }
 
 
 /*
- * If this plugin is active, override native WP email functions
+ * If this plugin is active, override native WP email functions.
  */
-if( get_option('sailthru_override_wp_mail')
-	  && get_option('sailthru_setup_complete')
-		&& !function_exists('wp_mail') ) {
+if( get_option( 'sailthru_override_wp_mail' ) && get_option( 'sailthru_setup_complete' ) && ! function_exists( 'wp_mail' ) ) {
 
-	function wp_mail($to, $subject, $message, $headers = '', $attachments = array()) {
-
-	  // we'll be going through Sailthru so we'll handle text/html emails there already
-	  // replace the <> in the reset password message link to allow the link to display.
-	  // in HTML emails
+	function wp_mail( $to, $subject, $message, $headers = '', $attachments = array() ) {
+	  /**
+	   * We'll be going through Sailthru so we'll handle text/html emails there already.
+	   * Replace the <> in the reset password message link to allow the link to display
+	   * in HTML emails.
+	   */
 	  $message = preg_replace( '#<(https?://[^*]+)>#', '$1', $message );
 
 	  extract( apply_filters( 'wp_mail', compact( $to, $subject, $message, $headers = '', $attachments = array() ) ) );
 
-		// recipients
-		$recipients = is_array($to) ? implode(',', $to) : $to;
+		// Recipients.
+		$recipients = is_array( $to ) ? implode( ',', $to ) : $to;
 
-		// as the client library accepts these...
+		// As the client library accepts these...
 		$vars = array(
 			'subject' => $subject,
-			'body' => $message
+			'body'    => $message
 		);
 
-		// template
-		$sailthru_configs = get_option('sailthru_setup_options');
-		  $template = $sailthru_configs['sailthru_setup_email_template'];
+		// Template.
+		$sailthru_configs = get_option( 'sailthru_setup_options' );
+		$template         = $sailthru_configs['sailthru_setup_email_template'];
 
 
-		// SEND
-		$sailthru = get_option('sailthru_setup_options');
-			$api_key = $sailthru['sailthru_api_key'];
-			$api_secret = $sailthru['sailthru_api_secret'];
-		$client = new WP_Sailthru_Client( $api_key, $api_secret);
-		$r = $client->send($template, $recipients, $vars, array());
+		// Send.
+		$sailthru   = get_option( 'sailthru_setup_options' );
+		$api_key    = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+		$client     = new WP_Sailthru_Client( $api_key, $api_secret );
+		$r          = $client->send( $template, $recipients, $vars, array() );
 
 		return true;
-
 	}
-
 }
 
