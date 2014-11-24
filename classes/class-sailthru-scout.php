@@ -64,7 +64,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 				// If conceirge is on, we want noPageView to be set to true
 				$conceirge = get_option( 'sailthru_concierge_options' );
 					/** This filter is documented in class-sailthru-horizon.php */
-					if ( isset( $conceirge['sailthru_convierge_is_on'] ) && $conceirge['sailthru_convierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) ) {
+					if ( isset( $conceirge['sailthru_concierge_is_on'] ) && $conceirge['sailthru_concierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) ) {
 						$params['sailthru_scout_noPageview'] = 'true';
 					}
 

@@ -219,30 +219,24 @@ class Sailthru_Horizon {
 	 		return;
 	 	}
 
-		// Get the client's horizon domain.
-		$options        = get_option( 'sailthru_setup_options' );
-		$concierge      = get_option( 'sailthru_concierge_options' );
-		$concierge_from = isset( $concierge['sailthru_concierge_from'] ) ? $concierge['sailthru_concierge_from'] : 'bottom';
+		// Get the options.
+		$options             = get_option( 'sailthru_setup_options' );
+		$concierge           = get_option( 'sailthru_concierge_options' );
+
+		// From.
+		$concierge_from      = isset( $concierge['sailthru_concierge_from'] ) ? $concierge['sailthru_concierge_from'] : 'bottom';
 
 		// Threshold.
-		if ( ! isset( $concierge['sailthru_concierge_threshold'] ) ) {
-			$concierge_threshold = 'threshold: 500,';
-		} else {
-			$concierge_threshold =  strlen( $concierge['sailthru_concierge_threshold'] ) ? "threshhold: " . intval( $concierge['sailthru_concierge_threshold'] ) . ",": 'threshold: 500,';
-		}
+		$concierge_threshold = isset( $concierge['sailthru_concierge_threshold'] ) ? intval( $concierge['sailthru_concierge_threshold'] ) : '500';
 
 		// Delay.
-		$concierge_delay = isset( $concierge['sailthru_concierge_delay'] ) ? $concierge['sailthru_concierge_delay'] : '500';
+		$concierge_delay     = isset( $concierge['sailthru_concierge_delay'] ) ? $concierge['sailthru_concierge_delay'] : '500';
 
 		// Offset.
-		$concierge_offset = isset( $concierge['sailthru_concierge_offsetBottom'] ) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
+		$concierge_offset    = isset( $concierge['sailthru_concierge_offsetBottom'] ) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
 
 		// CssPath.
-		if ( ! isset( $concierge['sailthru_concierge_cssPath'] ) ) {
-			$concierge_css = 'https://ak.sail-horizon.com/horizon/recommendation.css';
-		} else {
-			$concierge_css = strlen( $concierge['sailthru_concierge_cssPath'] ) > 0 ? $concierge['sailthru_concierge_cssPath'] : 'https://ak.sail-horizon.com/horizon/recommendation.css';
- 		}
+		$concierge_css       = isset( $concierge['sailthru_concierge_cssPath'] ) ? $concierge['sailthru_concierge_cssPath'] : 'https://ak.sail-horizon.com/horizon/recommendation.css';
 
  		// Filter.
  		if ( ! isset( $concierge['sailthru_concierge_filter'] ) ) {
@@ -274,7 +268,7 @@ class Sailthru_Horizon {
 	 			spider: '" . esc_js( $spider ) . "',
 	 			concierge: {
 	 				from: '" . esc_js( $concierge_from ) . "',
-	 				" . esc_js( $concierge_threshold ) . "
+	 				threshold: '" . esc_js( $concierge_threshold ) . "
 	 				delay: " . esc_js( $concierge_delay ) . ",
 	 				offsetBottom: " . esc_js( $concierge_offset ) . ",
 	 				cssPath: '" . esc_js( $concierge_css ) . "',
