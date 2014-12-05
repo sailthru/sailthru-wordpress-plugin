@@ -109,7 +109,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		// renderItem?
 		if( isset( $scout['sailthru_scout_renderItem']) ) {
-			$scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ". (bool) $scout['sailthru_scout_renderItem']."": '';
+            $decodedRenderFunction = htmlspecialchars_decode(stripcslashes($scout['sailthru_scout_renderItem']));
+            $scout_params[] = strlen($scout['sailthru_scout_renderItem']) > 0 ?  "renderItem: ". $decodedRenderFunction ."" : '';
 		} else {
 			$scout['sailthru_scout_renderItem'] = '';
 		}
@@ -127,7 +128,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 				if( is_array($scout_params) ) {
 					foreach ($scout_params as $key => $val) {
 						if (strlen($val) >0)  {
-							echo esc_js($val).",\n";
+							echo $val .",\n";
 						}
 					}
 				}
