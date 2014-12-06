@@ -133,7 +133,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		 * @param array $tags Array of tags.
 		 */
 		$tags = apply_filters( 'sailthru_scout_filter', $tags );
-		$tags = array_map( array( $this, 'escape_filter_tags' ), $tags );print_r($tags);
+		$tags = array_map( array( $this, 'escape_filter_tags' ), $tags );
 		if ( ! empty( $tags ) ) {
 			if ( 1 === count( $tags ) ) {
 				$filter = "        filter: {tags:'" . implode( "','", $tags ) . "'},\n";
