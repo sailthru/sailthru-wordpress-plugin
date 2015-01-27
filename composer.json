@@ -1,7 +1,7 @@
 {
-  name: "sailthru-wordpress-plugin/sailthru-wordpress-plugin",
-  type: "wordpress-plugin",
-  require: {
-    composer/installers: "~1.0"
+  "name": "sailthru-wordpress-plugin/sailthru-wordpress-plugin",
+  "type": "wordpress-plugin",
+  "require": {
+    "composer/installers": "~1.0"
   }
 }
