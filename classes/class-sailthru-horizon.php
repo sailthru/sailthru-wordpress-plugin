@@ -11,10 +11,10 @@ class Sailthru_Horizon {
 	 * The current version of the plugin.
 	 *
 	 * @since    3.0.5
-	 * @access   protected
+	 * @access   public
 	 * @var      string    $version    The current version of the plugin.
 	 */
-	 protected $version;
+	 public static $version = '3.0.5';
 
 
 	/*--------------------------------------------*
@@ -26,8 +26,6 @@ class Sailthru_Horizon {
 	 */
 	function __construct() {
 
-
-		$this->version = '3.0.5';
 
 
 		// Load plugin text domain
@@ -78,8 +76,10 @@ class Sailthru_Horizon {
 
 		// add a record in the db to keep track of the version of this plugin
 		if( false == get_option( 'sailthru_plugin_version' ) ) {
-			add_option( 'sailthru_sailthru_plugin_version', $this->version );
-		} // end if		
+			add_option( 'sailthru_plugin_version', self::$version );
+		} else {
+			update_option( 'sailthru_plugin_version', self::$version );
+		}// end if		
 
 	} // end activate
 
@@ -134,10 +134,20 @@ class Sailthru_Horizon {
 				delete_option('sailthru_customfields_order');
 			}
 
+			if( false != get_option('sailthru_forms_key') ) {
+				delete_option('sailthru_forms_key');
+			}
+
 
 		// remove integrations options
 		if( false != get_option('sailthru_integrations_options') ) {
 			delete_option( 'sailthru_integrations_options' );
+		}
+
+
+		//remove plugin version number
+		if( false != get_option('sailthru_plugin_version') ) {
+			delete_option( 'sailthru_plugin_version' );
 		}
 
 
