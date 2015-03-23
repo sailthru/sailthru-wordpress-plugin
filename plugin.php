@@ -27,6 +27,17 @@ License:
 */
 
 
+
+/**
+ * The current version of the plugin.
+ *
+ * @since    3.0.5
+ * @var      const    $version    The current version of the plugin.
+ */	 
+if( ! defined( 'SAILTHRU_PLUGIN_VERSION') )
+	define( 'SAILTHRU_PLUGIN_VERSION', '3.0.5');
+
+
 if( ! defined('SAILTHRU_PLUGIN_PATH') )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );
 
@@ -74,6 +85,13 @@ require_once( SAILTHRU_PLUGIN_PATH . 'widget.subscribe.php' );
 if( class_exists( 'Sailthru_Horizon' ) ) {
 
 	$sailthru_horizon = new Sailthru_Horizon();
+
+	// add a record in the db to keep track of the version of this plugin
+	if( false == get_option( 'sailthru_plugin_version' ) ) {
+		add_option( 'sailthru_plugin_version', SAILTHRU_PLUGIN_VERSION );
+	} else {
+		update_option( 'sailthru_plugin_version', SAILTHRU_PLUGIN_VERSION );
+	} // end if		
 
 	if( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();

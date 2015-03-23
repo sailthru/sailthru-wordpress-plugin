@@ -7,15 +7,6 @@ class Sailthru_Horizon {
 	 // Represents the nonce value used to save the post media
 	 private $nonce = 'wp_sailthru_nonce';
 
-	/**
-	 * The current version of the plugin.
-	 *
-	 * @since    3.0.5
-	 * @access   public
-	 * @var      string    $version    The current version of the plugin.
-	 */
-	 public static $version = '3.0.5';
-
 
 	/*--------------------------------------------*
 	 * Constructor
@@ -72,14 +63,7 @@ class Sailthru_Horizon {
 		if( false == get_option( 'sailthru_override_wp_mail' ) ) {
 			add_option( 'sailthru_override_wp_mail', 1 );
 		} // end if
-
-
-		// add a record in the db to keep track of the version of this plugin
-		if( false == get_option( 'sailthru_plugin_version' ) ) {
-			add_option( 'sailthru_plugin_version', self::$version );
-		} else {
-			update_option( 'sailthru_plugin_version', self::$version );
-		}// end if		
+	
 
 	} // end activate
 
@@ -173,7 +157,7 @@ class Sailthru_Horizon {
 	 */
 	public static function sailthru_update_check() {
 
-		$sailthru_plugin_version = get_site_option( 'sailthru_plugin_version' );
+		$sailthru_plugin_version = get_option( 'sailthru_plugin_version' );
 		
 		// changes to <3.0.5
 		// delete custom subscribe widget fields from the database,
