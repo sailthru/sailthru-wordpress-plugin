@@ -17,6 +17,8 @@ class Sailthru_Horizon {
 	 */
 	function __construct() {
 
+
+
 		// Load plugin text domain
 		add_action( 'init', array( $this, 'sailthru_init' ) );
 
@@ -39,6 +41,10 @@ class Sailthru_Horizon {
 	 	add_action( 'save_post', array( $this, 'save_custom_meta_data' ) );
 
 
+	 	// Check for updates and make changes as needed
+	 	add_action( 'plugins_loaded', array( $this, 'sailthru_update_check' ) );
+
+
 	} // end constructor
 
 	/**
@@ -53,10 +59,11 @@ class Sailthru_Horizon {
 		if ( ! current_user_can( 'activate_plugins' ) )
             return;
 
-          // signal that it's ok to override Wordpress's built-in email functions
+        // signal that it's ok to override Wordpress's built-in email functions
 		if( false == get_option( 'sailthru_override_wp_mail' ) ) {
 			add_option( 'sailthru_override_wp_mail', 1 );
 		} // end if
+	
 
 	} // end activate
 
@@ -111,10 +118,20 @@ class Sailthru_Horizon {
 				delete_option('sailthru_customfields_order');
 			}
 
+			if( false != get_option('sailthru_forms_key') ) {
+				delete_option('sailthru_forms_key');
+			}
+
 
 		// remove integrations options
 		if( false != get_option('sailthru_integrations_options') ) {
 			delete_option( 'sailthru_integrations_options' );
+		}
+
+
+		//remove plugin version number
+		if( false != get_option('sailthru_plugin_version') ) {
+			delete_option( 'sailthru_plugin_version' );
 		}
 
 
@@ -133,11 +150,59 @@ class Sailthru_Horizon {
 	} // end uninstall
 
 
+	/**
+	 * Fired after plugins are loaded.
+	 * Checks versions to see if changes
+	 * need to be made to the database
+	 */
+	public static function sailthru_update_check() {
+
+		$sailthru_plugin_version = get_option( 'sailthru_plugin_version' );
+		
+		// changes to <3.0.5
+		// delete custom subscribe widget fields from the database,
+		// don't just hide them.
+		if ( $sailthru_plugin_version <= '3.0.5' || $sailthru_plugin_version ==  false) {
+
+			$customfields  = get_option( 'sailthru_forms_options' );
+			$key           = get_option( 'sailthru_forms_key' );	
+
+			$updatedcustomfields = array();		
+
+			if ( isset($customfields) && !empty($customfields)) {
+
+				for ( $i = 0; $i <= $key; $i++ ) {
+					if( isset($customfields[$i]['sailthru_customfield_name']) 
+							and !empty($customfields[$i]['sailthru_customfield_name']) ) {
+
+						// save non-empty custom fields to the database
+						$updatedcustomfields[$i] = $customfields[$i];
+
+					} else {
+
+						// don't save empty custom fields to the database
+						// we're pruning them.
+					}
+
+				}
+
+				update_option( 'sailthru_forms_options', $updatedcustomfields );
+				
+			} // end if $customfields isset
+
+		}
+
+	}
+
+
+
+
+	/**
+ 	* Loads the plugin text domain for translation
+ 	*/
 	public function sailthru_init() {
 
-		/**
-	 	* Loads the plugin text domain for translation
-	 	*/
+
 		$domain = 'sailthru-for-wordpress-locale';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
         	load_textdomain( $domain, SAILTHRU_PLUGIN_PATH . $domain . '-' . $locale . '.mo' );
