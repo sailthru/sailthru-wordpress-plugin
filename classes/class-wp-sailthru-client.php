@@ -12,6 +12,31 @@
 class WP_Sailthru_Client extends Sailthru_Client {
 
 
+
+    /**
+     * Prepare JSON payload
+     */
+    protected function prepareJsonPayload(array $data, array $binary_data = array()) {
+        
+        // Get the plugin and version and add to API calls
+        $plugin_info = get_plugin_data( __DIR__.'/../plugin.php');
+        $version = !empty($plugin_info['Version']) ? $plugin_info['Version'] : '';
+        $integration = 'WordPress Integration - '. $version;
+        $data['integration'] = $integration;
+
+        $payload =  array(
+            'api_key' => $this->api_key,
+            'format' => 'json', //<3 XML
+            'json' => json_encode($data)
+        );
+        $payload['sig'] = Sailthru_Util::getSignatureHash($payload, $this->secret);
+        if (!empty($binary_data)) {
+            $payload = array_merge($payload, $binary_data);
+        }
+        return $payload;
+    }
+
+
     /**
      * Overload method to transparently intercept calls.
      * Perform an HTTP request using the Wordpress HTTP API
