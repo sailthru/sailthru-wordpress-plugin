@@ -213,9 +213,11 @@
 			?>
 
 			<p>
-				<?php _e( 'Subscribe to list(s): ' ); ?>
+				<p class="small">Select a list to subscribe the user to. As users cannot be added directly to a smart list only natural lists are displayed.  </p>
 				<?php
+
 					foreach ( $lists as $key => $list ) {
+
 						if( ! empty( $instance['sailthru_list'][ $key ] ) ) {
 							$list_key = $instance['sailthru_list'][ $key ];
 						}
@@ -223,9 +225,13 @@
 							$list_key = '';
 						}
 						?>
+						<?php if ($list['type'] != 'smart'): ?>
 						<br />
 						<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo $this->get_field_name( 'sailthru_list' ); ?>[<?php echo $key; ?>]" id="<?php echo esc_attr( $this->get_field_id( 'sailthru_list' ) . '-' . $key ); ?>" <?php checked( $list_key, $list['name'] ); ?>  />
 						<label for=""><?php echo esc_html( $list['name'] ); ?></label>
+						<?php endif; ?>
+						
+
 						<?php
 					}
 				?>
