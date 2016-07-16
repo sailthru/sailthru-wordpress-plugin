@@ -58,12 +58,22 @@
 						if ( false == get_option( 'sailthru_setup_complete' ) ) {
 							add_option( 'sailthru_setup_complete', 1 );
 						} // end if
+
+						// check to see what JS version is implemented. 
+						if ( isset( $setup['sailthru_js_type']) && $setup['sailthru_js_type'] == 'personalize_js' ){
+							$show_concierge = false;
+						} else {
+							$show_concierge = true;
+						}
+
  						?>
 
 						<h2 class="nav-tab-wrapper">
 							<a href="?page=sailthru_configuration_page" class="nav-tab <?php echo $active_tab == 'sailthru_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Welcome', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=settings_configuration_page" class="nav-tab <?php echo $active_tab == 'settings_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Settings', 'sailthru-for-wordpress' ); ?></a>
+							<?php if ($show_concierge): ?>
 							<a href="?page=concierge_configuration_page" class="nav-tab <?php echo $active_tab == 'concierge_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Concierge', 'sailthru-for-wordpress' ); ?></a>
+							<?php endif; ?>
 							<a href="?page=scout_configuration_page" class="nav-tab <?php echo $active_tab == 'scout_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Scout', 'sailthru-for-wordpress' ); ?></a>
 							<a href="?page=custom_fields_configuration_page" class="nav-tab <?php echo $active_tab == 'custom_fields_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ); ?></a>
 						</h2>
@@ -162,7 +172,7 @@
 
 					<div id="sailthru-welcome-panel" class="welcome-panel">
 						<div class="welcome-panel-content">
-						<h3><img src="<?php echo SAILTHRU_PLUGIN_URL ?>/img/sailthru-logo.png" /> &nbsp;Sailthru Configuration</h3>
+						<h3><img src="<?php echo SAILTHRU_PLUGIN_URL ?>img/sailthru-logo.png" /> &nbsp;Sailthru Configuration</h3>
 						<p class="about-description">Before we get started, let's make sure you've got everything set up.</p>
 							<div class="welcome-panel-column-container">
 								<div class="welcome-panel-column">

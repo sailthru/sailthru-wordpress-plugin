@@ -270,24 +270,84 @@ class Sailthru_Horizon {
 			// we're not going to pass the enitre set of options
 			// through to be seen in the html source so just stick it in this var
 			$options = get_option('sailthru_setup_options');
+
+
+			// check what JS version is being used. 
+
+			if ( isset ( $options['sailthru_js_type'] ) &&  $options['sailthru_js_type'] == 'personalize_js')  {
+				
+				// Load Personalize JS
+
+				$customer_id = $options['sailthru_customer_id'];
+
+				// and then grab only what we need and put it in this var
+				$params = array();
+				$params['sailthru_customer_id'] = $customer_id;
+
+				wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/onsite/personalize.v0.0.3.min.js', array( 'scriptaculous' ) );
+				add_action('wp_footer', array( $this, 'sailthru_client_personalize' ), 10);
+
+			} else {
+
 				$horizon_domain = $options['sailthru_horizon_domain'];
 
-			// and then grab only what we need and put it in this var
-			$params = array();
-			$params['sailthru_horizon_domain'] = $horizon_domain;
+				// and then grab only what we need and put it in this var
+				$params = array();
+				$params['sailthru_horizon_domain'] = $horizon_domain;
 
-			add_action('wp_footer', array( $this, 'sailthru_client_horizon' ), 10);
+				add_action('wp_footer', array( $this, 'sailthru_client_horizon' ), 10);
 
-			// A handy trick to update the parameters in js files
-			wp_localize_script( 'sailthru-horizon-params', 'Horizon', $params );
+				// A handy trick to update the parameters in js files
+				wp_localize_script( 'sailthru-horizon-params', 'Horizon', $params );
 
-			// Horizon paramters.
-			wp_enqueue_script( 'sailthru-horizon-params' );
-
+				// Horizon parameters.
+				wp_enqueue_script( 'sailthru-horizon-params' );
+			}			
 
 		} // end if sailthru setup is complete
 
 	} // end register_plugin_scripts
+
+
+
+
+		/*-------------------------------------------
+	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
+	 *------------------------------------------*/
+	 function sailthru_client_personalize() {
+
+	 	$options = get_option('sailthru_setup_options');
+	 	$customer_id = isset( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
+
+	 	// if the content API has been disabled by a filter set stored tags to false
+	 	if( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
+			$stored_tags = 'false';
+		} else {
+			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
+	 			$stored_tags = 'true';
+	 		} else {
+	 			// default setting
+	 			$stored_tags = 'false';
+	 		}
+		}
+
+	 	$customer_id = isset( $options['sailthru_customer_id'] ) && ($options['sailthru_customer_id']) ? $options['sailthru_customer_id'] : '';
+
+		$js = "<script type=\"text/javascript\">\n";
+        $js .= "var customerId = '".esc_attr( $customer_id ) ."'\n";
+        $js .= "var SPM = Sailthru.SPM;\n";
+        $js .= "SPM.setup(customerId, {\n";
+        $js .= "autoTrackPageviews: true,\n";
+		$js .= "useStoredTags: ". esc_attr( $stored_tags ) ."\n";
+        $js .= "});\n";
+ 		$js .= "</script>\n";
+
+		if ( !is_404() &&  !is_preview() ) {
+			echo $js;
+		}
+
+	 } // end sailthru_client_horizon
+
 
 
 	/*-------------------------------------------
