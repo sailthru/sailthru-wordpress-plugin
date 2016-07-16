@@ -179,8 +179,8 @@ class Sailthru_Subscribe_Fields {
         }
 
         // loads the admin js and css for the configuration pages
-        wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array('jquery') );
-        wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . 'css/admin.css'  );
+        wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array('jquery'), '3.9.2');
+        wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . 'css/admin.css', '3.9.2' );
 
     } // end register_admin_scripts
 
