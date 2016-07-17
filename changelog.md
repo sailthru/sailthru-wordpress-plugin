@@ -7,7 +7,9 @@ Version 3.0.6 of the plugin adds support for Sailthru's content API and addition
 
 #### Added Content API support
 
-Each time a post is added or saved it is now pushed toSailthru"s using the Content API. Any additional custom fields produced by a WordPress plugin are passed as vars. The post type is also passed a a var so that you can filter data feeds based on post type as well as tags. 
+Each time a post is added or saved it is now pushed to Sailthru's Content API. Any additional custom fields produced by a WordPress plugin are passed as vars. The post type is also passed a a var so that you can filter data feeds based on post type as well as tags. 
+
+Content API calls can be disabled and the Spidering process used by applying the filter ```sailthru_content_api_enable``` in your functions.php file with a return value of ```false```
 
 #### Added option to choose Javascript Library
 
