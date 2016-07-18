@@ -18,5 +18,10 @@ Customers can choose between Personalize JS and Horizon JS versions. During the 
 #### Sailthru Subscription Widget
 Fixed a bug whereby smart lists were available in the subscription widget. Changed Sailthru subscription widget to only use natural lists as subscription option as Smart Lists cannot be posted to.
 
+#### Added setHorizonCookie to newsletter singup widget
+
+Added a call to setHorizonCookie that will be called upon form submission of the Sailthru subscribe widget. This should drop the sailthru_hid cookie.
+
+
 #### Updated Sailthru Client Library 
 Added an integration parameter to all API calls to help Salthru support identify the WordPress plugin version to help provide faster responses and initial investigations.
