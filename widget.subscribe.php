@@ -435,6 +435,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 						}
 						unset( $options['vars']['lists'] );
 						$res = $client->saveUser( $email, $options );
+						$client->setHorizonCookie( $email );
 
 					}
 				}
