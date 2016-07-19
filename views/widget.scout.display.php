@@ -4,24 +4,50 @@
      * If Scout is not on, advise the user
      */
     $scout = get_option( 'sailthru_scout_options' );
-
-    if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
-
-        // do nothing, get outta here
-        return;
-
+    $sailthru = get_option( 'sailthru_setup_options' );
+    
+    // check if this is an SPM widget or a Scout Widget
+    if (isset ( $sailthru['sailthru_js_type'] ) && $sailthru['sailthru_js_type'] == 'personalize_js'  ) {
+        $use_spm = true;
+        $section = empty( $instance['sailthru_spm_section'] ) ? ' ' :  $instance['sailthru_spm_section'];
+    } else {
+        $use_spm = false;
+        $title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
     }
 
-    /*
-     * Grab the settings from $instance and fill out default
-     * values as needed.
-     */
-	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
+
+    if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
+        // do nothing, get outta here
+        return;
+    }
+
 
 ?>
- <div class="sailthru-recommends-widget">
 
-    <?php
+<?php if ($use_spm): ?>
+    <div class="sailthru-spm-widget">
+         <div id="<?php echo $this->id; ?>"></div>
+          <script type="text/javascript">
+            jQuery(function() {
+                SPM.addSection('<?php echo $section; ?>', {
+                    elementId: '<?php echo $this->id; ?>'
+                });
+
+                SPM.personalize({
+                    timeout: 2000,
+                onSuccess: function(data){
+                    //console.log('Success',data);
+                },
+                onError: function(error) {
+                    //console.log('Error', error);
+                }
+            });
+         });
+    </script>
+
+    </div>
+<?php else: ?>
+<?php
         // title
         if ( ! empty( $title ) ) {
             if ( ! isset( $before_title ) ) {
@@ -34,6 +60,5 @@
         }
     ?>
 
-	<div id="sailthru-scout"><div class="loading">Loading, please wait...</div></div>
-
-</div>
+    <div id="sailthru-scout"><div class="loading"></div></div>
+<?php endif; ?>
