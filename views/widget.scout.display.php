@@ -15,14 +15,10 @@
         $title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
     }
 
-
-    if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
-        // do nothing, get outta here
-        return;
-    }
-
-
 ?>
+
+<?php var_dump($use_spm); ?>
+
 
 <?php if ($use_spm): ?>
     <div class="sailthru-spm-widget">

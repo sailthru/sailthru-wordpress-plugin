@@ -62,8 +62,10 @@
 						// check to see what JS version is implemented. 
 						if ( isset( $setup['sailthru_js_type']) && $setup['sailthru_js_type'] == 'personalize_js' ){
 							$show_concierge = false;
+							$show_scout = false;
 						} else {
 							$show_concierge = true;
+							$show_scout = true;
 						}
 
  						?>
@@ -74,7 +76,9 @@
 							<?php if ($show_concierge): ?>
 							<a href="?page=concierge_configuration_page" class="nav-tab <?php echo $active_tab == 'concierge_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Concierge', 'sailthru-for-wordpress' ); ?></a>
 							<?php endif; ?>
+							<?php if ($show_scout): ?>
 							<a href="?page=scout_configuration_page" class="nav-tab <?php echo $active_tab == 'scout_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Scout', 'sailthru-for-wordpress' ); ?></a>
+							<?php endif; ?>
 							<a href="?page=custom_fields_configuration_page" class="nav-tab <?php echo $active_tab == 'custom_fields_configuration_page' ? 'nav-tab-active' : ''; ?>"><?php _e( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ); ?></a>
 						</h2>
 
