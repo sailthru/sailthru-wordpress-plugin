@@ -1,7 +1,7 @@
 # Changelog
 
 
-## v3.0.6-dev (2016-07-15)
+## v3.0.6 (2016-07-15)
 
 Version 3.0.6 of the plugin adds support for Sailthru's content API and additional support for our personalization engine JavaScript as well as bug fixes and improvements. 
 
