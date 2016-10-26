@@ -342,7 +342,7 @@ class Sailthru_Horizon {
         $js .= "});\n";
  		$js .= "</script>\n";
 
-		if ( !is_404() &&  !is_preview() ) {
+		if ( !is_404() && !is_preview() && apply_filters( 'sailthru_add_spm_js', true ) ) {
 			echo $js;
 		}
 
@@ -444,7 +444,7 @@ class Sailthru_Horizon {
 			$horizon_js .= " </script>\n";
 		}
 
-		if ( !is_404() &&  !is_preview() ) {
+		if ( !is_404() &&  !is_preview() && apply_filters( 'sailthru_add_horizon_js', true ) ) {
 			echo $horizon_js;
 		}
 
