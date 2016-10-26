@@ -1,28 +1,32 @@
 <?php
-function sailthru_attributes ( $attribute_list ) {
-if ( ! empty( $attribute_list ) ) {
-	$attributes = explode( ',', $attribute_list );
-	$list = '';
-		foreach ( $attributes as $attribute ) {
-			$split = explode( ':', esc_attr($attribute) );
-			$list .= $split[0]. '="' . $split[1] . '" ';
 
-		}
-	return $list;
+function sailthru_attributes ( $attribute_list ) {
+	if ( ! empty( $attribute_list ) ) {
+		$attributes = explode( ',', $attribute_list );
+		$list = '';
+			foreach ( $attributes as $attribute ) {
+				$split = explode( ':', esc_attr($attribute) );
+				$list .= $split[0]. '="' . $split[1] . '" ';
+
+			}
+		return $list;
+	}
+	return '';
 }
-return '';
-}
+
 function sailthru_field_class ( $class ) {
-if ( ! empty( $class ) ) {
-	return 'class="form-control ' . esc_attr($class).'"';
+	if ( ! empty( $class ) ) {
+		return 'class="form-control ' . esc_attr($class).'"';
+	}
+
+	return '';
 }
-return '';
-}
+
 function sailthru_field_id ( $id ) {
-if ( ! empty( $class ) ) {
-	return 'id="' . esc_attr($id).'"';
-}
-return '';
+	if ( ! empty( $class ) ) {
+		return 'id="' . esc_attr($id).'"';
+	}
+	return '';
 }
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) )
 	define( 'SAILTHRU_PLUGIN_PATH', plugin_dir_path(__FILE__) );

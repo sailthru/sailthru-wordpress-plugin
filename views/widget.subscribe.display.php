@@ -1,6 +1,7 @@
 <?php
 	// Grab the settings from $instance and fill out default values as needed.
 	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
+	
 	if ( ! empty( $instance['sailthru_list'] ) ) {
 		if ( is_array( $instance['sailthru_list'] ) )
 		{
@@ -9,8 +10,13 @@
 			$sailthru_list = $instance['sailthru_list'];
 		}
 	} else {
-		$sailthru_list = '';
-	}
+      if ( is_array( $instance['sailthru_list'] ) )
+      {
+          $sailthru_list = implode( ',', $instance['sailthru_list'] );
+      } else {
+          $sailthru_list = $instance['sailthru_list'];
+      }
+  	} 
 
 	// Display options.
 	$customfields = get_option( 'sailthru_forms_options' );
@@ -23,14 +29,18 @@
 		<?php
 			// Title.
 			if ( ! empty( $title ) ) {
+				
 				if ( ! isset( $before_title ) ) {
 					$before_title = '';
 				}
+
 				if ( ! isset( $after_title ) ) {
 					$after_title = '';
 				}
+
 				echo $before_title . esc_html( trim( $title ) ) . $after_title;
 			}
+			
 			if ( empty( $customfields['sailthru_customfield_success'] ) ) {
 				$success = 'Thank you for subscribing!';
 			} else {
@@ -56,14 +66,51 @@
 				}
 
 			}
+			
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;
 
+            	$fields = explode( ',', $instance['fields'] );
+	            foreach ( $fields as $field ) {
+	            	$name_stripped = preg_replace( "/[^\da-z]/i", '_', $field );
+	            	$instance['show_'.$name_stripped.'_name']     = true;
+	            	$instance['show_'.$name_stripped.'_required'] = false;
+	            }
+            }
+
+			
+
+        for ( $i = 0; $i < $key; $i++ ) {
+        
+        $field_key = $i + 1;
+        
+        if ( ! empty( $customfields[ $field_key ] ) ) {
+        	
+        	$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+          
+         		if ( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+            		
+            		if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
+                        $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
+                	} else {
+                          $attributes = '';
+                	}
+				
 				if ( ! empty( $customfields[ $field_key ] ) ) {
 
-					$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+				        echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>
+                        <select ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) .' '. sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_id" class="form-control">';
+						
+						$name_stripped = preg_replace( "/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
 
-					if ( ! empty( $instance['show_' . $name_stripped . '_name'] ) ) {
+                        $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+                        
+                        foreach( $items as $item ) {
+                          $vals = explode( ':', $item );
+                          echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+                        }
+
+                        echo '</select>';
 
 						if ( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
 							$attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
@@ -153,8 +200,9 @@
 
 							}
 						}
+					}
 						echo '</div>';
-					} // End if ! empty name.
+				} // End if ! empty name.
 				} // End if ! empty field key.
 			} // End for loop.
 			?>

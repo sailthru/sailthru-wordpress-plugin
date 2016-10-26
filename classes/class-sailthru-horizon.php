@@ -48,9 +48,6 @@ class Sailthru_Horizon {
 	 */
 	public function activate( $network_wide ) {
 
-		if ( ! current_user_can( 'activate_plugins' ) ) {
-			return;
-		}
 
 	} // End activate.
 
