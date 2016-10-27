@@ -30,7 +30,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 	} // end constructor.
 
-
 	/*--------------------------------------------------*/
 	/* Public Functions
 	/*--------------------------------------------------*/
@@ -51,6 +50,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		// Is scout turned on?
 
+			wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
 	 	 /**
 		 * Filter the Sailthru Scout status.
 		 *

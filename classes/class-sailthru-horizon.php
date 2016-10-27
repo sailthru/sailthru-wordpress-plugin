@@ -97,6 +97,9 @@ class Sailthru_Horizon {
 			delete_option( 'sailthru_forms_options' );
 		}
 
+		if( false != get_option('sailthru_customfields_order_widget') ) {
+				delete_option('sailthru_customfields_order_widget');
+		}
 
 		if( false != get_option('sailthru_customfields_order') ) {
 				delete_option('sailthru_customfields_order');
@@ -263,6 +266,11 @@ class Sailthru_Horizon {
 		 */
  		$spider = apply_filters( 'sailthru_horizon_spider', true ) ? 'true' : 'false';
 
+	 	// Sailthru Spidering
+	 	$sailthru_spider = '1';
+	 	if ( is_preview() || is_404()) {
+	 		$sailthru_spider = '0';
+	 	}
  		// Setup our concierge output values.
 
 	 	// Check if concierge is on.
@@ -414,6 +422,11 @@ class Sailthru_Horizon {
 		);
 		$this->admin_views[ $forms_menu ] = 'customforms_configuration_page';
 
+
+			
+
+			$scout_menu = add_submenu_page(
+				'sailthru_configuration_page',
 
 			$scout_menu = add_submenu_page(
 				'sailthru_configuration_page',
@@ -603,7 +616,7 @@ class Sailthru_Horizon {
 		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 		$html  = '<input id="sailthru_post_expiration" type="text" name="sailthru_post_expiration" value="' . esc_attr($sailthru_post_expiration) . '" size="25" class="datepicker" />';
 		$html .= '<p class="description">';
-		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
+		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" tion can be found here</a>.';
 		$html .= '</p><!-- /.description -->';
 
 		// post meta tags

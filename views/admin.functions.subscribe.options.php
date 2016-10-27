@@ -6,6 +6,53 @@
 
 function sailthru_initialize_forms_options() {
 
+
+	function welcome_template_callback( $args ) {
+		echo '<h3>Welcome Template</h3>';
+		echo '<p>Choose a template to send after a user signs up using the Sailthru Subscribe Widget or shortcode.';
+	}
+
+	function welcome_template( $args ) {
+		$sailthru   = get_option( 'sailthru_setup_options' );
+
+		if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
+			$api_key    = $sailthru['sailthru_api_key'];
+			$api_secret = $sailthru['sailthru_api_secret'];
+
+			$client = new WP_Sailthru_Client( $api_key, $api_secret );
+				try {
+					if ( $client ) {
+						$res = $client->getTemplates();
+					}
+				}
+				catch ( Sailthru_Client_Exception $e ) {
+					//silently fail
+					return;
+				}
+
+
+			if ( isset( $res['error'] ) ) {
+
+				$tpl =  array();
+
+			} else {
+
+				$tpl = $res['templates'];
+			}
+		}
+
+		if(isset($tpl)){
+			$html = sailthru_create_dropdown( $args, $tpl );
+		} else {
+			$html = sailthru_create_dropdown( $args, array() );
+			$html .= "Sailthru Api Key and Secret must be saved first";
+		}
+
+		echo $html;
+
+	}
+
+
 	function sailthru_forms_callback( $args ) {
 
 		/*
@@ -13,68 +60,67 @@ function sailthru_initialize_forms_options() {
 		** Begin the column here. It ends in delete_field()
 		*/
 		echo '<div class="wrap">';
-		echo '<h2>Custom fields</h2>';
-		echo '<p>Custom fields allow you to collect additional information from the user that can be stored in their Sailthru User Profile. </p>';
 
 		$customfields  = get_option( 'sailthru_forms_options' );
 		$key           = get_option( 'sailthru_forms_key' );
 		$order		   = get_option( 'sailthru_customfields_order' );
-		echo '<table class="wp-list-table widefat">';
-		echo '<thead>';
-		echo '<th scope="col" class=manage-column">&nbsp;</th>';
-		echo '<th scope="col" class="manage-column">Display Label</th>';
-		echo '<th scope="col" class="manage-column">Field Name</th>';
-		echo '<th scope="col" class="manage-column">Field Type</th>';
 
-		echo '<th scope="col" class="manage-column"> </th>';
-		echo '</thead>';
-		echo '<tbody id="sortable">';
-		if ( isset($customfields) && !empty($customfields)){
-			//If these were sorted display in proper order
-			//echo $key;
-			//print_r($customfields);
-			//echo $order;
-			if( isset($order) && !empty($order) ){
-				$order_list = explode(',', $order);
-				foreach ($order_list as $pos) {
-					for ($i=1; $i <= (int)$key; $i++) {
-						if($i == (int)$pos){
-							if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
-								&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
-								echo '<tr id="pos_'. $i.'">';
-								echo '<td><span class="icon-sort">&nbsp;</span></td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
-								echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
-								echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
-							 	echo '</tr>';
+		echo '<h3>Add new custom fields to your Subscribe Widget</h3>';
+		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget and saved to Sailthru user profiles.</p>';
+
+
+		if (!empty($customfields)) {
+			echo '<table class="wp-list-table widefat">';
+			echo '<thead>';
+			echo '<th scope="col" class=manage-column">&nbsp;</th>';
+			echo '<th scope="col" class="manage-column">Display Label</th>';
+			echo '<th scope="col" class="manage-column">Field Name</th>';
+			echo '<th scope="col" class="manage-column">Field Type</th>';
+
+			echo '<th scope="col" class="manage-column"> </th>';
+			echo '</thead>';
+			echo '<tbody id="sortable">';
+			if ( isset($customfields) && !empty($customfields)){
+
+				if( isset($order) && !empty($order) ){
+					$order_list = explode(',', $order);
+					foreach ($order_list as $pos) {
+						for ($i=1; $i <= (int)$key; $i++) {
+							if($i == (int)$pos){
+								if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
+									&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
+									echo '<tr id="pos_'. $i.'">';
+									echo '<td><span class="icon-sort">&nbsp;</span></td>';
+									echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
+									echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
+									echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
+									echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+								 	echo '</tr>';
+								}
 							}
 						}
 					}
-				}
-			} else {
-				for ( $i = 1; $i <= $key; $i++ ) {
-					if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
-								&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
-						echo '<tr id="pos_'. $i.'">';
-						echo '<td><span class="icon-sort">&nbsp;</span></td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
-						echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
-						echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
-						echo '</tr>';
-					}
+				} else {
+					for ( $i = 1; $i <= $key; $i++ ) {
+						if( isset($customfields[$i]['sailthru_customfield_label']) and !empty($customfields[$i]['sailthru_customfield_label'])
+									&& isset($customfields[$i]['sailthru_customfield_name']) and !empty($customfields[$i]['sailthru_customfield_name']) ){
+							echo '<tr id="pos_'. $i.'">';
+							echo '<td><span class="icon-sort">&nbsp;</span></td>';
+							echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_label']).' </td>';
+							echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_name']).' </td>';
+							echo '<td>'. esc_html($customfields[$i]['sailthru_customfield_type']).' </td>';
+							echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+							echo '</tr>';
+						}
 
+					}
 				}
 			}
+			echo '</tbody>';
+			echo '</table>';
+			echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
 		}
-		echo '</tbody>';
-		echo '</table>';
-		echo '<input type="hidden" value="" name="sailthru_forms_options[sailthru_customfield_delete]" id="delete_value"></input>';
 
-
-		echo '<h2>Add new custom fields to your Subscribe Widget';
-		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget.</p>';
 
 
 	}
@@ -279,10 +325,35 @@ function sailthru_initialize_forms_options() {
 	$forms = get_option( 'sailthru_forms_options' );
 
 
+	/* ------------------------------------------------------------------------ *
+	 * Add welcome email settings
+	 * ------------------------------------------------------------------------ */
+	add_settings_section(
+		'sailthru_welcome_section',								// ID used to identify this section and with which to register options
+		__( '', 'sailthru-for-wordpress' ),	     // Title to be displayed on the administration page
+		'welcome_template_callback',							// Callback used to render the description of the section
+		'sailthru_forms_options'							// Page on which to add this section of options
+	);
+
+	add_settings_field(
+			'sailthru_welcome_template',					// ID used to identify the field throughout the theme
+			__( 'Welcome Template', 'sailthru-for-wordpress' ),	// The label to the left of the option interface element
+			'welcome_template',									// The name of the function responsible for rendering the option interface
+			'sailthru_forms_options',						// The page on which this option will be displayed
+			'sailthru_welcome_section',					// The name of the section to which this field belongs
+			array(											// The array of arguments to pass to the callback. In this case, just a description.
+				'sailthru_forms_options',
+				'sailthru_welcome_template',
+				'',
+				'sailthru_welcome_template'
+			)
+		);
+
 
 	/* ------------------------------------------------------------------------ *
 	 * Show Options for Adding Custom Fields
 	 * ------------------------------------------------------------------------ */
+
 	add_settings_section(
 		'sailthru_forms_section',							// ID used to identify this section and with which to register options
 		__( '', 'sailthru-for-wordpress' ),	// Title to be displayed on the administration page
@@ -457,7 +528,7 @@ add_action( 'admin_init', 'sailthru_initialize_forms_options' );
 
 
 function sailthru_html_fields_options_callback() {
-	echo '<h2>Advanced HTML options</h2>';
+	echo '<h3>Advanced HTML options</h3>';
 	//Add additional HTML attributes such as CSS classes and data attributes to the form field. These are optional fields to allow theme developers to integrate with their own themes.
 }
 
@@ -471,6 +542,15 @@ function sailthru_html_fields_options_callback() {
 	$fields = get_option( 'sailthru_forms_options' );
 	$output = $fields;
 	$key    = get_option( 'sailthru_forms_key' );
+
+
+	// save welcome email
+	if( isset($input['sailthru_welcome_template'] )) {
+		$output['sailthru_welcome_template'] = sanitize_text_field(trim( $input['sailthru_welcome_template'] ));
+	} else {
+		$output['sailthru_welcome_template'] = false;
+	}
+
 	if( isset( $input['sailthru_customfield_field_order']) ) {
 		$order = sanitize_text_field($input['sailthru_customfield_field_order']);
 	} else {
@@ -495,6 +575,7 @@ function sailthru_html_fields_options_callback() {
 			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
 			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
 			$output[ $new_key ]['sailthru_customfield_field_order']		= sanitize_text_field($input['sailthru_customfield_field_order']);
+
 
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
 			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
