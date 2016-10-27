@@ -422,12 +422,6 @@ class Sailthru_Horizon {
 		);
 		$this->admin_views[ $forms_menu ] = 'customforms_configuration_page';
 
-
-			
-
-			$scout_menu = add_submenu_page(
-				'sailthru_configuration_page',
-
 			$scout_menu = add_submenu_page(
 				'sailthru_configuration_page',
 				__( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ),
