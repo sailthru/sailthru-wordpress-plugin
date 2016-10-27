@@ -199,8 +199,10 @@
 							} else {
 
                                         foreach( $items as $item ) {
-                                            $vals = explode( ':', $item );
-                                            echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+                                            if ( !empty( $item ) ) {
+                                                $vals = explode( ':', $item );
+                                                echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr($vals[1]) . '</option>';
+                                            }
                                         }
 								if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
 									echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
@@ -219,15 +221,16 @@
                                         echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
 
                                         foreach ( $items as $item ) {
-                                            $vals = explode( ':', $item );
-                                            echo '<input ';
+                                            if ( !empty ( $item )) {
+                                                $vals = explode( ':', $item );
+                                                echo '<input ';
 
-                                            if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
-                                                echo 'required=required ';
+                                                if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                    echo 'required=required ';
+                                                }
+
+                                                echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '" ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) .' '. sailthru_attributes( $attributes ) . '> ' . esc_html($vals[0]) . '';
                                             }
-
-                                            echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[0]) . '';
-
                                         }
 
                                         echo '</div>';
@@ -238,13 +241,15 @@
                                             echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
 
                                             foreach ( $items as $item ) {
-                                                $vals = explode( ':', $item );
-                                                echo '<input ';
+                                                if ( !empty ( $item )) {
+                                                    $vals = explode( ':', $item );
+                                                    echo '<input ';
 
-                                                if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
-                                                    echo 'required=required ';
+                                                    if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                        echo 'required=required ';
+                                                    }
+                                                    echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"  ' . sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) .' '. sailthru_attributes( $attributes ) . '> ' . esc_html($vals[1]) . '';
                                                 }
-                                                echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr($vals[0]) . '"> ' . esc_html($vals[1]) . '';
                                             }
                                         echo '</div>';
 
@@ -320,24 +325,100 @@
                                     $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 
                                     foreach( $items as $item ) {
+                                        $vals = explode( ':', $item );
+                                        echo '<option value="' . esc_attr($vals[0]) . '">' . esc_attr( isset($vals[1]) ? $vals[1] : '' ) . '</option>';
+                                    }
 
 								echo sailthru_field_class( esc_attr( $customfields[ $field_key ]['sailthru_customfield_class'] ) ) . ' type="' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_type'] ) . '" ' . sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr( $name_stripped ) . '" id="sailthru_' . esc_attr( $name_stripped ) . '_id"  class="form-control"/>';
 
-							}
-						}
-					}
-						echo '</div>';
-				} // End if ! empty name.
-				} // End if ! empty field key.
-			} // End for loop.
-			?>
-			<input type="hidden" name="sailthru_nonce" value="<?php echo $nonce; ?>" />
-			<input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
-			<input type="hidden" name="action" value="add_subscriber" />
-			<input type="hidden" name="vars[source]" value="<?php bloginfo( 'url' ); ?>" />
-			<span class="input-group-btn">
-				<button class="btn btn-reverse" type="submit">Submit</button>
-			</span>
-		</form>
-	</div>
+                                        foreach ( $items as $item ) {
+                                            $vals = explode( ':', $item );
+                                            echo '<input ';
+
+                                            if ( $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                echo 'required=required ';
+                                            }
+
+                                            echo 'type="radio" name="custom_'. esc_attr($name_stripped) . '" value="' . esc_attr( $vals[0] ) . '"> ' . esc_html( isset($vals[1]) ? $vals[1] : '' ) . '';
+                                        }
+
+                                    echo '</div>';
+                                } elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'checkbox' ) {
+                                    $items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+                                    echo '<div class="checkbox">';
+                                        echo '<label for="custom_' . esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</label>';
+
+                                        foreach ( $items as $item ) {
+                                            $vals = explode( ':', $item );
+                                            echo '<input ';
+
+                                            if ( isset( $instance['show_'.esc_attr($name_stripped).'_required'] ) && $instance['show_'.esc_attr($name_stripped).'_required'] == 'checked' ) {
+                                                echo 'required=required ';
+                                            }
+
+                                            echo 'type="checkbox" name="custom_'. esc_attr($name_stripped) . '[]" value="' . esc_attr( $vals[0] ) . '"> ' . esc_html( isset($vals[1]) ? $vals[1] : '' ) . '';
+                                        }
+
+                                    echo '</div>';
+                                } else{
+
+                                     if( ! empty ( $customfields[ $field_key ]['sailthru_customfield_attr'] ) ) {
+                                        $attributes = $customfields[ $field_key ]['sailthru_customfield_attr'];
+                                    } else {
+                                        $attributes = '';
+                                    }
+
+                                    //check if the field is required
+                                    if ( isset( $instance['show_'.$name_stripped.'_required'] ) && $instance['show_'.$name_stripped.'_required'] == 'checked' ) {
+
+                                        if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+                                            echo '<label for="custom_' . esc_attr($name_stripped) . '" class="sailthru-widget-label sailthru-widget-required">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . ' </label>';
+                                        }
+
+                                        echo '<input ' . sailthru_field_class( esc_attr($customfields[ $field_key ]['sailthru_customfield_class']) ) . ' type="' . esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" ';
+
+                                        if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+                                            echo 'value="'.esc_attr($customfields[ $field_key ]['sailthru_customfield_value']).'" ';
+                                        }
+
+                                        echo sailthru_attributes( $attributes ) . 'required="required" name="custom_' . esc_attr($name_stripped) . '" id="sailthru_' . esc_attr($name_stripped) . '_name" class="form-control"/>';
+
+                                    } else{
+
+                                        if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+                                            echo '<label for="custom_' .esc_attr($name_stripped) . '">' . esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</label>';
+                                        }
+
+                                        echo '<input ';
+
+                                        if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+                                            echo 'value="'.esc_attr($customfields[ $field_key ]['sailthru_customfield_value']).'" ';
+                                        }
+
+                                        echo sailthru_field_class( esc_attr($customfields[ $field_key ]['sailthru_customfield_class'] ) ) .' type="' .esc_attr($customfields[ $field_key ]['sailthru_customfield_type']) . '" ' . sailthru_attributes( $attributes ) . 'name="custom_' . esc_attr($name_stripped). '" id="sailthru_' .esc_attr($name_stripped). '_id"  class="form-control"/>';
+
+                                    }
+
+                                }
+
+                                echo '</div>'; // end .sailthru_form_input .form-group
+
+                            } //end if !empty name
+
+                        } // end for
+
+                    } // end if there are fields
+                ?>
+                <input type="hidden" name="sailthru_nonce" value="<?php echo $nonce; ?>" />
+                <input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
+                <input type="hidden" name="action" value="add_subscriber" />
+                <input type="hidden" name="vars[source]" value="<?php bloginfo( 'url' ); ?>" />
+
+                <span class="input-group-btn">
+                    <button class="btn btn-reverse" type="submit">
+                        Submit
+                    </button>
+                </span>
+        </form>
+    </div>
 </div>

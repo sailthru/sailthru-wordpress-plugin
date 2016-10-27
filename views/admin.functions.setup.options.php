@@ -211,19 +211,6 @@ function sailthru_horizon_loadtype_callback() {
 }
 
 /**
- * Creates a checkbox for the double opt in
- *
- */
-function sailthru_double_opt_in_callback() {
-
-	$options = get_option( 'sailthru_setup_options' );
-	$load_type = isset($options['sailthru_double_opt_in']) ? $options['sailthru_double_opt_in'] : '';
-	echo '<input type="checkbox" id="checkbox_example" name="sailthru_setup_options[sailthru_double_opt_in]" value="1"' . checked( 1, esc_attr($load_type), false ) . '/>';
-	echo '<small>Double opt-in email subscribers </small>';
-
-}
-
-/**
  * Creates a checkbox to ask to override Wordpress emails
  *
  */
@@ -348,13 +335,6 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
 	} else {
 		$output['sailthru_api_secret'] = false;
-	}
-
-	// double opt-in load type
-	if( isset( $input['sailthru_double_opt_in'] ) ) {
-		$output['sailthru_double_opt_in'] = 1;
-	} else {
- 		$output['sailthru_double_opt_in'] = false;
 	}
 
 

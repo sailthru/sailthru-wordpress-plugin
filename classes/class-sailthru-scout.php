@@ -103,10 +103,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			$scout_params[] = "renderItem: " . (bool) $scout['sailthru_scout_renderItem'];
 		}
 
-		// numVisible?
-		$num_visible = 10;
-		if ( isset( $scout['sailthru_scout_numVisible'] ) ) {
-			$num_visible = $scout['sailthru_scout_numVisible'];
+		if( isset( $scout['sailthru_scout_numVisible']) ) {
+			$scout_params[] = strlen($scout['sailthru_scout_numVisible']) > 0 ?  "numVisible: ". (int) $scout['sailthru_scout_numVisible'] ." ": '';
 		}
 		/**
 		 * Filter the Sailthru Scout number of visible articles.
@@ -114,12 +112,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		 * @param string|int $num_visible Number of visible articles.
 		 */
 		$scout_params[] = "numVisible: " . (int) apply_filters( 'sailthru_scout_num_visible', $num_visible );
-
-		// pageView?
-		/** This filter is documented in class-sailthru-horizon.php */
-		if ( isset( $concierge['sailthru_concierge_is_on'] ) && $concierge['sailthru_concierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) && apply_filters( 'sailthru_horizon_on', true ) ) {
-			$scout_params[] = "noPageview: true";
-		}
 
 		// Tags.
 		$tags   = array();

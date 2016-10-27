@@ -52,6 +52,18 @@ function sailthru_initialize_forms_options() {
 
 	}
 
+	/**
+	 * Creates a checkbox for the double opt-in decision
+	 *
+	 */
+	function sailthru_double_opt_in_callback() {
+
+		$options = get_option( 'sailthru_forms_options' );
+		$sailthru_double_opt_in = isset($options['sailthru_double_opt_in']) ? $options['sailthru_double_opt_in'] : '';
+		echo '<input type="checkbox" id="sailthru_double_opt_in" name="sailthru_forms_options[sailthru_double_opt_in]" value="1"' . checked( 1, esc_attr($sailthru_double_opt_in), false ) . '/>';
+		echo '<small><strong>Important:</strong> Ensure the template uses <code><a href="http://docs.sailthru.com/developers/zephyr-syntax/zephyr-functions/signupconfirm">signup_confirm</a></code> or the user will not be added to a list </small><p><small>The welcome email will only be sent when a user does not belong to a list selected in the subscribe widget. </small></p>';
+	}
+
 
 	function sailthru_forms_callback( $args ) {
 
@@ -143,7 +155,6 @@ function sailthru_initialize_forms_options() {
 
 		echo '<select id="type" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">
 				  <option value="text"' . selected( esc_attr( $value ), 'text' ) . '>Text Field</option>
-				  <option value="password"'. selected( esc_attr( $value ), 'password' ) . '>Password</option>
 				  <option value="tel"' . selected( esc_attr( $value ), 'tel' ) . '>Telephone</option>
 				  <option value="date"' . selected( esc_attr( $value ), 'date' ) . '>Date</option>
 				  <option value="hidden"' . selected( esc_attr( $value ), 'hidden' ) . '>Hidden</option>
@@ -161,29 +172,6 @@ function sailthru_initialize_forms_options() {
 		** Begin the column here. It ends in views/admin.php (unfortunately)
 		*/
 		echo '';
-	}
-
-	function delete_field ( $args ) {
-		$customfields  = get_option( 'sailthru_forms_options' );
-		$collection    = $args[0];
-		$option_name   = $args[1];
-		$default_value = $args[2];
-		$html_id       = $args[3];
-		$options       = get_option( $collection );
-		$key           = get_option( 'sailthru_forms_key' );
-
-
-		echo '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']">
-				<option value="select">Select...</option>';
-				for ( $i = 0; $i < $key; $i++ ) {
-					 $field_key = $i + 1;
-					 if ( ! empty ( $customfields[ $field_key ][ 'sailthru_customfield_name' ] ) ) {
-					 echo '<option value="'.esc_attr($field_key).'" >'.esc_html($customfields[ $field_key ][ 'sailthru_customfield_label' ]).'</option>';
-					 }
-				} //end for loop
-		echo '</select>';
-		echo '<div>'.submit_button('Delete Field') .'</div>';
-
 	}
 
 
@@ -288,9 +276,12 @@ function sailthru_initialize_forms_options() {
 		$options       = get_option( $collection );
 
 		echo '<div class="sailthru_keypair_fields"  id="sailthru_value_fields_block">';
-		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'2' ) . ']" type="text" placeholder="display " />';
-		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'1' ) . ']" type="text"  placeholder="value"/>';
-		echo '<input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="1" />';
+		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . '][0][value]" type="text" placeholder="display " />';
+		echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . '][0][label]" type="text"  placeholder="value"/>';
+		echo '<input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="0" />';
+		//echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'2' ) . ']" type="text" placeholder="display " />';
+		//echo '<input class="selection" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name.'1' ) . ']" type="text"  placeholder="value"/>';
+		//echo '<input id="value_amount" type="hidden" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name .'_val' ) . ']" value="1" />';
 		echo '</div>';
 		echo '</div>';
 		echo '<div class="instructions">';
@@ -346,6 +337,20 @@ function sailthru_initialize_forms_options() {
 				'sailthru_welcome_template',
 				'',
 				'sailthru_welcome_template'
+			)
+		);
+
+	add_settings_field(
+		    'sailthru_double_opt_in',
+		    'Use Double Opt In',
+		    'sailthru_double_opt_in_callback',
+		    'sailthru_forms_options',
+		    'sailthru_welcome_section',
+		    array(
+				'sailthru_welcome_section',
+				'sailthru_double_opt_in',
+				'',
+				'sailthru_double_opt_in'
 			)
 		);
 
@@ -543,13 +548,20 @@ function sailthru_html_fields_options_callback() {
 	$output = $fields;
 	$key    = get_option( 'sailthru_forms_key' );
 
-
 	// save welcome email
 	if( isset($input['sailthru_welcome_template'] )) {
 		$output['sailthru_welcome_template'] = sanitize_text_field(trim( $input['sailthru_welcome_template'] ));
 	} else {
 		$output['sailthru_welcome_template'] = false;
 	}
+
+	// double opt-in load type
+	if( isset( $input['sailthru_double_opt_in'] ) ) {
+		$output['sailthru_double_opt_in'] = 1;
+	} else {
+ 		$output['sailthru_double_opt_in'] = false;
+	}
+
 
 	if( isset( $input['sailthru_customfield_field_order']) ) {
 		$order = sanitize_text_field($input['sailthru_customfield_field_order']);
@@ -573,30 +585,30 @@ function sailthru_html_fields_options_callback() {
 			$output[ $new_key ]['sailthru_customfield_label']    = sanitize_text_field($input['sailthru_customfield_label']);
 			$output[ $new_key ]['sailthru_customfield_name']    = sanitize_text_field($input['sailthru_customfield_name']);
 			$output[ $new_key ]['sailthru_customfield_type']      = sanitize_text_field($input['sailthru_customfield_type']);
-			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_html_class($input['sailthru_customfield_class']);
-			$output[ $new_key ]['sailthru_customfield_field_order']		= sanitize_text_field($input['sailthru_customfield_field_order']);
-
+			$output[ $new_key ]['sailthru_customfield_class']     = sanitize_text_field($input['sailthru_customfield_class']);
+			$output[ $new_key ]['sailthru_customfield_field_order']	= sanitize_text_field($input['sailthru_customfield_field_order']);
 
 			if ( ! empty( $input['sailthru_customfield_attr'] ) ) {
 			$output[ $new_key ]['sailthru_customfield_attr']      = sanitize_text_field($input['sailthru_customfield_attr']);
 			}
+
 			if ( $input['sailthru_customfield_type'] == 'select' || $input['sailthru_customfield_type'] == 'radio' || $input['sailthru_customfield_type'] == 'checkbox' ) {
+
 				$amount = sanitize_text_field($input['sailthru_customfield_value_val']);
 					$values = '';
-					for( $i = 1; $i <= $amount; $i++ ) {
-						if ( $i != $amount ) {
-							if ( $i % 2 == 0 ) {
-								$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]) .',';
-							}
-							else{
-								$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]) .':';
-							}
-						}
-						else{
-							$values .= sanitize_text_field($input['sailthru_customfield_value'.$i]);
+					$amount = count( $input['sailthru_customfield_value'] );
+
+					for( $i = 0; $i <= $amount; $i++ ) {
+
+						if ( !empty( $input['sailthru_customfield_value'][$i]['value'] ) ) {
+							$values .= sanitize_text_field($input['sailthru_customfield_value'][$i]['value']).':';
+							$values .= sanitize_text_field($input['sailthru_customfield_value'][$i]['label']).',';
 						}
 					} //end for
-					$output[ $new_key ]['sailthru_customfield_value']      = $values;
+
+
+					$output[ $new_key ]['sailthru_customfield_value']  = $values;
+					$values = rtrim($values, ',');
 			}
 			if ( $input['sailthru_customfield_type'] == 'hidden' ) {
 				$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field($input['sailthru_customfield_value2']);
@@ -633,18 +645,3 @@ function sailthru_html_fields_options_callback() {
 	return $output;
 
 }
-
-
-
- /* ------------------------------------------------------------------------ *
- * Setting Callbacks
- * ------------------------------------------------------------------------ */
-
-
-
-/* ------------------------------------------------------------------------ *
- * Utility Functions
- * ------------------------------------------------------------------------ */
-
-
-

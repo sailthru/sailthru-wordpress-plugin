@@ -3,7 +3,7 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your Wordpress set up.
-Version: 3.0.4
+Version: 3.0.5
 Author: Sailthru
 Author URI: http://sailthru.com
 Author Email: nick@sailthru.com
@@ -49,6 +49,7 @@ require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php' );
  * Get Sailthru for Wordpress plugin classes
  */
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php' );
+require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php' );
 require_once( SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php' );
 
 
@@ -76,7 +77,14 @@ if ( class_exists( 'Sailthru_Horizon' ) ) {
 
 	$sailthru_horizon = new Sailthru_Horizon();
 
-	if ( class_exists( 'Sailthru_Scout' ) ) {
+	// add a record in the db to keep track of the version of this plugin
+	if( false == get_option( 'sailthru_plugin_version' ) ) {
+		add_option( 'sailthru_plugin_version', SAILTHRU_PLUGIN_VERSION );
+	} else {
+		update_option( 'sailthru_plugin_version', SAILTHRU_PLUGIN_VERSION );
+	} // end if		
+
+	if( class_exists( 'Sailthru_Scout' ) ) {
 		$sailthru_scout = new Sailthru_Scout();
 	}
 }
@@ -226,6 +234,10 @@ if( get_option( 'sailthru_override_wp_mail' ) && get_option( 'sailthru_setup_com
 
 
 		// SEND (ALL EMAILS)
+		$sailthru = get_option('sailthru_setup_options');
+		$api_key = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+		$client = new WP_Sailthru_Client( $api_key, $api_secret);
 		try {
 			if ($client) {
 				$r = $client->send($template, $recipients, $vars, array());

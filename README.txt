@@ -1,9 +1,9 @@
-=== Plugin Name ===
+=== Sailthru for WordPress ===
 Contributors: nickgundry, automattic, irms, zackify, natebot
 Tags: personalization, email,
 Requires at least: 3.6
 Tested up to: 3.9.1
-Stable tag: 3.0.4
+Stable tag: 3.0.5
 
 This plugin  provides fast and easy integration of the core Sailthru features into your Wordpress site.
 

@@ -120,8 +120,9 @@ function sailthru_sanitize_text_input( $input ) {
 
 		// Loop through each of the options sanitizing the data
 		foreach( $input as $key => $val ) {
-
-			if ( isset ( $input[ $key ] ) ) {
+                       if ( $key === 'sailthru_scout_renderItem' ) {
+                           $output[ $key ] = esc_js($input[ $key ]);
+                       } else if ( isset ( $input[ $key ] ) ) {
 				$output[ $key ] = sanitize_text_field( stripslashes( $input[ $key ] ) );
 			} // end if
 
