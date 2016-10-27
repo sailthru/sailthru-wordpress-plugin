@@ -21,10 +21,10 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		parent::__construct(
 			'sailthru-recommends-id',
-			__( 'Sailthru Recommends Widget', 'sailthru-for-wordpress' ),
+			__( 'Sailthru Personalization Engine', 'sailthru-for-wordpress' ),
 			array(
-				'classname'   => 'Sailthru_Scout',
-				'description' => __( 'Sailthru Scout but in a compact sidebar widget.', 'sailthru-for-wordpress' )
+				'classname'		=>	'Sailthru_Scout',
+				'description'	=>	__( 'Sailthru Personalization Engine Widget', 'sailthru-for-wordpress' )
 			)
 		);
 
@@ -240,7 +240,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array();
-		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+			$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+			$instance['sailthru_spm_section'] = filter_var( $new_instance['sailthru_spm_section'], FILTER_SANITIZE_STRING );
 
 		return $instance;
 
@@ -253,14 +254,15 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		// Default values for a widget instance.
-		$instance = wp_parse_args(
-			(array) $instance, array(
-				'title' => ''
-			)
-		);
-		$title = esc_attr( $instance['title'] );
-
+		// Default values for a widget instance
+        $instance = wp_parse_args(
+        	(array) $instance, array(
+                'title' => '',
+                'sailthru_spm_section' => ''
+            )
+        );
+        $title = esc_attr($instance['title']);
+        $section_id = esc_attr($instance['sailthru_spm_section']);
 
 		// Display the admin form.
 		include( SAILTHRU_PLUGIN_PATH . 'views/widget.scout.admin.php' );

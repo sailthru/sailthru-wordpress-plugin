@@ -221,6 +221,12 @@ function sailthru_verify_setup() {
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
 
+  if ( empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
+	add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Sailthru Customer Id' ), 'error' );
+  	return false;
+  }
+
+
   if ( $template == '' ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-verify-settings-fail', __( '<a href="?page=settings_configuration_page#sailthru_setup_email_template">Select a Sailthru template</a> to use for all WordPress emails.' ), 'error' );
   } else {
