@@ -68,6 +68,59 @@
 			foreach ( $lists as $key => $list ) {
 				if( ! empty( $instance['sailthru_list'][ $key ] ) ) {
 					$list_key = $instance['sailthru_list'][ $key ];
+			echo '<div class="sortable_widget">';
+			echo '<table class="wp-list-table widefat">';
+			echo '<thead>';
+				echo '<tr>';
+					echo '<th>&nbsp;</th>';
+					echo '<th align="left">Field</th>';
+					echo '<th align="left">Active</th>';
+					echo '<th>Req</th>';
+				echo '</tr>';
+			echo '</thead>';
+			echo '<tbody class="ui-sortable">';
+			echo '<tr id="not_sortable"><td>&nbsp;</td><td>Email</td><td colspan="2">Always displayed</td></tr>';
+			
+			// if there are custom fields...
+			if ( isset($customfields) && !empty($customfields)){
+			//If these were sorted display in proper order
+				if( isset($order ) && $order != '' ){
+					$order_list = explode(',', $order);
+					$order_list = array_unique( $order_list );
+				}
+
+				$order_as_listed = ''; // used if there's been no order set for these fields
+				$last_listed = 0; // used to show fields that were added after the widget was created.
+				
+				// if they are in order
+				if( isset($order_list) ){				
+					for ( $j = 0; $j < count($order_list); $j++ ) {
+						$field_key = (int)$order_list[$j];
+						for ( $i = 0; $i <= $key; $i++ ) {
+							if ( $i == $field_key ) {
+								echo '<tr id="pos_' . $field_key . '">';
+								if( isset( $customfields[ $i ]['sailthru_customfield_name'] ) 
+										&& !empty( $customfields[ $i ]['sailthru_customfield_name'] ) ){
+									echo '<td><span class="icon-sort">&nbsp;</span></td>';
+									$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
+
+									if( ! empty( $instance['show_'.$name_stripped.'_name'] ) ) {
+										echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label']) . '</td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox"' .(( $instance['show_'.$name_stripped.'_name']) ? ' checked' : '') . '/></td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox"' . (( $instance['show_'.$name_stripped.'_required'] ) ? ' checked' : '') . ' /> </td>';
+									}
+									else{
+										echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ). '</td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_name' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_name' ) . '" type="checkbox" /></td>';
+										echo '<td><input id="' . $this->get_field_id( 'show_'.$name_stripped.'_required' ) . '" name="' . $this->get_field_name( 'show_'.$name_stripped.'_required' ) . '" type="checkbox" /></td>';
+									}
+									echo '</tr>';
+									$last_listed = $i;
+								} //if field name exists							
+							} 
+						} //for loop
+					} //for loop
+				// they are have not been ordered.
 				} else {
 					$list_key = '';
 				} ?>

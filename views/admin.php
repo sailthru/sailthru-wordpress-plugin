@@ -3,7 +3,10 @@
 
 			<div id="icon-sailthru" class="icon32"></div>
 			<h2><?php _e( 'Sailthru for WordPress', 'sailthru-for-wordpress' ); ?></h2>
+
 			<?php
+				//Check to see if everything is set up correctly
+				$verify_setup = sailthru_verify_setup();
 
 				if ( isset( $_GET[ 'page' ] ) ) {
 					$active_tab = $_GET[ 'page' ];
@@ -34,6 +37,7 @@
 
 					// Sitewide template is picked.
 					if ( ! empty( $setup['sailthru_setup_email_template'] ) ) {
+
 
 						/*
 						 * This is pretty important.
@@ -94,6 +98,8 @@
 
 						?>
 						</form>
+
+
 
 					<?php } else { /* If no sitewide template is chosen. */ ?>
 

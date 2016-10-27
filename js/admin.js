@@ -7,6 +7,47 @@
 			$("#sailthru-add-api-key-form").toggle(600);
 		});
 
+		// validate the form for saving api keys
+		$("#sailthru-add-api-key-form").submit( function(e)
+		{
+
+			var isFormValid = true;
+			var sailthru_fields = new Array("sailthru_api_key", "sailthru_api_secret", "sailthru_horizon_domain");
+
+			for (var i = 0; i < sailthru_fields.length; i++) {
+				var field = '#'+sailthru_fields[i];
+
+   				 if ($.trim($(field).val()).length == 0){
+   				 	$(field).addClass("error-highlight");
+					isFormValid = false;
+					e.preventDefault();
+   				 } else{
+					$(field).removeClass("error-highlight");
+					isFormValid = true;
+				}
+			}
+
+			return isFormValid;
+
+		}); // end validate form submit
+
+		// add a subscriber
+		$("#sailthru-add-subscriber-form").submit(function(e) {
+			e.preventDefault();
+		});
+		// set up form. make the email template more prominent
+		// datepicker for meta box
+		// but since Datepicker causes a jQuery conflict, wrap it
+		// and prevent from initializing unless necessary
+		if( $('.datepicker').length ) {
+			$('.datepicker').datepicker({
+				dateFormat: 'yy-mm-dd'
+			});
+		}
+
+
+	// custom form fields
+
 		$('.selection').parent().parent().hide();
 		$('#type').closest('table').find("tr").last().hide();
 
@@ -16,6 +57,7 @@
 		});
 
 		$('#type').on("change", (function() {
+
 			if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'hidden' || $(this).attr('value') == 'checkbox') {
 				$(this).closest('table').find("tr").last().show();
 				$('#add_value').show();
@@ -54,29 +96,6 @@
 			$('#attr_amount').attr('value',second_val);
 		}));
 
-		// validate the form for saving api keys
-		$("#sailthru-add-api-key-form").submit( function(e)
-		{
-
-			var isFormValid = true;
-			var sailthru_fields = new Array("sailthru_api_key", "sailthru_api_secret", "sailthru_horizon_domain");
-
-			for (var i = 0; i < sailthru_fields.length; i++) {
-				var field = '#'+sailthru_fields[i];
-
-   				 if ($.trim($(field).val()).length == 0){
-   				 	$(field).addClass("error-highlight");
-					isFormValid = false;
-					e.preventDefault();
-   				 } else{
-					$(field).removeClass("error-highlight");
-					isFormValid = true;
-				}
-			}
-
-			return isFormValid;
-
-		}); // end validate form submit
 
 		// add a subscriber
 		$("#sailthru-add-subscriber-form").submit(function(e) {
