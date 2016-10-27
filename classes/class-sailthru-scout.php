@@ -23,8 +23,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			'sailthru-recommends-id',
 			__( 'Sailthru Personalization Engine', 'sailthru-for-wordpress' ),
 			array(
-				'classname'		=>	'Sailthru_Scout',
-				'description'	=>	__( 'Sailthru Personalization Engine Widget', 'sailthru-for-wordpress' )
+				'classname'  => 'Sailthru_Scout',
+				'description' => __( 'Sailthru Personalization Engine Widget', 'sailthru-for-wordpress' )
 			)
 		);
 
@@ -50,11 +50,11 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		// Is scout turned on?
 
-			wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
-	 	 /**
+		wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
+		/**
 		 * Filter the Sailthru Scout status.
 		 *
-		 * @param bool $status True if Scout is turned on.
+		 * @param bool    $status True if Scout is turned on.
 		 */
 		if ( isset( $params['sailthru_scout_is_on'] ) && $params['sailthru_scout_is_on'] && apply_filters( 'sailthru_scout_on', true ) ) {
 
@@ -63,10 +63,10 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 				// If conceirge is on, we want noPageView to be set to true
 				$conceirge = get_option( 'sailthru_concierge_options' );
-					/** This filter is documented in class-sailthru-horizon.php */
-					if ( isset( $conceirge['sailthru_concierge_is_on'] ) && $conceirge['sailthru_concierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) ) {
-						$params['sailthru_scout_noPageview'] = 'true';
-					}
+				/** This filter is documented in class-sailthru-horizon.php */
+				if ( isset( $conceirge['sailthru_concierge_is_on'] ) && $conceirge['sailthru_concierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) ) {
+					$params['sailthru_scout_noPageview'] = 'true';
+				}
 
 				add_action( 'wp_footer', array( $this, 'scout_js' ), 10 );
 
@@ -85,7 +85,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 *
 	 * @return string
 	 */
-	 function scout_js() {
+	function scout_js() {
 
 		$options        = get_option( 'sailthru_setup_options' );
 		$horizon_domain = $options['sailthru_horizon_domain'];
@@ -103,8 +103,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			$scout_params[] = "renderItem: " . (bool) $scout['sailthru_scout_renderItem'];
 		}
 
-		if( isset( $scout['sailthru_scout_numVisible']) ) {
-			$scout_params[] = strlen($scout['sailthru_scout_numVisible']) > 0 ?  "numVisible: ". (int) $scout['sailthru_scout_numVisible'] ." ": '';
+		if ( isset( $scout['sailthru_scout_numVisible'] ) ) {
+			$scout_params[] = strlen( $scout['sailthru_scout_numVisible'] ) > 0 ?  "numVisible: ". (int) $scout['sailthru_scout_numVisible'] ." ": '';
 		}
 		/**
 		 * Filter the Sailthru Scout number of visible articles.
@@ -142,7 +142,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			echo "        domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "',\n";
 			if ( is_array( $scout_params ) ) {
 				foreach ( $scout_params as $key => $val ) {
-					if ( strlen( $val ) > 0 )  {
+					if ( strlen( $val ) > 0 ) {
 						echo "        " . esc_js( $val ) . ",\n";
 					}
 				}
@@ -227,7 +227,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		extract( $args, EXTR_SKIP );
 		echo $before_widget;
-		include( SAILTHRU_PLUGIN_PATH . 'views/widget.scout.display.php' );
+		include SAILTHRU_PLUGIN_PATH . 'views/widget.scout.display.php';
 		echo $after_widget;
 
 	}
@@ -240,8 +240,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array();
-			$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
-			$instance['sailthru_spm_section'] = filter_var( $new_instance['sailthru_spm_section'], FILTER_SANITIZE_STRING );
+		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
+		$instance['sailthru_spm_section'] = filter_var( $new_instance['sailthru_spm_section'], FILTER_SANITIZE_STRING );
 
 		return $instance;
 
@@ -255,17 +255,17 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	public function form( $instance ) {
 
 		// Default values for a widget instance
-        $instance = wp_parse_args(
-        	(array) $instance, array(
-                'title' => '',
-                'sailthru_spm_section' => ''
-            )
-        );
-        $title = esc_attr($instance['title']);
-        $section_id = esc_attr($instance['sailthru_spm_section']);
+		$instance = wp_parse_args(
+			(array) $instance, array(
+				'title' => '',
+				'sailthru_spm_section' => ''
+			)
+		);
+		$title = esc_attr( $instance['title'] );
+		$section_id = esc_attr( $instance['sailthru_spm_section'] );
 
 		// Display the admin form.
-		include( SAILTHRU_PLUGIN_PATH . 'views/widget.scout.admin.php' );
+		include SAILTHRU_PLUGIN_PATH . 'views/widget.scout.admin.php';
 
 	} // End form.
 } // End class.

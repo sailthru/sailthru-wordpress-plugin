@@ -30,12 +30,12 @@ class Sailthru_Concierge {
 
 		//if( isset($params['sailthru_concierge_is_on']) && $params['sailthru_concierge_is_on'] ) {
 
-			// Check first, otherwise js could throw errors
-			//if( get_option('sailthru_setup_complete') ) {
+		// Check first, otherwise js could throw errors
+		//if( get_option('sailthru_setup_complete') ) {
 
-				//wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
+		//wp_enqueue_script( 'sailthru-horizon', '//ak.sail-horizon.com/horizon/v1.js', array('jquery') );
 
-			//}
+		//}
 
 		//}
 
