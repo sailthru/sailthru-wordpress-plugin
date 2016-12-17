@@ -1,14 +1,7 @@
-# Ignore everything in the root except the "wp-content" directory.
-/*
-!.gitignore
-!wp-content/
+img/.DS_Store
+.DS_Store
+.svn/*
 
-# Ignore everything in the "plugins" directory, except for Sailthru's 
-# plugin directory.
-wp-content/plugins/*
-!wp-content/plugins/sailthru/
+*.sublime-project
 
-# Ignore everything in the "themes" directory, except for Sailthru's
-# theme directory.
-wp-content/themes/*
-!wp-content/themes/sailthru/
+*.sublime-workspace
