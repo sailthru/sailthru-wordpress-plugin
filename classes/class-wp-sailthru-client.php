@@ -9,6 +9,8 @@
  */
 class WP_Sailthru_Client extends Sailthru_Client {
 
+     protected $api_uri = 'https://api.sailthru.com';
+
     /**
      * Prepare JSON payload
      */
@@ -47,7 +49,9 @@ class WP_Sailthru_Client extends Sailthru_Client {
      * @param string  $method
      * @return string
      */
-    function httpRequestCurl( $url, array $data, $method = 'POST'  ) {
+    function httpRequestCurl( $action, array $data, $method = 'POST', $options = [ ] ) {
+
+        $url = $this->api_uri . "/" . $action;
 
         if ( 'GET' == $method ) {
             $url_with_params = $url;
