@@ -460,6 +460,8 @@ class Sailthru_Horizon {
 	 */
 	function sailthru_menu() {
 
+		$options = get_option( 'sailthru_setup_options' );
+
 		$sailthru_menu = add_menu_page(
 			'Sailthru',           // The value used to populate the browser's title bar when the menu page is active
 			__( 'Sailthru', 'sailthru-for-wordpress' ),   // The text of the menu in the administrator's sidebar
@@ -492,29 +494,31 @@ class Sailthru_Horizon {
 		$this->admin_views[$settings_menu] = 'settings_configuration_page';
 
 
+		if ( isset ( $options['sailthru_js_type'] ) &&  $options['sailthru_js_type'] == 'horizon_js' ) {
+
+			$concierge_menu = add_submenu_page(
+				'sailthru_configuration_page',       // The ID of the top-level menu page to which this submenu item belongs
+				__( 'Concierge Options', 'sailthru-for-wordpress' ), // The value used to populate the browser's title bar when the menu page is active
+				__( 'Concierge Options', 'sailthru-for-wordpress' ), // The label of this submenu item displayed in the menu
+				'manage_options',          // What roles are able to access this submenu item
+				'concierge_configuration_page',       // The ID used to represent this submenu item
+				array( &$this, 'load_sailthru_admin_display' )   // The callback function used to render the options for this submenu item
+			);
+			$this->admin_views[$concierge_menu] = 'concierge_configuration_page';
 
 
-		$concierge_menu = add_submenu_page(
-			'sailthru_configuration_page',       // The ID of the top-level menu page to which this submenu item belongs
-			__( 'Concierge Options', 'sailthru-for-wordpress' ), // The value used to populate the browser's title bar when the menu page is active
-			__( 'Concierge Options', 'sailthru-for-wordpress' ), // The label of this submenu item displayed in the menu
-			'manage_options',          // What roles are able to access this submenu item
-			'concierge_configuration_page',       // The ID used to represent this submenu item
-			array( &$this, 'load_sailthru_admin_display' )   // The callback function used to render the options for this submenu item
-		);
-		$this->admin_views[$concierge_menu] = 'concierge_configuration_page';
 
-
-
-		$scout_menu = add_submenu_page(
-			'sailthru_configuration_page',
-			__( 'Scout Options', 'sailthru-for-wordpress' ),
-			__( 'Scout Options', 'sailthru-for-wordpress' ),
-			'manage_options',
-			'scout_configuration_page',
-			array( &$this, 'load_sailthru_admin_display' )
-		);
-		$this->admin_views[$scout_menu] = 'scout_configuration_page';
+			$scout_menu = add_submenu_page(
+				'sailthru_configuration_page',
+				__( 'Scout Options', 'sailthru-for-wordpress' ),
+				__( 'Scout Options', 'sailthru-for-wordpress' ),
+				'manage_options',
+				'scout_configuration_page',
+				array( &$this, 'load_sailthru_admin_display' )
+			);
+			$this->admin_views[$scout_menu] = 'scout_configuration_page';
+			
+		}
 
 		$scout_menu = add_submenu_page(
 			'sailthru_configuration_page',
