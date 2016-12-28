@@ -1,73 +1,53 @@
-<div id="icon-sailthru" class="icon32"></div>
-<h2><?php _e( 'Sailthru Subscribe', 'sailthru-for-wordpress' ); ?></h2>
-<?php
-	$sailthru     = get_option( 'sailthru_setup_options' );
-	$customfields = get_option( 'sailthru_forms_options' );
-	if ( ! is_array( $sailthru ) )
-	{
-		echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
-		return;
-	}
-	$api_key    = $sailthru['sailthru_api_key'];
-	$api_secret = $sailthru['sailthru_api_secret'];
+	<div id="icon-sailthru" class="icon32"></div>
+	<h2><?php _e( 'Sailthru Subscribe', 'sailthru-for-wordpress' ); ?></h2>
 
-	$client = new WP_Sailthru_Client( $api_key, $api_secret );
-		try {
-			if ( $client ) {
-				$res = $client->getLists();
-			}
-		}
-		catch ( Sailthru_Client_Exception $e ) {
-			//silently fail
-			return;
-		}
-
-		$lists = $res['lists'];
-?>
-<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
-	<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">
-			<?php _e( 'Widget Title:' ); ?>
-			<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		</label>
-	</p>
-	<p>
 	<?php
-	if ( get_option( 'sailthru_forms_key' ) ) {
-		$key = get_option( 'sailthru_forms_key' );
-			echo '<table class="wp-list-table widefat">';
-			echo '<thead>';
-			echo '<tr><th align="left">Field</th><th align="left">Active</th><th>Req</th></tr>';
-			echo '</thead>';
-			echo '<tr><td>Email</td><td colspan="2">Always displayed</td></tr>';
-			for ( $i = 0; $i < $key; $i++ ) {
-				$field_key = $i + 1;
-				if ( ! empty( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
-					echo '<tr>';
-					$name_stripped = preg_replace("/[^\da-z]/i", '_', $customfields[ $field_key ]['sailthru_customfield_name']);
 
-					if ( ! empty( $instance['show_' . $name_stripped . '_name'] ) ) {
-						echo '<td>'. esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</td>';
-						echo '<td><input id="' . $this->get_field_id( 'show_' . $name_stripped . '_name' ) . '" name="' . $this->get_field_name( 'show_' . $name_stripped . '_name' ) . '" type="checkbox"' . ( ( $instance['show_' . $name_stripped . '_name'] ) ? ' checked' : '') . '/></td>';
-						echo '<td><input id="' . $this->get_field_id( 'show_' . $name_stripped . '_required' ) . '" name="' . $this->get_field_name( 'show_' . $name_stripped . '_required' ) . '" type="checkbox"' . ( ( $instance['show_' . $name_stripped . '_required'] ) ? ' checked' : '') . ' /> </td>';
-					} else {
-						echo '<td>'. esc_html($customfields[ $field_key ]['sailthru_customfield_label'] ) . '</td>';
-						echo '<td><input id="' . $this->get_field_id( 'show_' . $name_stripped . '_name' ) . '" name="' . $this->get_field_name( 'show_' . $name_stripped . '_name' ) . '" type="checkbox" /></td>';
-						echo '<td><input id="' . $this->get_field_id( 'show_' . $name_stripped . '_required' ) . '" name="' . $this->get_field_name( 'show_' . $name_stripped . '_required' ) . '" type="checkbox" /></td>';
-					}
-					echo '</tr>';
-			} // If field name exists.
-		} // For loop.
-		echo '</table>';
-	} // If options exist.
+		$sailthru     = get_option( 'sailthru_setup_options' );
+		$customfields = get_option( 'sailthru_forms_options' );
+
+		if( empty( $order ) ) {
+			$order = get_option( 'sailthru_customfields_order' );
+		}
+
+
+
+		$key = get_option( 'sailthru_forms_key' );
+
+		if ( ! is_array( $sailthru ) )
+		{
+
+			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
+			return;
+
+		}
+		$api_key    = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+
+		$client = new WP_Sailthru_Client( $api_key, $api_secret );
+			try {
+				if ( $client ) {
+					$res = $client->getLists();
+				}
+			}
+			catch ( Sailthru_Client_Exception $e ) {
+				//silently fail
+				return;
+			}
+
+
+			$lists = $res['lists'];
+
 	?>
-	</p>
-	<p>
-		<?php _e( 'Subscribe to list(s): ' ); ?>
-		<?php
-			foreach ( $lists as $key => $list ) {
-				if( ! empty( $instance['sailthru_list'][ $key ] ) ) {
-					$list_key = $instance['sailthru_list'][ $key ];
+        <div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
+            <p>
+            	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
+            		<?php _e( 'Widget Title:' ); ?>
+            		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+            	</label>
+            </p>
+            <p>
+			<?php
 			echo '<div class="sortable_widget">';
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
@@ -122,16 +102,6 @@
 					} //for loop
 				// they are have not been ordered.
 				} else {
-<<<<<<< HEAD
-					$list_key = '';
-				} ?>
-				<br />
-				<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo $this->get_field_name( 'sailthru_list' ); ?>[<?php echo $key; ?>]" id="<?php echo esc_attr( $this->get_field_id( 'sailthru_list' ) . '-' . $key ); ?>" <?php checked( $list_key, $list['name'] ); ?>  />
-				<label for=""><?php echo esc_html( $list['name'] ); ?></label>
-			<?php } ?>
-	</p>
-</div>
-=======
 					 for ( $i = 0; $i <= $key; $i++ ) {
 				 		echo '<tr id="pos_' . $i . '">';
 				 		if( isset( $customfields[ $i ]['sailthru_customfield_name'] )
@@ -289,4 +259,3 @@
 			    });
 			});
         </script>
->>>>>>> origin/v3.0.4

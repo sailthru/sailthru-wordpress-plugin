@@ -283,8 +283,6 @@ function sailthru_js_type_callback() {
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
 
-
-
 		if ( $key == $js_type ) {
 			$selected = ' selected';
 		} else {
