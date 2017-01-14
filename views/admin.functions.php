@@ -211,6 +211,7 @@ function sailthru_create_dropdown( $args, $values ) {
 function sailthru_verify_setup() {
 
 	$input = array();
+	$valid_keys = false;
 	$sailthru   = get_option( 'sailthru_setup_options' );
 	if (  ! isset( $sailthru['sailthru_api_key'] )
 		|| ! isset( $sailthru['sailthru_api_secret'] ) ) {
@@ -219,7 +220,6 @@ function sailthru_verify_setup() {
 
 	$api_key    = $sailthru['sailthru_api_key'];
 	$api_secret = $sailthru['sailthru_api_secret'];
-	$template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
 	$res        = array();
 
 	if ( empty( $input['sailthru_customer_id'] ) && !empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
@@ -227,36 +227,23 @@ function sailthru_verify_setup() {
 		return false;
 	}
 
+	// now check to see if we can make an API call
+	//$client = new Sailthru_Client( $api_key, $api_secret );
+	$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
-	if ( $template == '' ) {
-		add_settings_error( 'sailthru-notices', 'sailthru-verify-settings-fail', __( '<a href="?page=settings_configuration_page#sailthru_setup_email_template">Select a Sailthru template</a> to use for all WordPress emails.' ), 'error' );
-	} else {
-
-		// now check to see if we can make an API call
-		//$client = new Sailthru_Client( $api_key, $api_secret );
-		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-		$res = $client->getTemplates();
-
+	try {
+		$res = $client->apiGet('settings');
 		if ( !isset( $res['error'] ) ) {
-			// we can make a call, now check the template is configured
-			try {
-				$tpl = $client->getTemplate( $template );
-				$tpl_errors = sailthru_verify_template( $tpl );
-
-				if ( count( $tpl_errors ) > 0 ) {
-					add_settings_error( 'sailthru-notices', 'sailthru-verify-template-fail', __( 'The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions. If you have enabled double opt-in there are additional steps.' ), 'error' );
-				}
-			} catch ( Exception $e ) {
-				// fail silently, someone may have deleted the template on the sailthru side and
-				// they will need to re-select.
-			}
+			$valid_keys = true;
 		} else {
 			add_settings_error( 'sailthru-notices', 'sailthru-verify-config-fail', __( 'Sailthru is not correctly configured, please check your API key and template settings.' ), 'error' );
 		}
-
+	} catch (Sailthru_Client_Exception $e) {
+		// fail silently return false
 	}
-
-	return $res;
+	
+	return $valid_keys;
+	
 }
 // end sailthru_verify_setup
 

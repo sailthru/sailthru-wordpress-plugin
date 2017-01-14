@@ -474,24 +474,13 @@ class Sailthru_Horizon {
 
 		$redundant_menu = add_submenu_page(
 			'sailthru_configuration_page',
-			__( 'Welcome', 'sailthru-for-wordpress' ),
-			__( 'Welcome', 'sailthru-for-wordpress' ),
+			__( 'Settings', 'sailthru-for-wordpress' ),
+			__( 'Settings', 'sailthru-for-wordpress' ),
 			'manage_options',
 			'sailthru_configuration_page',
 			array( &$this, 'load_sailthru_admin_display' )
 		);
 		$this->admin_views[$redundant_menu] = 'sailthru_configuration_page';
-
-
-		$settings_menu = add_submenu_page(
-			'sailthru_configuration_page',
-			__( 'Settings', 'sailthru-for-wordpress' ),
-			__( 'Settings', 'sailthru-for-wordpress' ),
-			'manage_options',
-			'settings_configuration_page',
-			array( &$this, 'load_sailthru_admin_display' )
-		);
-		$this->admin_views[$settings_menu] = 'settings_configuration_page';
 
 
 		if ( isset ( $options['sailthru_js_type'] ) &&  $options['sailthru_js_type'] != 'personalize_js' ) {
@@ -523,8 +512,8 @@ class Sailthru_Horizon {
 
 		$scout_menu = add_submenu_page(
 			'sailthru_configuration_page',
-			__( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ),
-			__( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ),
+			__( 'List Signup Options', 'sailthru-for-wordpress' ),
+			__( 'List Signup Options', 'sailthru-for-wordpress' ),
 			'manage_options',
 			'custom_fields_configuration_page',
 			array( &$this, 'load_sailthru_admin_display' )
