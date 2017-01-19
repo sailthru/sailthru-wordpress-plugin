@@ -47,8 +47,13 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	public function register_scout_scripts() {
 
 		$params = get_option( 'sailthru_scout_options' );
-
+		$options = get_option( 'sailthru_setup_options' );
 		// Is scout turned on?
+
+		// Don't load scout if using Personalize J
+		if (isset( $options['sailthru_js_type'] ) && !empty( $options['sailthru_js_type'] ) ) {
+			return;
+		}
 
 		wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
 		/**
@@ -93,6 +98,11 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		$concierge      = get_option( 'sailthru_concierge_options' );
 		$scout_params   = array();
 
+		// if we're using Personalize JS then don't use Scout
+		if (isset( $options['sailthru_js_type'] ) && !empty( $options['sailthru_js_type'] ) ) {
+			return;
+		}
+
 		// inlcudeConsumed?
 		if ( isset( $scout['sailthru_scout_includeConsumed'] ) && strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ) {
 			$scout_params[] = "includeConsumed: " . (bool) $scout['sailthru_scout_includeConsumed'];
@@ -136,6 +146,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 		/** This filter is documented in class-sailthru-horizon.php */
 		if ( $scout['sailthru_scout_is_on'] == 1 && apply_filters( 'sailthru_scout_on', true ) ) {
+			
 			echo "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/scout/v1.js\"></script>";
 			echo "<script type=\"text/javascript\">\n";
 			echo "    SailthruScout.setup( {\n";
