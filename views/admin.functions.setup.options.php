@@ -344,6 +344,7 @@ function sailthru_override_other_emails_callback() {
 function sailthru_setup_email_template_callback( $args ) {
 
 	$sailthru   = get_option( 'sailthru_setup_options' );
+
 	if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
 		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
@@ -356,7 +357,11 @@ function sailthru_setup_email_template_callback( $args ) {
 			}
 			catch ( Sailthru_Client_Exception $e ) {
 				//silently fail
-				return;
+				// $tpl = ['']
+				// $html = sailthru_create_dropdown( $args, $tpl );
+				// echo $html;
+				// return;
+				$api_error = true;
 			}
 
 
@@ -411,7 +416,12 @@ function sailthru_setup_email_template_callback( $args ) {
 		$html = sailthru_create_dropdown( $args, $tpl );
 	} else {
 		$html = sailthru_create_dropdown( $args, array() );
-		$html .= "Sailthru Api Key and Secret must be saved first";
+
+		if ($api_error) {
+			$html .= "<p>We could not connect to the Sailthru API</p>";
+		} else {
+			$html .= "<p>Sailthru Api Key and Secret must be saved first</p>";
+		}
 	}
 
 	echo $html;
