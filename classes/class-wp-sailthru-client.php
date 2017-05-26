@@ -53,6 +53,9 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
         $url = $this->api_uri . "/" . $action;
 
+        $debug_call = array('api' => $url, 'payload' => json_encode($data));
+        write_log($debug_call);
+
         if ( 'GET' == $method ) {
             $url_with_params = $url;
             if ( count( $data ) > 0 ) {

@@ -306,7 +306,6 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 						}
 
 					}
-
 					// Make the API call to Sailthru
 					$api = $client->apiPost( 'content', $data );
 
@@ -320,5 +319,18 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 	}
 }
 add_action( 'save_post', 'sailthru_save_post', 10, 3 );
+
+
+
+if ( ! function_exists('write_log')) {
+   function write_log ( $log )  {
+      if ( is_array( $log ) || is_object( $log ) ) {
+         error_log( print_r( $log, true ) );
+      } else {
+         error_log( $log );
+      }
+   }
+}
+
 
 
