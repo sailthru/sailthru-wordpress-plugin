@@ -24,7 +24,6 @@ class SailthruMailer extends PHPMailer {
 
 	public function sailthruSend() {
 
-
 		if ( count( $this->getAllRecipientAddresses() ) > 0 ) {
 			$this->email = implode( ",", array_keys( $this->getAllRecipientAddresses() ) );
 		} else {
@@ -73,14 +72,18 @@ class SailthruMailer extends PHPMailer {
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 		try {
-			$send = $client->send( $this->template, $this->email, $this->vars, $this->options, $this->schedule_time );
+
+			$data = array('email' => $this->email, 
+						   'template' => $this->template, 
+						   'vars' => $this->vars, 
+						   'options' => $this->options,
+						   'schedule_time' => $this->schedule_time);
+
+			$send = $client->apiPost('send', $data);
 			return true;
 		} catch ( Sailthru_Client_Exception $exc ) {
 			print $exc;
 		}
-
-		
-
 
 	}
 

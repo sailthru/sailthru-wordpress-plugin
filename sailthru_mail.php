@@ -16,15 +16,12 @@ if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) 
 	// configure the mail override function. 
 	function sailthru_configure_mailer($phpmailer, $template = '') {
 		$phpmailer->Mailer = 'sailthru';
-		$phpmailer->template = $template;
-		
 	}
 
 
 	// check each of the options for transactionals
 
 	$sailthru = get_option( 'sailthru_setup_options' );
-	$phpmailer = new SailthruMailer();
 
 	$sailthru_template_fields = array( 'sailthru_setup_new_user_override_template',
 		'sailthru_setup_password_reset_override_template',
@@ -45,57 +42,76 @@ if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) 
 
 		if ( isset ( $sailthru['sailthru_setup_new_user_override_template'] ) &&
 					!empty( $sailthru['sailthru_setup_new_user_override_template'] ) ) {
+				
 
 				if ( !function_exists('wp_new_user_notification') ) {
-				/**
-				 * Pluggable - Email login credentials to a newly-registered user
-				 *
-				 * A new user registration notification is also sent to admin email.
-				 *
-				 * @since 2.0.0
-				 *
-				 * @param int    $user_id        User ID.
-				 * @param string $plaintext_pass Optional. The user's plaintext password. Default empty.
-				 */
-					function wp_new_user_notification($user_id, $plaintext_pass = ''){
 
-					    $user = get_userdata($user_id);
+
+					function wp_new_user_notification( $user_id, $deprecated = null, $notify = '' ) {
+					    if ( $deprecated !== null ) {
+					        _deprecated_argument( __FUNCTION__, '4.3.1' );
+					    }
+					 
+					    global $wpdb, $wp_hasher;
+					    $user = get_userdata( $user_id );	
+					    $user_vars = get_user_meta( $user_id );
+
+					    $sailthru_params['vars']['user'] = $user_vars;
+
 					    $sailthru = get_option( 'sailthru_setup_options' );
-					    $template = $sailthru['sailthru_setup_new_user_override_template'];
-
-
+						$sailthru_params['template'] = $sailthru['sailthru_setup_new_user_override_template'];
+					 
 					    // The blogname option is escaped with esc_html on the way into the database in sanitize_option
 					    // we want to reverse this for the plain text arena of emails.
 					    $blogname = wp_specialchars_decode(get_option('blogname'), ENT_QUOTES);
-
-					    $message  = sprintf(__('New user registration on your site %s:'), $blogname) . "\r\n\r\n";
-					    $message .= sprintf(__('Username: %s'), $user->user_login) . "\r\n\r\n";
-					    $message .= sprintf(__('E-mail: %s'), $user->user_email) . "\r\n";
-
-					    @wp_mail(get_option('admin_email'), sprintf(__('[%s] New User Registration'), $blogname), $message, '', '', $template);
-
-					    if ( empty($plaintext_pass) )
+					 
+					    if ( 'user' !== $notify ) {
+					        $switched_locale = switch_to_locale( get_locale() );
+					        $message  = sprintf( __( 'New user registration on your site %s:' ), $blogname ) . "\r\n\r\n";
+					        $message .= sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
+					        $message .= sprintf( __( 'Email: %s' ), $user->user_email ) . "\r\n";
+					 
+					        @wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message );
+					 
+					        if ( $switched_locale ) {
+					            restore_previous_locale();
+					        }
+					    }
+					 
+					    // `$deprecated was pre-4.3 `$plaintext_pass`. An empty `$plaintext_pass` didn't sent a user notification.
+					    if ( 'admin' === $notify || ( empty( $deprecated ) && empty( $notify ) ) ) {
 					        return;
+					    }
+					 
+					    // Generate something random for a password reset key.
+					    $key = wp_generate_password( 20, false );
+					 
+					    /** This action is documented in wp-login.php */
+					    do_action( 'retrieve_password_key', $user->user_login, $key );
+					 
+					    // Now insert the key, hashed, into the DB.
+					    if ( empty( $wp_hasher ) ) {
+					        $wp_hasher = new PasswordHash( 8, true );
+					    }
+					    $hashed = time() . ':' . $wp_hasher->HashPassword( $key );
+					    $wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
+					 
+					    $switched_locale = switch_to_locale( get_user_locale( $user ) );
+					 	
+					 	$url .= network_site_url("wp-login.php?action=rp&key=$key&login=" . rawurlencode($user->user_login), 'login');
 
-					    $message  = sprintf(__('Username: %s'), $user->user_login) . "\r\n";
-					    $message .= sprintf(__('Password: %s'), $plaintext_pass) . "\r\n";
-					    $message .= wp_login_url() . "\r\n";
-			    		
-					    wp_mail($user->user_email, sprintf(__('[%s] Your username and password'), $blogname), $message, '', '', $template);
-
+					    $message = sprintf(__('Username: %s'), $user->user_login) . "<br/><br/>";
+					    $message .= __('To set your password, visit the following address:') . "<br/><br/>";
+					    $message .= '<a href="'.$url.'">'.wp_login_url().'</a><br/>';
+					 
+					    wp_mail($user->user_email, sprintf(__('[%s] Your username and password info'), $blogname), $message, '', '', $sailthru_params);
+					 
+					    if ( $switched_locale ) {
+					        restore_previous_locale();
+					    }
 					}
 				}
+
 		}
-
-
-
-	// // Template for default emails to be sent via Sailthru
-	// if ( isset ( $sailthru['sailthru_setup_email_template'] ) &&
-	// 	!empty( $sailthru['sailthru_setup_email_template'] ) ) {
-
-	// 		//do_action( 'phpmailer_init', $phpmailer, 'default', $sailthru['sailthru_setup_email_template'] );
-
-	// }
-
 
 }

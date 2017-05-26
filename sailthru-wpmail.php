@@ -5,7 +5,7 @@
 *  this will allow for the flexibility to use php_mailer_init to override specific emails and greater flexibility
 **/
 
-function wp_mail( $to, $subject, $message, $headers = '', $attachments = array(), $template = '' ) {
+function wp_mail( $to, $subject, $message, $headers = '', $attachments = array(), $sailthru_params = '' ) {
 
 	// we'll be going through Sailthru so we'll handle text/html emails there already
 	// replace the <> in the reset password message link to allow the link to display.
@@ -49,15 +49,16 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 	// Added SailthruMailer
 	$phpmailer = new SailthruMailer();
 
-	if ( isset( $template ) && !empty( $template ) ) {
-		$phpmailer->template = $template;
+	if ( isset( $sailthru_params['template'] ) && !empty($sailthru_params['template'] ) ) {
+		$phpmailer->template = $sailthru_params['template'];
 		$phpmailer->Mailer = 'sailthru';
-	}
+	} 
 
-	var_dump($template);
-	var_dump($phpmailer);
+	// set any vars
+	if ( isset( $sailthru_params['vars']  ) ) {
+		$phpmailer->vars = $sailthru_params['vars'];
+	} 
 
-	die();
 
 	// Headers
 	$cc = $bcc = $reply_to = array();
