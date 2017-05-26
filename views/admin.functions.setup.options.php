@@ -131,20 +131,6 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		add_settings_field(
-			'sailthru_ignore_personalize_stored_tags',
-			'Ignore Stored Tags',
-			'sailthru_personalize_stored_tags_callback',
-			'sailthru_setup_options',
-			'sailthru_setup_section',
-			array(
-				'sailthru_setup_options',
-				'sailthru_ignore_personalize_stored_tags',
-				'',
-				'
-					'
-			)
-		);
 	}
 
 
@@ -255,7 +241,7 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset( $options['sailthru_js_type'] ) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array( 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Personalization Engine JavaScript' );
+	$html_options = array( 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Personalize JS' );
 
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {

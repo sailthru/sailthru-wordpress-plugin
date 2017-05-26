@@ -284,8 +284,8 @@ class Sailthru_Horizon {
 				$params = array();
 				$params['sailthru_customer_id'] = $customer_id;
 
-				wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/onsite/personalize.v0.0.3.min.js', array( 'scriptaculous' ) );
-				add_action( 'wp_footer', array( $this, 'sailthru_client_personalize' ), 10 );
+				wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/spm/spm.v1.min.js');
+				add_action( 'wp_head', array( $this, 'sailthru_client_personalize' ), 10 );
 
 			} else {
 
@@ -334,12 +334,7 @@ class Sailthru_Horizon {
 		$customer_id = isset( $options['sailthru_customer_id'] ) && ( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
 
 		$js = "<script type=\"text/javascript\">\n";
-		$js .= "var customerId = '".esc_attr( $customer_id ) ."'\n";
-		$js .= "var SPM = Sailthru.SPM;\n";
-		$js .= "SPM.setup(customerId, {\n";
-		$js .= "autoTrackPageviews: true,\n";
-		$js .= "useStoredTags: ". esc_attr( $stored_tags ) ."\n";
-		$js .= "});\n";
+		$js .= "Sailthru.init({ customerId:'".esc_attr( $customer_id ) ."' });";
 		$js .= "</script>\n";
 
 		if ( !is_404() && !is_preview() && apply_filters( 'sailthru_add_spm_js', true ) ) {
