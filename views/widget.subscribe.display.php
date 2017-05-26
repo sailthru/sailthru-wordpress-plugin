@@ -5,7 +5,10 @@
     * values as needed.
     */
     $widget_id = $this->id;
+   
     $title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
+    $source = empty( $instance['source'] ) ? bloginfo( 'url' )  :  $instance['source'];
+   
     if ( ! empty( $instance['sailthru_list'] ) ) {
         if ( is_array( $instance['sailthru_list'] ) ) {
             $sailthru_list = implode( ',', $instance['sailthru_list'] );
@@ -363,7 +366,7 @@
                 <input type="hidden" name="sailthru_nonce" value="<?php echo $nonce; ?>" />
                 <input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
                 <input type="hidden" name="action" value="add_subscriber" />
-                <input type="hidden" name="vars[source]" value="<?php bloginfo( 'url' ); ?>" />
+                <input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 
                 <span class="input-group-btn">
                     <button class="btn btn-reverse" type="submit">
