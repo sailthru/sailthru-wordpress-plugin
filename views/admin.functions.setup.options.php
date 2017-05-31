@@ -241,7 +241,7 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset( $options['sailthru_js_type'] ) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array( 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Personalize JS' );
+	$html_options = array( 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag' );
 
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
