@@ -114,10 +114,12 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * @param array   old_instance The new instance of values to be generated via the update.
 	 */
 	public function update( $new_instance, $old_instance ) {
+		
+		$instance = array(
+    		'title' => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
+    		'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING )
+		);
 
-		$instance = array();
-		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
-		$instance['source'] = filter_var( $new_instance['source'], FILTER_SANITIZE_STRING );
 		$customfields = get_option( 'sailthru_forms_options' );
 		$key = get_option( 'sailthru_forms_key' );
 
