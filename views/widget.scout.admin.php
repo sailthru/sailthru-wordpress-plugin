@@ -20,30 +20,51 @@
 			$api_secret = $sailthru['sailthru_api_secret'];
 			$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
+
+			// Check the user has access to SPM. 
+			$settings = $client->apiGet('settings');
+			// set to be disabled by default for a safe fallback
+			$spm_enabled = false;
+
+			// Get the SPM settings
+			if (isset ($settings['features']['spm_enabled']) && $settings['features']['spm_enabled']) {
+				$spm_enabled = $settings['features']['spm_enabled'];
+			} 
+
 			// Get Sections
-			$sections = $client->apiGet('section');
+			try {
 
-			// get sections
-			if (is_array ( $sections )) {
+				if ($spm_enabled) {
 
-				$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
-				$section_dropdown .= '<option value="">-- Select --</option>';
-				
-				foreach ( $sections as $list ) {
-					foreach ($list as $section) {
-						if ($section['section_id'] == $section_id) {
-							$selected = ' selected';
-						} else {
-							$selected = '';
+					$sections = $client->apiGet('section');
+
+					// get sections
+					if (is_array ( $sections )) {
+
+						$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
+						$section_dropdown .= '<option value="">-- Select --</option>';
+						
+						foreach ( $sections as $list ) {
+							foreach ($list as $section) {
+								if ($section['section_id'] == $section_id) {
+									$selected = ' selected';
+								} else {
+									$selected = '';
+								}
+								$section_dropdown .= '<option value="'.$section['section_id'].'"'.$selected.'>'.$section['name'].'</option>';
+							}
 						}
-						$section_dropdown .= '<option value="'.$section['section_id'].'"'.$selected.'>'.$section['name'].'</option>';
+						$section_dropdown .= '</select>';
 					}
-				}
-				$section_dropdown .= '</select>';
+				} 
+				
+			} catch (Exception $e) {
+				print "We could not retrieve the SPM sections.";
 			}
-
+			
 			?>
 
+			<?php if ($spm_enabled): ?>
 			<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
 			<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
@@ -52,6 +73,10 @@
 				<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>
 
 			</div>
+			<?php else: ?>
+			<p>SPM is not enabled for this account, please contact your Account Manager to find out more. </p>
+			<?php endif; ?>
+
 		<?php 
 
 		} else {
