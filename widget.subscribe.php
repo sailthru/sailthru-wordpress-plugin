@@ -114,9 +114,12 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * @param array   old_instance The new instance of values to be generated via the update.
 	 */
 	public function update( $new_instance, $old_instance ) {
+		
+		$instance = array(
+    		'title' => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
+    		'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING )
+		);
 
-		$instance = array();
-		$instance['title'] = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
 		$customfields = get_option( 'sailthru_forms_options' );
 		$key = get_option( 'sailthru_forms_key' );
 
@@ -152,6 +155,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$instance = wp_parse_args(
 			(array) $instance, array(
 				'title' => '',
+				'source' => '',
 				'sailthru_list' => array( '' ),
 				'field_order' => ''
 			)
@@ -159,6 +163,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 
 		$title = $instance['title'];
+		$source = $instance['source'];
 		$sailthru_list = $instance['sailthru_list'];
 		$order = $field_order = $instance['field_order'];
 		$widget_id = $this->id;
@@ -173,6 +178,58 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	/*--------------------------------------------*
 	 * Action Functions
 	 *--------------------------------------------*/
+
+
+	/**
+	 * If enabled then a user is created in WordPress when a newsletter subscription is processed.  
+	 * This will only fire when the first_name is present so we can create a username
+	 * it's recommended to uses a first and last name 
+	 */
+	function create_wp_account( $email, $options ) {
+
+		if ( false === apply_filters( 'sailthru_user_registration_enable', true ) ) {
+			return;
+		}
+
+		if ( isset( $options['vars']['first_name'] ) && !empty( $options['vars']['first_name'] ) ) {
+				 $first_name = $options['vars']['first_name'];
+		} else {
+			 $first_name = '';
+		}
+
+		if ( isset( $options['vars']['last_name'] ) && !empty( $options['vars']['last_name'] ) ) {
+				 $last_name = $options['vars']['last_name'];
+		} else {
+			 $last_name = '';
+		}
+
+		$nickname = $first_name. ' '. $last_name;
+
+		if ( empty($nickname) ) {
+			$nickname = $email;
+		}
+
+
+		if ( email_exists($email) == false ) {
+			$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
+			$user = wp_create_user( $email, $random_password, $email );
+			wp_new_user_notification( $user, null, 'user' );
+
+			$user_vars = $options['vars'];
+			$user_vars['ID'] = $user;
+			$user_vars['nickname'] = $first_name. ' '. $last_name;
+			unset($user_vars['wp_widget_lists']);
+			wp_update_user($user_vars);
+			write_log('Account created:'.$email);
+		} else {
+			write_log('Account for '.$email.' exists');
+		}
+		
+
+
+	}
+
+
 
 	/**
 	 * Adds the WordPress Ajax Library to the frontend.
@@ -299,6 +356,15 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		}
 
+		// set the source
+		if ( isset( $_POST['source'] ) && !empty( $_POST['source'] ) ) {
+			$source = filter_var( trim( $_POST['source'] ), FILTER_SANITIZE_STRING );
+		} else {
+			$source = get_bloginfo( 'url' );
+		}
+
+		$vars['source'] = $source;
+
 		$subscribe_to_lists = array();
 		if ( !empty( $_POST['sailthru_email_list'] ) ) {
 			//add the custom fields info to the api call! This is where the magic happens
@@ -337,6 +403,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			if ( empty ( $vars ) ) {
 				$vars = '';
 			}
+
 			$options = array(
 				'vars' => $vars
 			);
@@ -359,13 +426,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 
-			$options['vars']['source'] = get_bloginfo( 'url' );
-
-
 			$result['data'] = array(
 				'email' => $email,
 				'options' => $options
 			);
+
 			if ( empty ( $result['error'] ) ) {
 
 				$sailthru   = get_option( 'sailthru_setup_options' );
@@ -451,6 +516,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 				$result['result'] = $res;
 
+			}
+
+			// if the enable account option filter is set then run the account setup 
+			if ( has_filter( 'sailthru_user_registration_enable' ) ) {
+				$this->create_wp_account($email,$options);
 			}
 
 			// did this request come from an ajax call?

@@ -46,6 +46,12 @@
             		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
             	</label>
             </p>
+             <p>
+            	<label for="<?php echo $this->get_field_id( 'source' ); ?>">
+            		<?php _e( 'Acquisition Source' ); ?>
+            		<input class="widefat" id="<?php echo $this->get_field_id( 'source' ); ?>" name="<?php echo $this->get_field_name( 'source' ); ?>" type="text" value="<?php echo esc_attr( $source ); ?>" />
+            	</label>
+            </p>
             <p>
 			<?php
 			echo '<div class="sortable_widget">';

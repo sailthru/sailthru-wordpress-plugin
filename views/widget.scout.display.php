@@ -19,20 +19,21 @@
     // Grab the settings from $instance and fill out default values as needed.
 	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
 ?>
-	<script type="text/javascript">
+<?php if ($use_spm): ?>
+    <div class="sailthru-spm-widget">
+         <div id="<?php echo $this->id; ?>"></div>
+          <script type="text/javascript">
+            jQuery(function() {
+                SPM.addSection('<?php echo $section; ?>', {
+                    elementId: '<?php echo $this->id; ?>'
+                });
                 SPM.personalize({
-                    timeout: 2000,
-                onSuccess: function(data){
-                    //console.log('Success',data);
-                },
-                onError: function(error) {
-                    //console.log('Error', error);
-                }
+                    timeout: 2000
             });
          });
     </script>
 
-?>
+    </div>
  <div class="sailthru-recommends-widget">
     </div>
 <?php else: ?>
