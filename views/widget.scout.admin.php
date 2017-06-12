@@ -21,46 +21,45 @@
 			$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 
-			// Check the user has access to SPM. 
-			$settings = $client->apiGet('settings');
-			// set to be disabled by default for a safe fallback
-			$spm_enabled = false;
+			try {
+				$settings = $client->apiGet('settings');
+			} catch (Exception $e) {
+				print "We could not connect to Sailthru to retrieve Personalization Engine Settings";
+				write_log($e);
+			}
 
 			// Get the SPM settings
 			if (isset ($settings['features']['spm_enabled']) && $settings['features']['spm_enabled']) {
-				$spm_enabled = $settings['features']['spm_enabled'];
-			} 
-
-			// Get Sections
-			try {
-
-				if ($spm_enabled) {
+				
+				try {
 
 					$sections = $client->apiGet('section');
 
-					// get sections
-					if (is_array ( $sections )) {
+						// get sections
+						if (is_array ( $sections )) {
 
-						$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
-						$section_dropdown .= '<option value="">-- Select --</option>';
-						
-						foreach ( $sections as $list ) {
-							foreach ($list as $section) {
-								if ($section['section_id'] == $section_id) {
-									$selected = ' selected';
-								} else {
-									$selected = '';
+							$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
+							$section_dropdown .= '<option value="">-- Select --</option>';
+							
+							foreach ( $sections as $list ) {
+								foreach ($list as $section) {
+									if ($section['section_id'] == $section_id) {
+										$selected = ' selected';
+									} else {
+										$selected = '';
+									}
+									$section_dropdown .= '<option value="'.$section['section_id'].'"'.$selected.'>'.$section['name'].'</option>';
 								}
-								$section_dropdown .= '<option value="'.$section['section_id'].'"'.$selected.'>'.$section['name'].'</option>';
 							}
+							$section_dropdown .= '</select>';
 						}
-						$section_dropdown .= '</select>';
-					}
-				} 
-				
-			} catch (Exception $e) {
-				print "We could not retrieve the SPM sections.";
-			}
+
+				} catch (Exception $e) {
+					print "We could not retrieve the SPM sections.";
+					write_log($e);
+				}
+
+			} 
 			
 			?>
 
