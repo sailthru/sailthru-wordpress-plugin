@@ -63,7 +63,7 @@
 			
 			?>
 
-			<?php if ($spm_enabled): ?>
+			<?php  if (isset ($settings['features']['spm_enabled']) && $settings['features']['spm_enabled']) : ?>
 			<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
 			<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
