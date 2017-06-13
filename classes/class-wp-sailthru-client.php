@@ -53,7 +53,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
         $url = $this->api_uri . "/" . $action;
 
-        $debug_call = array('api' => $url, 'payload' => json_encode($data));
+        $debug_call = array('api' => $url, 'method'=> $method, 'payload' => json_encode($data));
         write_log($debug_call);
 
         if ( 'GET' == $method ) {
@@ -76,13 +76,19 @@ class WP_Sailthru_Client extends Sailthru_Client {
             );
         }
 
-        if ( 'GET' == $method ) {
-            $reply = wp_remote_get( $url, $data );
-        } else {
-            $reply = wp_remote_post( $url, $data );
+        try {
+            if ( 'GET' == $method ) {
+                $reply = wp_remote_get( $url, $data );
+            } else {
+                $reply = wp_remote_post( $url, $data );
+            }
+            write_log($reply);
+        } catch (Exception $e) {
+            write_log($e);
         }
-
+        
         if ( isset( $reply ) ) {
+
             if ( is_wp_error( $reply ) ) {
                 throw new Sailthru_Client_Exception( "Bad response received from $url: " . $reply->get_error_message() );
             } else {

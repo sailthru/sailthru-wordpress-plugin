@@ -425,7 +425,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			}
 
-
 			$result['data'] = array(
 				'email' => $email,
 				'options' => $options
@@ -440,81 +439,91 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 				//$client = new Sailthru_Client( $api_key, $api_secret );
 				$client = new WP_Sailthru_Client( $api_key, $api_secret );
-				try {
+				
+				if ($client) {
+					
+					// check if user exists and belongs to lists already
+					try {
+						
+						$data = array('id' => $email, 
+							'fields' => array( 
+										'lists' => 1,
+										'keys' => 1,
+										)
+							);
+						
+						if ( $res = $client->apiGet( 'user', $data)) {
+							$user_lists = empty( $res['lists'] ) ? array() : $res['lists'];
+						}
 
-					if ( $client ) {
-
-						// first we check to see if this user exists for this list(varname)
-						$user_exists = $client->apiGet( 'user', array( 'id' => $email , 'key' => 'email' ) );
-
-						if ( !isset( $user_exists['error'] )  && $user_exists  ) {
-
-							if ( isset ( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
-
-								$new_lists = array();
-								$save_lists = false;
-
-								// does the user have any lists?
-								if ( isset( $user_exists['lists'] ) && count( $user_exists['lists'] ) > 0 ) {
-
-									// now we need to check which lists they are being subscribed to which they are not a member of.
-									foreach ( $options['lists'] as $list_name => $list_val ) {
-
-										if ( !array_key_exists( $list_name, $user_exists['lists'] ) ) {
-											$new_lists[] = $list_name;
-										}
-
-									}
-
-								} else {
-									// all of the lists are new lists
-									$new_lists = $options['lists'];
-								}
-
-								// if there's any lists the user is not a member of send the welcome email
-								if ( count( $new_lists ) > 0 ) {
-									$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
-								}
-
-							}
-
+					} catch (Sailthru_Client_Exception $e) {
+		
+						if ( isset ( $user_exists['errormsg'] ) && strpos( $user_exists['errormsg'] , 'User not found with email' ) ) {
+							// fail silently to save log files as we're looking for this
 						} else {
+							write_log($e);
+						}
+						
+					} 
 
-							// check to see if we get an error that the user does not exist, otherwise throw a real error
-							if ( isset ( $user_exists['errormsg'] ) && strpos( $user_exists['errormsg'] , 'User not found with email' ) !== false ) {
-								// if there's no error we can send the user the welcome email
-								if ( isset ( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
-									$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
-								}
-							} else {
-								if ( $res['ok'] != true ) {
-									$result['error'] = true;
-									$result['message'] = "There was a problem with your email address.";
-								}
+					/** 
+					* Check if welcome email configured. 
+					* Then check if the widget subscribes to any lists the user is not a member of. 
+					**/
+
+					if ( isset ( $customfields['sailthru_welcome_template']) && !empty ($customfields['sailthru_welcome_template'] ) ) {
+
+
+						foreach ( $options['lists'] as $list_name => $list_val ) {
+							
+							if ( array_key_exists( $list_name, $user_lists ) ) {
+								unset( $options['lists'][$list_name] );
 							}
 
 						}
 
-						if ( $double_opt_in ) {
-							unset( $options['lists'] );
+						// send the welcome email
+						if ( count ( $options['lists'] ) > 0 ) {
+
+							// removed the lists if it's a double opt-in
+							if ( $double_opt_in ) {
+									unset( $options['lists'] );
+							}
+							
+							$data = array('template' => $customfields['sailthru_welcome_template'],
+										'email' => $email, 
+										'vars' => $vars);
+							
+							try {
+								$client->apiPost('send', $data);
+							} catch (Sailthru_Client_Exception $e) {
+								write_log($e);
+							}
+							
 						}
-						unset( $options['vars']['lists'] );
-						$res = $client->saveUser( $email, $options );
+
+					} 
+
+				
+					try {
+
+						unset($vars['wp_widget_lists']);
+
+						$user_data = array('id' => $email,
+										'vars' => $vars, 
+										'lists' => $options['lists']);
+						$res = $client->apiPost('user', $user_data);
 						$client->setHorizonCookie( $email );
+						write_log($res);
+						$result['result'] = $res;
 
+					} catch (Sailthru_Client_Exception $e) {
+						write_log($e);
+						$result['error'] = true;
+						$result['message'] = "There was an error subscribing you. Please try again later.";
 					}
-				}
-				catch ( Sailthru_Client_Exception $e ) {
-					//silently fail
-					return;
-				}
 
-				if ( $res['ok'] != true ) {
-					$result['error'] = true;
-					$result['message'] = "There was an error subscribing you. Please try again later.";
 				}
-
-				$result['result'] = $res;
 
 			}
 
