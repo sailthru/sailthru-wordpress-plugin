@@ -316,9 +316,13 @@ function sailthru_setup_email_template_callback( $args ) {
 		$api_secret = $sailthru['sailthru_api_secret'];
 
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-		try {
-			if ( $client ) {
-				$res = $client->getTemplates();
+			try {
+				if ( $client ) {
+					$res = $client->getTemplates();
+				}
+			}
+			catch ( Sailthru_Client_Exception $e ) {
+				$api_error = true;
 			}
 		}
 		catch ( Sailthru_Client_Exception $e ) {
@@ -378,7 +382,12 @@ function sailthru_setup_email_template_callback( $args ) {
 		$html = sailthru_create_dropdown( $args, $tpl );
 	} else {
 		$html = sailthru_create_dropdown( $args, array() );
-		$html .= "Sailthru Api Key and Secret must be saved first";
+
+		if ($api_error) {
+			$html .= "<p>We could not connect to the Sailthru API</p>";
+		} else {
+			$html .= "<p>Sailthru Api Key and Secret must be saved first</p>";
+		}
 	}
 
 	echo $html;
