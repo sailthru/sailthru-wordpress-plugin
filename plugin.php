@@ -3,10 +3,10 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your Wordpress set up.
-Version: 3.0.6
+Version: 3.1.0-develop
 Author: Sailthru
 Author URI: http://sailthru.com
-Author Email: nick@sailthru.com
+Author Email: integrations@sailthru.com
 License:
 
   Copyright 2013 (Sailthru)
@@ -35,7 +35,7 @@ License:
  * @var      const    $version    The current version of the plugin.
  */
 if ( ! defined( 'SAILTHRU_PLUGIN_VERSION' ) ) {
-	define( 'SAILTHRU_PLUGIN_VERSION', '3.0.6' );
+	define( 'SAILTHRU_PLUGIN_VERSION', '3.1.0-develop' );
 }
 
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) ) {
@@ -122,7 +122,7 @@ function sailthru_create_wordpress_template() {
 
 	$wordpress_template = 'Wordpress Template';
 
-	if ( get_option( 'sailthru_setup_complete' ) ) {
+	if ( sailthru_verify_setup() ) {
 
 		$sailthru = get_option( 'sailthru_setup_options' );
 		$api_key = $sailthru['sailthru_api_key'];
@@ -234,7 +234,7 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 
 
 	if ( $post->post_status == 'publish' ) {
-		// Make sure Salthru is setup
+		// Make sure Sailthru is setup
 		if ( get_option( 'sailthru_setup_complete' ) ) {
 			$sailthru = get_option( 'sailthru_setup_options' );
 			$api_key = $sailthru['sailthru_api_key'];
