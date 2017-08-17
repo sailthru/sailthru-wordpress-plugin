@@ -1,22 +1,17 @@
 <?php
 
-/* ------------------------------------------------------------------------ *
- * HORIZON SETUP
- * ------------------------------------------------------------------------ */
+/**
+ * Setup options
+ *
+ * @return void
+ */
 function sailthru_initialize_setup_options() {
 
-	// If the section options don't exist, create them.
-	if ( false == get_option( 'sailthru_setup_options' ) ) {
-		add_option( 'sailthru_setup_options' );
-	} // end if
-
-	// get the options
-	$setup = get_option( 'sailthru_setup_options' );
-
+	$options = get_option( 'sailthru_setup_options' );
 
 	add_settings_section(
 		'sailthru_setup_section',   // ID used to identify this section and with which to register options
-		__( 'Sailthru API Setup', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
+		__( '', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
 		'sailthru_setup_callback',   // Callback used to render the description of the section
 		'sailthru_setup_options'   // Page on which to add this section of options
 	);
@@ -35,7 +30,6 @@ function sailthru_initialize_setup_options() {
 			'sailthru_form_name'
 		)
 	);
-
 
 	add_settings_field(
 		'sailthru_api_key',     // ID used to identify the field throughout the theme
@@ -65,57 +59,9 @@ function sailthru_initialize_setup_options() {
 		)
 	);
 
-	add_settings_field(
-		'sailthru_js_type',
-		'Sailthru JavaScript Version',
-		'sailthru_js_type_callback',
-		'sailthru_setup_options',
-		'sailthru_setup_section',
-		array(
-			'sailthru_setup_options',
-			'sailthru_js_type',
-			'',
-			'sailthru_js_type'
-		)
-	);
+	$api_validated = get_option ('sailthru_api_validated' );
 
-
-	if ( isset( $setup['sailthru_js_type'] ) &&   $setup['sailthru_js_type'] != 'personalize_js' ) {
-
-
-		add_settings_field(
-			'sailthru_horizon_domain',
-			'Sailthru Horizon Domain',
-			'sailthru_html_text_input_callback',
-			'sailthru_setup_options',
-			'sailthru_setup_section',
-			array(
-				'sailthru_setup_options',
-				'sailthru_horizon_domain',
-				'',
-				'sailthru_horizon_domain'
-			)
-		);
-
-
-		add_settings_field(
-			'sailthru_horizon_load_type',
-			'Horizon Loading',
-			'sailthru_horizon_loadtype_callback',
-			'sailthru_setup_options',
-			'sailthru_setup_section',
-			array(
-				'sailthru_setup_options',
-				'sailthru_horizon_load_type',
-				'',
-				'sailthru_horizon_load_type'
-			)
-		);
-	}
-
-	// Add customer Id if personalize JS is being used.
-
-	if ( isset( $setup['sailthru_js_type'] ) &&   $setup['sailthru_js_type'] == 'personalize_js' ) {
+	if ( $api_validated ) {
 
 		add_settings_field(
 			'sailthru_customer_id',
@@ -131,43 +77,80 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-	}
-
-
-	/*
-	 * Sailthru options for overriding emails
-	 * Add a new field for selecting the email template to use,
-	 * but don't do this until we have an API key & secret to use.
-	 */
-
-
-	if ( isset( $setup['sailthru_api_key'] ) && ! empty ( $setup['sailthru_api_key'] ) &&
-		isset( $setup['sailthru_api_secret'] ) && ! empty ( $setup['sailthru_api_secret'] ) ) {
-
-
 		add_settings_section(
-			'sailthru_email_setup_section',   // ID used to identify this section and with which to register options
-			__( 'Email Settings', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
-			'sailthru_email_section_callback',   // Callback used to render the description of the section
+			'sailthru_js_setup_section',   // ID used to identify this section and with which to register options
+			__( '', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
+			'sailthru_js_setup_section_callback',   // Callback used to render the description of the section
 			'sailthru_setup_options'   // Page on which to add this section of options
 		);
 
-
-
 		add_settings_field(
-			'sailthru_setup_email_template', // ID used to identify the field throughout the theme
-			__( 'Default Template', 'sailthru-for-wordpress' ),  // The label to the left of the option interface element
-			'sailthru_setup_email_template_callback',
+			'sailthru_js_type',
+			'Sailthru JavaScript Version',
+			'sailthru_js_type_callback',
 			'sailthru_setup_options',
-			'sailthru_email_setup_section',
+			'sailthru_js_setup_section',
 			array(
 				'sailthru_setup_options',
-				'sailthru_setup_email_template',
+				'sailthru_js_type',
 				'',
-				'sailthru_setup_email_template',
-				'When selected WordPress emails will be sent via Sailthru. Configure your template in Sailthru with {subject} as the subject line and include {body} in the editor.'
-
+				'sailthru_js_type'
 			)
+		);
+
+		if ($options['sailthru_js_type'] === 'personalize_js') {
+
+			add_settings_field(
+				'sailthru_personalize_stored_tags',
+				'Ignore Stored Tags',
+				'sailthru_personalize_stored_tags_callback',
+				'sailthru_setup_options',
+				'sailthru_js_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_personalize_stored_tags',
+					'',
+					'sailthru_personalize_stored_tags'
+				)
+			);
+		}
+
+		if ($options['sailthru_js_type'] === 'horizon_js') {
+
+			add_settings_field(
+				'sailthru_horizon_domain',
+				'Sailthru Horizon Domain',
+				'sailthru_html_text_input_callback',
+				'sailthru_setup_options',
+				'sailthru_js_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_horizon_domain',
+					'',
+					'sailthru_horizon_domain'
+				)
+			);
+
+			add_settings_field(
+				'sailthru_horizon_load_type',
+				'Horizon Loading',
+				'sailthru_horizon_loadtype_callback',
+				'sailthru_setup_options',
+				'sailthru_js_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_horizon_load_type',
+					'',
+					'sailthru_horizon_load_type'
+				)
+			);
+		}
+
+		add_settings_section(
+			'sailthru_email_setup_section',   // ID used to identify this section and with which to register options
+			__( '', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
+			'sailthru_email_section_callback',   // Callback used to render the description of the section
+			'sailthru_setup_options'   // Page on which to add this section of options
 		);
 
 		add_settings_field(
@@ -181,12 +164,29 @@ function sailthru_initialize_setup_options() {
 				'sailthru_setup_new_user_override_template',
 				'',
 				'sailthru_setup_new_user_override_template',
-				'Select this template to for new user accounts in your WordPress site. Newsletter signups can be configured using the List Signup Widget.'
+				'Select a template to send new user registration emails via Sailthru. The template must have a subject line of subject and contain a variable {body} in the HTML of the email. '
 			)
 		);
 
+		// Only allow an override of all mail when not on VIP
+		if ( ! defined( 'WPCOM_IS_VIP_ENV' ) && false === WPCOM_IS_VIP_ENV ) {
+	
+			add_settings_field(
+				'sailthru_setup_email_template', // ID used to identify the field throughout the theme
+				__( 'Default Template', 'sailthru-for-wordpress' ),  // The label to the left of the option interface element
+				'sailthru_setup_email_template_callback',
+				'sailthru_setup_options',
+				'sailthru_email_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_setup_email_template',
+					'',
+					'sailthru_setup_email_template',
+					'Select a template to send all WordPress transactionals via Sailthru. The template must have a subject line of subject and contain a variable {body} in the HTML of the email. '
+					)
+			);
+		} 
 	}
-
 
 	// Finally, we register the fields with WordPress
 	register_setting(
@@ -209,10 +209,9 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
  */
 
 function sailthru_setup_callback() {
-	echo '<p>Add your Sailthru API key , secret key and your Horizon domain. This can be found on the <a href="https://my.sailthru.com/settings_api">settings page</a> of the Sailthru dashboard.</p><p>Not sure what these are? Contact <a href="mailto:support@sailthru.com">support@sailthru.com</a> ';
+	echo '<div id="icon-options-general"><h3>API Keys</h3></div>';
+	echo '<p>Add your Sailthru API key & Secret, you can find this on the <a href="https://my.sailthru.com/settings_api">settings page</a> of the Sailthru dashboard.</p><p>Not sure what these are? Contact <a href="mailto:support@sailthru.com">support@sailthru.com</a> ';
 } // end sailthru_setup_callback
-
-
 
 
 /* ------------------------------------------------------------------------ *
@@ -241,7 +240,7 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset( $options['sailthru_js_type'] ) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array( 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag' );
+	$html_options = array( 'none' => 'Select', 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag' );
 
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
@@ -266,9 +265,7 @@ function sailthru_customer_id_callback() {
 
 	$options = get_option( 'sailthru_setup_options' );
 	$customer_id = isset( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
-	echo '<input type="text" id="sailthru_customer_id" name="sailthru_setup_options[sailthru_customer_id]" value="' . esc_attr( $customer_id ) . '"/>';
-
-
+	echo esc_html( $customer_id );
 }
 
 /**
@@ -279,7 +276,7 @@ function sailthru_personalize_stored_tags_callback() {
 
 	$options = get_option( 'sailthru_setup_options' );
 	$ignore_stored_tags = isset( $options['sailthru_ignore_personalize_stored_tags'] ) ? $options['sailthru_ignore_personalize_stored_tags'] : '';
-	echo '<input type="checkbox" id="sailthru_ignore_personalize_stored_tags" name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" value="1"' . checked( 1, esc_attr( $ignore_stored_tags ), true ) . '/>';
+	echo '<input type="checkbox" id="sailthru_ignore_personalize_stored_tags" name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" value="1" ' . checked( 1, esc_attr( $ignore_stored_tags ), false ) . ' />';
 
 }
 
@@ -290,7 +287,19 @@ function sailthru_personalize_stored_tags_callback() {
  */
 function sailthru_email_section_callback() {
 
+	echo '<h3 class="sailthru-sub-section">Email Settings</h3>';
 	echo "<p>You can use Sailthru to deliver your WordPress emails.</p>";
+
+}
+
+/**
+ * Creates a section header for the JavaScript Settings.
+ *
+ */
+function sailthru_js_setup_section_callback() {
+	
+	echo '<h3 class="sailthru-sub-section">JavaScript Tag Settings</h3>';
+	echo "<p>Deploy Sailthru's JavaScript Tags automatically. Horizon JS is officially deprecated and will be retired in a future release.</p>";
 
 }
 
@@ -381,18 +390,13 @@ function sailthru_setup_email_template_callback( $args ) {
  * Setting Callbacks
  * ------------------------------------------------------------------------ */
 
-
-
-
 /**
  * Sanitize the text inputs, and don't let the horizon
  * domain get saved with either http:// https:// or www
  */
 function sailthru_setup_handler( $input ) {
 
-
-	$output = array();
-
+	 $output = array();
 	// api key
 	if ( isset( $input['sailthru_api_key'] ) ) {
 		$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
@@ -407,32 +411,58 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_api_secret'] = false;
 	}
 
+	if (!$output['sailthru_api_key'] || !$output['sailthru_api_secret']) {
+		add_settings_error( 'sailthru-notices', 'sailthru-api-keys-fail', __( 'Add a valid API key and Secret' ), 'error' );
+		return $output;
+	}
 
-	if ( empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
-		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Sailthru Customer Id' ), 'error' );
-	} else {
-		// customer id
-		if ( isset( $input['sailthru_customer_id'] ) ) {
-			$output['sailthru_customer_id'] = filter_var( $input['sailthru_customer_id'], FILTER_SANITIZE_STRING );
+	$sailthru = new WP_Sailthru_Client( $output['sailthru_api_key'], $output['sailthru_api_secret'] );
+
+	try {
+		$settings = $sailthru->apiGet( 'settings' );
+		if ( $settings ) {
+			// Get the Customer ID from Sailthru.
+			$output['sailthru_customer_id'] = filter_var( $settings['customer_id'], FILTER_SANITIZE_STRING );
+
+			$st_settings = array(
+				'customer_id' => $settings['customer_id'],
+				'features' => $settings['features'],
+				'domains' => $settings['domains'],
+			);
+
+			update_option( 'sailthru_settings', $st_settings );
+			update_option( 'sailthru_api_validated', true );
 		} else {
-			$output['sailthru_customer_id'] = false;
+			sailthru_invalidate(false, false);
+			return $output;
 		}
+
+	} catch ( Exception $e ) {
+			sailthru_invalidate(false, false);
+			add_settings_error( 'sailthru-notices', 'sailthru-api-secret-fail', __( $e->getMessage() ), 'error' );
+			return $output;
 	}
 
 	// javascript type
-	if ( isset( $input['sailthru_js_type'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
+	if ( isset( $input['sailthru_js_type'] ) ) {
 		$output['sailthru_js_type'] = filter_var( $input['sailthru_js_type'], FILTER_SANITIZE_STRING );
 	} else {
-		$output['sailthru_js_type'] = false;
+		$output['sailthru_js_type'] = '';
 	}
 
-	// Personalize JS - use stored tags
+	// ignore stored tags
 	if ( isset( $input['sailthru_ignore_personalize_stored_tags'] ) ) {
 		$output['sailthru_ignore_personalize_stored_tags'] = 1;
 	} else {
 		$output['sailthru_ignore_personalize_stored_tags'] = false;
 	}
 
+	// // horizon domain
+	if ( isset( $input['sailthru_horizon_domain'] ) ) {
+		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_horizon_domain'] = '';
+	}
 
 	// horizon load type
 	if ( isset( $input['sailthru_horizon_load_type'] ) ) {
@@ -440,15 +470,6 @@ function sailthru_setup_handler( $input ) {
 	} else {
 		$output['sailthru_horizon_load_type'] = false;
 	}
-
-
-	// horizon domain
-	if ( isset( $input['sailthru_horizon_domain'] ) ) {
-		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
-	} else {
-		$output['sailthru_horizon_domain'] = '';
-	}
-
 
 	// set errors
 	if ( empty( $output['sailthru_api_secret'] ) ) {
@@ -473,15 +494,10 @@ function sailthru_setup_handler( $input ) {
 		}
 	}
 
+	// This will have run before this section has been displayed
+	$api_validated = get_option ('sailthru_api_validated' );
 
-	/*
-	 * Of course we want to vaildate this field,
-	 * but don't do this until we have an API key & secret to use.
-	 */
-	$setup = get_option( 'sailthru_setup_options' );
-
-	if ( isset( $setup['sailthru_api_key'] ) && ! empty( $setup['sailthru_api_key'] ) &&
-		isset( $setup['sailthru_api_secret'] ) && ! empty( $setup['sailthru_api_secret'] ) ) {
+	if (  $api_validated ) {
 
 		// creates an email template if one does not already exist
 		sailthru_create_wordpress_template();
@@ -492,7 +508,7 @@ function sailthru_setup_handler( $input ) {
 		} else {
 			$output['sailthru_setup_email_template'] = false;
 		}
-	
+
 		if ( isset( $input['sailthru_setup_new_user_override_template'] ) ) {
 			$output['sailthru_setup_new_user_override_template'] = trim( $input['sailthru_setup_new_user_override_template'] );
 		} else {
@@ -501,7 +517,7 @@ function sailthru_setup_handler( $input ) {
 
 	}
 
-
+	update_option( 'sailthru_setup_complete', true );
 	return $output;
 
 }
