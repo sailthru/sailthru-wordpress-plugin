@@ -18,8 +18,7 @@ $verify_setup = sailthru_verify_setup();
 		</div>
 	<?php endif; ?>
 <?php endif; ?>
-<div id="dashboard-widgets-wrap">
-	<div id="sailthru-template-choices" class="metabox-holder columns-2">
+	<div id="sailthru-template-choices">
 			<div class="meta-box-sortables">
 				<div id="sailthru-choose-template" class="postbox">
 					<div class="inside">
@@ -33,4 +32,3 @@ $verify_setup = sailthru_verify_setup();
 			</div>
 		</div>
 	<div class="clear"></div>
-</div>

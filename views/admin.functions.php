@@ -33,7 +33,7 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 	$options       = get_option( $collection );
 
-	// Make sure the element is defined in the options. If not, we'll use the preferred default
+	// Make sure the element is defined in the options. If not, we'll use the preferred default.
 	$value = '';
 	if ( isset( $options[ $option_name ] ) ) {
 		$value = $options[ $option_name ];
@@ -42,14 +42,12 @@ function sailthru_html_text_input_callback( $args ) {
 	}
 
 	// Render the output
-	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" />';
+	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
 	if ( isset( $hint ) ) {
 		echo '<div class="instructions">'.esc_html( $hint ).'</div>';
 	}
 
-} // end sailthru_html_text_input_callback
-
-
+} // end sailthru_html_text_input_callback.
 
 
 /**
@@ -76,11 +74,15 @@ function sailthru_toggle_feature_callback( $args ) {
 	// Read the options collection
 	$options = get_option( $collection );
 
+	if (empty( $options ) ) {
+		$options = array();
+	}
+
 	// We don't want errors on first run, and since this is
 	// only a toggle, we can create this option_name if it
 	// doesn't exist.
 	if ( ! isset( $options[ $option_name ] ) ) {
-		$options[ $option_name ] = 0; // evalutates to not checked
+		$options[ $option_name ] = 0; // evaluates to not checked
 	}
 
 
@@ -167,7 +169,7 @@ function sailthru_create_dropdown( $args, $values ) {
 	$option_name = $args[1];
 	$default     = $args[2]; // we're not using this yet
 	$html_id     = $args[3];
-	if ( isset ( $args[4] ) ) {
+	if ( isset( $args[4] ) ) {
 		$instructions = $args[4];
 	} else {
 		$instructions = false;
@@ -205,48 +207,72 @@ function sailthru_create_dropdown( $args, $values ) {
 }
 
 /**
+ * Gets the Sailthru account settings
+ *
+ * @return stdclass
+ */
+function sailthru_account_settings() {
+
+	$settings   = get_option( 'sailthru_setup_options' );
+
+	if ( ! empty( $settings['sailthru_api_key'] ) && ! empty( $settings['sailthru_api_secret'] ) ) {
+
+		$client = new WP_Sailthru_Client( $settings['sailthru_api_key'], $settings['sailthru_api_secret'] );
+
+		try {
+			return $client->apiGet( 'settings' );
+		} catch ( Exception $e ) {
+			write_log( $e );
+			return false;
+		}
+	}
+
+}
+
+/**
+ * Function to check if Sailthru has been configured
+ *
+ * @return void
+ */
+function sailthru_status() {
+
+	// default to false
+	$status = array (
+		'setup' => false,
+		'api' => false,
+	);
+
+	$api =  get_option( 'sailthru_api_validated' );
+
+	if ($api != '0' || $api != false) {
+		$status['api'] = true;
+	} else {
+		// invalidate the setup if the API is invalid
+		update_option( 'sailthru_setup_complete', false );
+	}
+
+	$setup =  get_option( 'sailthru_setup_complete' );
+	if ($setup != '0' || $setup != false) {
+		$status['setup'] = true;
+	}
+
+	return $status;
+}
+
+ function sailthru_invalidate($api, $setup) {
+	update_option( 'sailthru_setup_complete', $setup );
+	update_option( 'sailthru_api_validated', $api );
+ }
+
+/**
  * This function verifies Sailthru is working by making an API Call to Sailthru
  *
  */
 function sailthru_verify_setup() {
-
-	$input = array();
-	$valid_keys = false;
-	$sailthru   = get_option( 'sailthru_setup_options' );
-	if (  ! isset( $sailthru['sailthru_api_key'] )
-		|| ! isset( $sailthru['sailthru_api_secret'] ) ) {
-		return;
-	}
-
-	$api_key    = $sailthru['sailthru_api_key'];
-	$api_secret = $sailthru['sailthru_api_secret'];
-	$res        = array();
-
-	if ( empty( $input['sailthru_customer_id'] ) && !empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
-		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Sailthru Customer Id' ), 'error' );
-		return false;
-	}
-
-	// now check to see if we can make an API call
-	//$client = new Sailthru_Client( $api_key, $api_secret );
-	$client = new WP_Sailthru_Client( $api_key, $api_secret );
-
-	try {
-		$res = $client->apiGet('settings');
-		if ( !isset( $res['error'] ) ) {
-			$valid_keys = true;
-		} else {
-			add_settings_error( 'sailthru-notices', 'sailthru-verify-config-fail', __( 'Sailthru is not correctly configured, please check your API key and template settings.' ), 'error' );
-		}
-	} catch (Sailthru_Client_Exception $e) {
-		// fail silently return false
-	}
 	
-	return $valid_keys;
-	
+	return get_option( 'sailthru_api_validated' );
 }
-// end sailthru_verify_setup
-
+// end sailthru_verify_setup.
 
 /**
  * This function verifies that the template is coded correctly
