@@ -227,8 +227,8 @@ function sailthru_initialize_forms_options() {
 					//select field
 					if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
 						echo '
-					        <label for="custom_' . $name_stripped . '">' . $customfields[ $field_key ]['sailthru_customfield_name'] . ':</label>
-							<select name="custom_' . $name_stripped .'" id="sailthru_' . $name_stripped . '_name">';
+					        <label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_name'] ). ':</label>
+							<select name="custom_' . esc_attr( $name_stripped ) .'" id="sailthru_' . esc_attr ( $name_stripped ) . '_name">';
 
 						$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 						foreach ( $items as $item ) {

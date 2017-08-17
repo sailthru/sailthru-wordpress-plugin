@@ -71,11 +71,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
 
 			// Include the Ajax library on the front end
-			add_action( 'wp_head', array( &$this, 'add_ajax_library' ) );
+			add_action( 'wp_head', array( $this, 'add_ajax_library' ) );
 
 			// Method to subscribe a user
-			add_action( 'wp_ajax_nopriv_add_subscriber', array( &$this, 'add_subscriber' ) );
-			add_action( 'wp_ajax_add_subscriber', array( &$this, 'add_subscriber' ) );
+			add_action( 'wp_ajax_nopriv_add_subscriber', array( $this, 'add_subscriber' ) );
+			add_action( 'wp_ajax_add_subscriber', array( $this, 'add_subscriber' ) );
 		}
 
 	} // end constructor

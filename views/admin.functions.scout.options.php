@@ -127,7 +127,7 @@ function sailthru_scout_items_callback( $args ) {
 
 	$i = 0;
 	while ( $i <= 40 ) {
-		$html .= '<option value="'.$i.'" ' . selected( $saved_value, $i, false ) . '>' . $i . '</option>';
+		$html .= '<option value="'.$i.'" ' . selected( esc_attr( $saved_value ) , $i, false ) . '>' . $i . '</option>';
 		$i++;
 	}
 	$html .= '</select>';
