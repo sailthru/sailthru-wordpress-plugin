@@ -40,7 +40,7 @@
 						$after_title = '';
 					}
 
-					echo $before_title . esc_html( trim( $title ) ) . $after_title;
+					echo $before_title . wp_kses_post( trim( $title ) ) . $after_title;
 				}
 
 				// success message
