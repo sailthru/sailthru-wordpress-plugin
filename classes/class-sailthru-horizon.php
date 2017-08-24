@@ -261,189 +261,101 @@ class Sailthru_Horizon {
 	 */
 	public function register_plugin_scripts() {
 
-		// Check first, otherwise js could throw errors
+		// Check first, otherwise js could throw errors.
 		if ( get_option( 'sailthru_setup_complete' ) ) {
-
 
 			// we're not going to pass the enitre set of options
 			// through to be seen in the html source so just stick it in this var
 			$options = get_option( 'sailthru_setup_options' );
 
-
 			// check what JS version is being used.
 
-			if ( isset ( $options['sailthru_js_type'] ) &&  $options['sailthru_js_type'] == 'personalize_js' ) {
+			if ( isset ( $options['sailthru_js_type'] ) &&  $options['sailthru_js_type'] == 'personalize_js' ||  $options['sailthru_js_type'] == 'personalize_js_custom' ) {
 
-				// Load Personalize JS
 
 				$customer_id = $options['sailthru_customer_id'];
 
-				// and then grab only what we need and put it in this var
-				$params = array();
-				$params['sailthru_customer_id'] = $customer_id;
+				if ( $customer_id ) {
 
-				wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/spm/spm.v1.min.js');
-				add_action( 'wp_head', array( $this, 'sailthru_client_personalize' ), 10 );
+					// have to wrap the options in an inner array to preserve booleans.
+					$params = array(
+						'options' => array(
+							'customerId' => $options['sailthru_customer_id'],
+						),
+					);
 
-			} else {
+					if ( $options['sailthru_js_type'] == 'personalize_js_custom' ) {
+						// override defaults
+						if ( $options['sailthru_js_auto_track_pageview'] == 'false' ) {
+							$params['options']['autoTrackPageview'] = (bool) false;
+						}
 
-				$horizon_domain = $options['sailthru_horizon_domain'];
+						if ( $options['sailthru_ignore_personalize_stored_tags'] == 'false' ) {
+							$params['options']['useStoredTags'] = (bool) false;
+						}
 
-				// and then grab only what we need and put it in this var
-				$params = array();
-				$params['sailthru_horizon_domain'] = $horizon_domain;
+						if ( $options['sailthru_js_exclude_content'] == 'true' ) {
+							$params['options']['excludeContent'] = (bool) true;
+						}
+					}
 
-				add_action( 'wp_footer', array( $this, 'sailthru_client_horizon' ), 10 );
+					if ( !is_404() && !is_preview() && apply_filters( 'sailthru_add_spm_js', true ) ) {
+						wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/spm/spm.v1.min.js');
+						wp_register_script( 'tag', plugin_dir_url( __DIR__ ).'js/tag.js' );
+						wp_localize_script( 'tag', 'tag', $params );
+						wp_enqueue_script( 'tag' );
+					}
+				}
 
-				// A handy trick to update the parameters in js files
-				wp_localize_script( 'sailthru-horizon-params', 'Horizon', $params );
+			} else {				
+				$params = array(
+					'options' => array (
+						'horizon_domain' => $options['sailthru_horizon_domain'],
+					),
+				);
 
+				$concierge = get_option( 'sailthru_concierge_options' );
+
+				if ($concierge['sailthru_concierge_is_on']) {
+					$params['concierge']['enabled'] = (bool) true;
+					$params['concierge']['from'] = isset( $concierge['sailthru_concierge_from'] ) ? $concierge['sailthru_concierge_from'] : 'bottom';
+					$params['concierge']['delay'] = isset( $concierge['sailthru_concierge_delay'] ) ? $concierge['sailthru_concierge_delay'] : '500';
+					$params['concierge']['offsetBottom'] = isset( $concierge['sailthru_concierge_offsetBottom'] ) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
+
+					// threshold.
+					if ( !isset( $concierge['sailthru_concierge_threshold'] ) ) {
+						$params['concierge']['threshold'] = 'threshold: 500,';
+					} else {
+						$params['concierge']['threshold'] =  strlen( $concierge['sailthru_concierge_threshold'] ) ? "threshhold: ".intval( $concierge['sailthru_concierge_threshold'] ) .",": 'threshold: 500,';
+					}
+
+					if( isset($concierge['sailthru_concierge_filter']) ) {
+						//remove whitespace around the commas
+						$tags_filtered = preg_replace("/\s*([\,])\s*/", "$1", $concierge['sailthru_concierge_filter']);
+						$params['concierge']['filter'] = strlen($concierge['sailthru_concierge_filter']) >  0 ? "{tags: '". esc_js($tags_filtered) ."'}" : '';
+					}
+
+					// cssPath.
+					if ( !isset( $concierge['sailthru_concierge_cssPath'] ) ) {
+						$params['concierge']['cssPath'] = 'https://ak.sail-horizon.com/horizon/recommendation.css';
+					} else {
+						$params['concierge']['cssPath'] = strlen( $concierge['sailthru_concierge_cssPath'] ) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
+					}
+				}
+
+				if ( !is_404() && !is_preview() && apply_filters( 'sailthru_add_horizon_js', true ) ) {
+					wp_enqueue_script( 'horizon_js', '//ak.sail-horizon.com/horizon/v1.js');
+					wp_register_script( 'tag', plugin_dir_url( __DIR__ ).'js/horizon.js' );
+					wp_localize_script( 'tag', 'tag', $params );
+					wp_enqueue_script( 'tag' );
+				}
 				// Horizon parameters.
-				wp_enqueue_script( 'sailthru-horizon-params' );
 			}
-
 		} // end if sailthru setup is complete
 
 	} // end register_plugin_scripts
 
-
-
-
-	/*-------------------------------------------
-	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
-	 *------------------------------------------*/
-	function sailthru_client_personalize() {
-
-		$options = get_option( 'sailthru_setup_options' );
-		$customer_id = isset( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
-
-		// if the content API has been disabled by a filter set stored tags to false
-		if ( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
-			$stored_tags = 'false';
-		} else {
-			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
-				$stored_tags = 'true';
-			} else {
-				// default setting
-				$stored_tags = 'false';
-			}
-		}
-
-		$customer_id = isset( $options['sailthru_customer_id'] ) && ( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
-
-		$js = "<script type=\"text/javascript\">\n";
-		$js .= "Sailthru.init({ customerId:'".esc_attr( $customer_id ) ."' });";
-		$js .= "</script>\n";
-
-		if ( !is_404() && !is_preview() && apply_filters( 'sailthru_add_spm_js', true ) ) {
-			echo $js;
-		}
-
-	} // end sailthru_client_horizon
-
-
-
-	/*-------------------------------------------
-	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
-	 *------------------------------------------*/
-	function sailthru_client_horizon() {
-
-		// get the client's horizon domain
-		$options = get_option( 'sailthru_setup_options' );
-
-		$concierge = get_option( 'sailthru_concierge_options' );
-		$concierge_from = isset( $concierge['sailthru_concierge_from'] ) ? $concierge['sailthru_concierge_from'] : 'bottom';
-
-		// threshold
-		if ( !isset( $concierge['sailthru_concierge_threshold'] ) ) {
-			$concierge_threshold = 'threshold: 500,';
-		} else {
-			$concierge_threshold =  strlen( $concierge['sailthru_concierge_threshold'] ) ? "threshhold: ".intval( $concierge['sailthru_concierge_threshold'] ) .",": 'threshold: 500,';
-		}
-
-		// delay
-		$concierge_delay = isset( $concierge['sailthru_concierge_delay'] ) ? $concierge['sailthru_concierge_delay'] : '500';
-
-		// offset
-		$concierge_offset = isset( $concierge['sailthru_concierge_offsetBottom'] ) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
-
-		// cssPath
-		if ( !isset( $concierge['sailthru_concierge_cssPath'] ) ) {
-			$concierge_css = 'https://ak.sail-horizon.com/horizon/recommendation.css';
-		} else {
-			$concierge_css = strlen( $concierge['sailthru_concierge_cssPath'] ) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
-		}
-
-		// filter
-		if ( !isset( $concierge['sailthru_concierge_filter'] ) ) {
-			$concierge_filter = '';
-		} else {
-			//remove whitespace around the commas
-			$tags_filtered = preg_replace( "/\s*([\,])\s*/", "$1", $concierge['sailthru_concierge_filter'] );
-			$concierge_filter = strlen( $concierge['sailthru_concierge_filter'] ) >  0 ? "filter: {tags: '". esc_js( $tags_filtered ) ."'}" : '';
-		}
-
-
-		// check if concierge is on
-		if ( isset( $concierge['sailthru_concierge_is_on'] ) && $concierge['sailthru_concierge_is_on'] == 1 ) {
-			$horizon_params = "domain: '".$options['sailthru_horizon_domain']."',concierge: {
-	 			from: '". esc_js( $concierge_from ) ."',
-	 			". esc_js( $concierge_threshold ) ."
-	 			delay: ". esc_js( $concierge_delay ) .",
-	 			offsetBottom: ". esc_js( $concierge_offset ) .",
-	 			cssPath: '". esc_js( $concierge_css ) ."',
-	 			$concierge_filter
-	 		}";
-
-		} else {
-			$horizon_params =   "domain:'" . esc_js( $options['sailthru_horizon_domain'] ) ."'";
-		}
-
-		if ( $options['sailthru_horizon_load_type'] == '1' ) {
-			$horizon_js =  "<!-- Sailthru Horizon Sync -->\n";
-			$horizon_js .= "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/horizon/v1.js\"></script>\n";
-			$horizon_js .= "<script type=\"text/javascript\">\n";
-			$horizon_js .= "jQuery(function() { \n";
-			$horizon_js .= "  if (window.Sailthru) {\n";
-			$horizon_js .= "           Sailthru.setup({\n";
-			$horizon_js .= "              ". $horizon_params ."\n";
-			$horizon_js .= "         });\n";
-			$horizon_js .= "  }\n";
-			$horizon_js .= "});\n";
-			$horizon_js .= " </script>\n";
-		} else {
-			$horizon_js  = "<!-- Sailthru Horizon  Async-->\n";
-			$horizon_js .= "<script type=\"text/javascript\">\n";
-			$horizon_js .= "(function() {\n";
-			$horizon_js .= "     function loadHorizon() {\n";
-			$horizon_js .= "           var s = document.createElement('script');\n";
-			$horizon_js .= "           s.type = 'text/javascript';\n";
-			$horizon_js .= "          s.async = true;\n";
-			$horizon_js .= "          s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';\n";
-			$horizon_js .= "         var x = document.getElementsByTagName('script')[0];\n";
-			$horizon_js .= "         x.parentNode.insertBefore(s, x);\n";
-			$horizon_js .= "      }\n";
-			$horizon_js .= "     loadHorizon();\n";
-			$horizon_js .= "      var oldOnLoad = window.onload;\n";
-			$horizon_js .= "      window.onload = function() {\n";
-			$horizon_js .= "          if (typeof oldOnLoad === 'function') {\n";
-			$horizon_js .= "            oldOnLoad();\n";
-			$horizon_js .= "         }\n";
-			$horizon_js .= "           Sailthru.setup({\n";
-			$horizon_js .= "              ". $horizon_params ."\n";
-			$horizon_js .= "         });\n";
-			$horizon_js .= "     };\n";
-			$horizon_js .= "  })();\n";
-			$horizon_js .= " </script>\n";
-		}
-
-		if ( !is_404() &&  !is_preview() && apply_filters( 'sailthru_add_horizon_js', true ) ) {
-			echo $horizon_js;
-		}
-
-	} // end sailthru_client_horizon
-
-
+	
 
 	/*--------------------------------------------*
 	 * Core Functions

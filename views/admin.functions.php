@@ -186,7 +186,7 @@ function sailthru_create_dropdown( $args, $values ) {
 
 	$html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
 
-	$html .= '<option value=""> - Choose One - </option>';
+	$html .= '<option value=""> - Select - </option>';
 
 	if ( is_array( $values ) ) {
 		foreach ( $values as $key => $value ) {

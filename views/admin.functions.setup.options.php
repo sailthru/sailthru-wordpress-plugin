@@ -98,11 +98,25 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		if ($options['sailthru_js_type'] === 'personalize_js') {
+		if ($options['sailthru_js_type'] === 'personalize_js_custom') {
+
+			add_settings_field(
+				'sailthru_js_custom_mode',
+				'Auto Track Pageviews',
+				'sailthru_js_auto_track_pageview_callback',
+				'sailthru_setup_options',
+				'sailthru_js_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_js_auto_track_pageview',
+					'',
+					'sailthru_js_auto_track_pageview'
+				)
+			);
 
 			add_settings_field(
 				'sailthru_personalize_stored_tags',
-				'Ignore Stored Tags',
+				__('Use Stored Tags', 'sailthru-for-wordpress'),
 				'sailthru_personalize_stored_tags_callback',
 				'sailthru_setup_options',
 				'sailthru_js_setup_section',
@@ -113,6 +127,22 @@ function sailthru_initialize_setup_options() {
 					'sailthru_personalize_stored_tags'
 				)
 			);
+ 
+			add_settings_field(
+				'sailthru_js_exclude_content',
+				'Exclude Content',
+				'sailthru_js_exclude_content_callback',
+				'sailthru_setup_options',
+				'sailthru_js_setup_section',
+				array(
+					'sailthru_setup_options',
+					'sailthru_js_exclude_content',
+					'',
+					'sailthru_js_exclude_content'
+				)
+			);
+
+		
 		}
 
 		if ($options['sailthru_js_type'] === 'horizon_js') {
@@ -169,8 +199,8 @@ function sailthru_initialize_setup_options() {
 		);
 
 		// Only allow an override of all mail when not on VIP
-		if ( ! defined( 'WPCOM_IS_VIP_ENV' ) && false === WPCOM_IS_VIP_ENV ) {
-	
+		if ( ! defined( 'WPCOM_IS_VIP_ENV' ) && false === 'WPCOM_IS_VIP_ENV' ) {
+
 			add_settings_field(
 				'sailthru_setup_email_template', // ID used to identify the field throughout the theme
 				__( 'Default Template', 'sailthru-for-wordpress' ),  // The label to the left of the option interface element
@@ -185,7 +215,7 @@ function sailthru_initialize_setup_options() {
 					'Select a template to send all WordPress transactionals via Sailthru. The template must have a subject line of subject and contain a variable {body} in the HTML of the email. '
 					)
 			);
-		} 
+		}
 	}
 
 	// Finally, we register the fields with WordPress
@@ -240,7 +270,7 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset( $options['sailthru_js_type'] ) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array( 'none' => 'Select', 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag' );
+	$html_options = array( 'none' => 'Select', 'horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag', 'personalize_js_custom' => 'Sailthru Script Tag (custom mode)' );
 
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
@@ -268,6 +298,23 @@ function sailthru_customer_id_callback() {
 	echo esc_html( $customer_id );
 }
 
+
+/**
+ * Creates a checkbox to use custom mode
+ *
+ */
+function sailthru_js_auto_track_pageview_callback() {
+
+
+		$options = get_option( 'sailthru_setup_options' );
+		$value = isset( $options['sailthru_js_auto_track_pageview'] ) ? $options['sailthru_js_auto_track_pageview'] : "true";
+
+		echo '<select name="sailthru_setup_options[sailthru_js_auto_track_pageview]" id="sailthru_js_auto_track_pageview">';
+		echo '<option value="true" '. selected( "true", esc_attr( $value ), false ) .'>Yes</option>';
+		echo '<option value="false" '. selected( "false" , esc_attr( $value ), false ) .'>No</option>';
+		echo '</select>';
+	}
+
 /**
  * Creates a checkbox to use stored tags
  *
@@ -275,8 +322,30 @@ function sailthru_customer_id_callback() {
 function sailthru_personalize_stored_tags_callback() {
 
 	$options = get_option( 'sailthru_setup_options' );
-	$ignore_stored_tags = isset( $options['sailthru_ignore_personalize_stored_tags'] ) ? $options['sailthru_ignore_personalize_stored_tags'] : '';
-	echo '<input type="checkbox" id="sailthru_ignore_personalize_stored_tags" name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" value="1" ' . checked( 1, esc_attr( $ignore_stored_tags ), false ) . ' />';
+	$value = isset( $options['sailthru_ignore_personalize_stored_tags'] ) ? $options['sailthru_ignore_personalize_stored_tags'] : "true";
+
+	echo '<select name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" id="sailthru_ignore_personalize_stored_tags">';
+	echo '<option value="true" '. selected( "true", esc_attr( $value ), false ) .'>Yes</option>';
+	echo '<option value="false" '. selected( "false" , esc_attr( $value ), false ) .'>No</option>';
+	echo '</select>';
+
+
+}
+
+
+/**
+ * Creates a checkbox to use exclude content flag.
+ *
+ */
+function sailthru_js_exclude_content_callback() {
+
+		$options = get_option( 'sailthru_setup_options' );
+		$value = isset( $options['sailthru_js_exclude_content'] ) ? $options['sailthru_js_exclude_content'] : "true";
+
+		echo '<select name="sailthru_setup_options[sailthru_js_exclude_content]" id="sailthru_js_exclude_content">';
+		echo '<option value="false" '. selected( "false", esc_attr( $value ), false ) .'>No</option>';
+		echo '<option value="true" '. selected( "true", esc_attr( $value ), false ) .'>Yes</option>';
+		echo '</select>';
 
 }
 
@@ -297,7 +366,7 @@ function sailthru_email_section_callback() {
  *
  */
 function sailthru_js_setup_section_callback() {
-	
+
 	echo '<h3 class="sailthru-sub-section">JavaScript Tag Settings</h3>';
 	echo "<p>Deploy Sailthru's JavaScript Tags automatically. Horizon JS is officially deprecated and will be retired in a future release.</p>";
 
@@ -316,20 +385,14 @@ function sailthru_setup_email_template_callback( $args ) {
 		$api_secret = $sailthru['sailthru_api_secret'];
 
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-			try {
-				if ( $client ) {
-					$res = $client->getTemplates();
-				}
-			}
-			catch ( Sailthru_Client_Exception $e ) {
-				$api_error = true;
-			}
-		}
-		catch ( Sailthru_Client_Exception $e ) {
-			//silently fail
-			return;
-		}
 
+		try {
+			if ( $client ) {
+				$res = $client->getTemplates();
+			}
+		} catch ( Sailthru_Client_Exception $e ) {
+				$api_error = true;
+		}
 
 		if ( isset( $res['error'] ) ) {
 
@@ -459,13 +522,27 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_js_type'] = '';
 	}
 
+	// auto pageviews
+	if ( isset( $input['sailthru_js_auto_track_pageview'] ) ) {
+		$output['sailthru_js_auto_track_pageview'] = filter_var( $input['sailthru_js_auto_track_pageview'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_js_auto_track_pageview'] = false;
+	}
+
 	// ignore stored tags
 	if ( isset( $input['sailthru_ignore_personalize_stored_tags'] ) ) {
-		$output['sailthru_ignore_personalize_stored_tags'] = 1;
+		$output['sailthru_ignore_personalize_stored_tags'] = filter_var( $input['sailthru_ignore_personalize_stored_tags'], FILTER_SANITIZE_STRING );
 	} else {
 		$output['sailthru_ignore_personalize_stored_tags'] = false;
 	}
 
+	// exclude content
+	if ( isset( $input['sailthru_js_exclude_content'] ) ) {
+		$output['sailthru_js_exclude_content'] = filter_var( $input['sailthru_js_exclude_content'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['sailthru_js_exclude_content'] = false;
+	}
+	
 	// // horizon domain
 	if ( isset( $input['sailthru_horizon_domain'] ) ) {
 		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
