@@ -98,7 +98,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		if ($options['sailthru_js_type'] === 'personalize_js_custom') {
+		if ( isset( $options['sailthru_js_type'] ) && $options['sailthru_js_type'] === 'personalize_js_custom') {
 
 			add_settings_field(
 				'sailthru_js_custom_mode',
@@ -127,7 +127,7 @@ function sailthru_initialize_setup_options() {
 					'sailthru_personalize_stored_tags'
 				)
 			);
- 
+
 			add_settings_field(
 				'sailthru_js_exclude_content',
 				'Exclude Content',
@@ -142,10 +142,10 @@ function sailthru_initialize_setup_options() {
 				)
 			);
 
-		
+
 		}
 
-		if ($options['sailthru_js_type'] === 'horizon_js') {
+		if ( isset( $options['sailthru_js_type'] ) && $options['sailthru_js_type'] === 'horizon_js') {
 
 			add_settings_field(
 				'sailthru_horizon_domain',
@@ -542,7 +542,7 @@ function sailthru_setup_handler( $input ) {
 	} else {
 		$output['sailthru_js_exclude_content'] = false;
 	}
-	
+
 	// // horizon domain
 	if ( isset( $input['sailthru_horizon_domain'] ) ) {
 		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
