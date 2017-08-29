@@ -259,22 +259,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	} // end load_widget_text_domain
 
 
-	public function activate( $network_wide ) {
-		// nothing to see here
-	} // end activate
-
-	/**
-	 * Fired when the plugin is deactivated.
-	 *
-	 * @param boolean $network_wide True if WPMU superadmin uses
-	 *    "Network Activate" action, false if WPMU is disabled
-	 *    or plugin is activated on an individual blog
-	 */
-	public function deactivate( $network_wide ) {
-		// nothing to see there
-	} // end deactivate
-
-
 	/**
 	 * Registers and enqueues admin-specific JavaScript.
 	 */

@@ -400,7 +400,11 @@ function sailthru_setup_email_template_callback( $args ) {
 
 		} else {
 
-			$tpl = $res['templates'];
+			if ( isset( $res['templates'] ) ) {
+				$tpl = $res['templates'];
+			} else {
+				$tpl = '';
+			}
 		}
 
 		// if there are no templates available create a basic one
@@ -446,7 +450,7 @@ function sailthru_setup_email_template_callback( $args ) {
 	} else {
 		$html = sailthru_create_dropdown( $args, array() );
 
-		if ($api_error) {
+		if ( ! empty( $api_error ) ) {
 			$html .= "<p>We could not connect to the Sailthru API</p>";
 		} else {
 			$html .= "<p>Sailthru Api Key and Secret must be saved first</p>";

@@ -120,12 +120,18 @@ class Sailthru_Horizon {
 			delete_option( 'sailthru_forms_key' );
 		}
 
-
 		// remove integrations options
 		if ( false != get_option( 'sailthru_integrations_options' ) ) {
 			delete_option( 'sailthru_integrations_options' );
 		}
 
+		if ( false != get_option( 'sailthru_setup_complete' ) ) {
+			update_option( 'sailthru_setup_complete', $setup );
+		}
+
+		if ( false != get_option( 'sailthru_api_validated' ) ) {
+			update_option( 'sailthru_api_validated', $setup );
+		}
 
 		//remove plugin version number
 		if ( false != get_option( 'sailthru_plugin_version' ) ) {
