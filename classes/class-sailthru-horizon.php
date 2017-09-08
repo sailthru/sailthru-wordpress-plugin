@@ -230,14 +230,13 @@ class Sailthru_Horizon {
 			is only loaded in context rather than everywhere in the admin screens
 		*/
 
-		$screens = array( 'post-new.php', 'post.php', 'edit.php' );
+		$screens = array( 'post-new.php', 'post.php', 'edit.php', 'admin.php' );
 
 		if ( in_array( $hook, $screens ) ) {
 
 			if ( isset( $_GET['action'] ) ) {
 				if ( $_GET['action'] == 'edit' ) {
 					// datepicker for the meta box on post pages
-					wp_enqueue_script( 'jquery-ui-datepicker', array( 'jquery' ) );
 					wp_enqueue_style( 'jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 					// our own magic
 					wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array( 'jquery' ) );
@@ -245,11 +244,15 @@ class Sailthru_Horizon {
 			}
 		}
 
+		wp_enqueue_script( 'jquery-ui-datepicker', array( 'jquery' ) );
+
+
 		// abandon if we're not on our own pages.
 		if ( !stristr( $hook, 'sailthru' ) &&
 			!stristr( $hook, 'horizon' ) &&
 			!stristr( $hook, 'scout' ) &&
 			!stristr( $hook, 'concierge' ) &&
+			!stristr( $hook, 'custom_fields_configuration_page' ) &&
 			!stristr( $hook, 'settings_configuration_page' ) ) {
 			return;
 		}
@@ -313,7 +316,7 @@ class Sailthru_Horizon {
 					}
 				}
 
-			} else {				
+			} else {
 				$params = array(
 					'options' => array (
 						'horizon_domain' => $options['sailthru_horizon_domain'],
@@ -361,7 +364,7 @@ class Sailthru_Horizon {
 
 	} // end register_plugin_scripts
 
-	
+
 
 	/*--------------------------------------------*
 	 * Core Functions

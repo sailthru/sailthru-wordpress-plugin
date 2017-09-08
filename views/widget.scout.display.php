@@ -1,11 +1,10 @@
 <?php
     $scout = get_option( 'sailthru_scout_options' );
     $sailthru = get_option( 'sailthru_setup_options' );
-    
+
     // check if this is an SPM widget or a Scout Widget
-    if (isset ( $sailthru['sailthru_js_type'] ) && $sailthru['sailthru_js_type'] == 'personalize_js'  ) {
+    if (sailthru_spm_ready()) {
         $use_spm = true;
-        $section = empty( $instance['sailthru_spm_section'] ) ? ' ' :  $instance['sailthru_spm_section'];
     } else {
         $use_spm = false;
         $title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );

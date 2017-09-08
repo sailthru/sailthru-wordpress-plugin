@@ -21,7 +21,7 @@
 			$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 
-			// Check the user has access to SPM. 
+			// Check the user has access to SPM.
 			$settings = $client->apiGet('settings');
 			// set to be disabled by default for a safe fallback
 			$spm_enabled = false;
@@ -29,7 +29,7 @@
 			// Get the SPM settings
 			if (isset ($settings['features']['spm_enabled']) && $settings['features']['spm_enabled']) {
 				$spm_enabled = $settings['features']['spm_enabled'];
-			} 
+			}
 
 			// Get Sections
 			try {
@@ -43,7 +43,7 @@
 
 						$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
 						$section_dropdown .= '<option value="">-- Select --</option>';
-						
+
 						foreach ( $sections as $list ) {
 							foreach ($list as $section) {
 								if ($section['section_id'] == $section_id) {
@@ -56,15 +56,15 @@
 						}
 						$section_dropdown .= '</select>';
 					}
-				} 
-				
+				}
+
 			} catch (Exception $e) {
 				print "We could not retrieve the SPM sections.";
 			}
-			
+
 			?>
 
-			<?php if ($spm_enabled): ?>
+			<?php if (sailthru_spm_ready()): ?>
 			<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
 			<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
@@ -77,10 +77,10 @@
 			<p>SPM is not enabled for this account, please contact your Account Manager to find out more. </p>
 			<?php endif; ?>
 
-		<?php 
+		<?php
 
 		} else {
-			
+
 			/*
 			 * If Scout is not on, advise the user
 			 */
@@ -92,7 +92,7 @@
 				return;
 
 			}
-		?> 
+		?>
 
 		<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
 			<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>

@@ -26,9 +26,6 @@ class Sailthru_Subscribe_Fields {
 		// Documentation says: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
 		add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 
-		// Register Horizon Javascripts
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_plugin_scripts' ) );
-
 		// Register the menu
 		add_action( 'admin_menu', array( $this, 'sailthru_menu' ) );
 
@@ -183,144 +180,6 @@ class Sailthru_Subscribe_Fields {
 		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . 'css/admin.css', '3.9.2' );
 
 	} // end register_admin_scripts
-
-
-
-	/**
-	 * Registers and enqueues Horizon for every page, but only if setup has been completed.
-	 */
-	public function register_plugin_scripts() {
-
-		// Check first, otherwise js could throw errors
-		if ( get_option( 'sailthru_setup_complete' ) ) {
-
-
-			// we're not going to pass the enitre set of options
-			// through to be seen in the html source so just stick it in this var
-			$options = get_option( 'sailthru_setup_options' );
-			$horizon_domain = $options['sailthru_horizon_domain'];
-
-			// and then grab only what we need and put it in this var
-			$params = array();
-			$params['sailthru_horizon_domain'] = $horizon_domain;
-
-			add_action( 'wp_footer', array( $this, 'sailthru_client_horizon' ), 10 );
-
-			// A handy trick to update the parameters in js files
-			wp_localize_script( 'sailthru-horizon-params', 'Horizon', $params );
-
-			// Horizon paramters.
-			wp_enqueue_script( 'sailthru-horizon-params' );
-
-
-		} // end if sailthru setup is complete
-
-	} // end register_plugin_scripts
-
-
-	/*-------------------------------------------
-	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
-	 *------------------------------------------*/
-	function sailthru_client_horizon() {
-
-		// get the client's horizon domain
-		$options = get_option( 'sailthru_setup_options' );
-
-		$concierge = get_option( 'sailthru_concierge_options' );
-		$concierge_from = isset( $concierge['sailthru_concierge_from'] ) ? $concierge['sailthru_concierge_from'] : 'bottom';
-
-		// threshold
-		if ( !isset( $concierge['sailthru_concierge_threshold'] ) ) {
-			$concierge_threshold = 'threshold: 500,';
-		} else {
-			$concierge_threshold =  strlen( $concierge['sailthru_concierge_threshold'] ) ? "threshhold: ".intval( $concierge['sailthru_concierge_threshold'] ) .",": 'threshold: 500,';
-		}
-
-		// delay
-		$concierge_delay = isset( $concierge['sailthru_concierge_delay'] ) ? $concierge['sailthru_concierge_delay'] : '500';
-
-		// offset
-		$concierge_offset = isset( $concierge['sailthru_concierge_offsetBottom'] ) ? $concierge['sailthru_concierge_offsetBottom'] : '20';
-
-		// cssPath
-		if ( !isset( $concierge['sailthru_concierge_cssPath'] ) ) {
-			$concierge_css = 'https://ak.sail-horizon.com/horizon/recommendation.css';
-		} else {
-			$concierge_css = strlen( $concierge['sailthru_concierge_cssPath'] ) > 0 ? $concierge['sailthru_concierge_cssPath']  :  'https://ak.sail-horizon.com/horizon/recommendation.css';
-		}
-
-		// filter
-		if ( !isset( $concierge['sailthru_concierge_filter'] ) ) {
-			$concierge_filter = '';
-		} else {
-			//remove whitespace around the commas
-			$tags_filtered = preg_replace( "/\s*([\,])\s*/", "$1", $concierge['sailthru_concierge_filter'] );
-			$concierge_filter = strlen( $concierge['sailthru_concierge_filter'] ) >  0 ? "filter: {tags: '". esc_js( $tags_filtered ) ."'}" : '';
-		}
-
-
-		// check if concierge is on
-		if ( isset( $concierge['sailthru_concierge_is_on'] ) && $concierge['sailthru_concierge_is_on'] == 1 ) {
-			$horizon_params = "domain: '".$options['sailthru_horizon_domain']."',concierge: {
-				from: '". esc_js( $concierge_from ) ."',
-				". esc_js( $concierge_threshold ) ."
-				delay: ". esc_js( $concierge_delay ) .",
-				offsetBottom: ". esc_js( $concierge_offset ) .",
-				cssPath: '". esc_js( $concierge_css ) ."',
-				$concierge_filter
-			}";
-
-		} else {
-			$horizon_params =   "domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "'";
-		}
-
-		if ( $options['sailthru_horizon_load_type'] == '1' ) {
-			$horizon_js =  "<!-- Sailthru Horizon Sync -->\n";
-			$horizon_js .= "<script type=\"text/javascript\" src=\"//ak.sail-horizon.com/horizon/v1.js\"></script>\n";
-			$horizon_js .= "<script type=\"text/javascript\">\n";
-			$horizon_js .= "jQuery(function() { \n";
-			$horizon_js .= "  if (window.Sailthru) {\n";
-			$horizon_js .= "           Sailthru.setup({\n";
-			$horizon_js .= "              ". $horizon_params ."\n";
-			$horizon_js .= "         });\n";
-			$horizon_js .= "  }\n";
-			$horizon_js .= "});\n";
-			$horizon_js .= " </script>\n";
-		} else {
-			$horizon_js  = "<!-- Sailthru Horizon  Async-->\n";
-			$horizon_js .= "<script type=\"text/javascript\">\n";
-			$horizon_js .= "(function() {\n";
-			$horizon_js .= "     function loadHorizon() {\n";
-			$horizon_js .= "           var s = document.createElement('script');\n";
-			$horizon_js .= "           s.type = 'text/javascript';\n";
-			$horizon_js .= "          s.async = true;\n";
-			$horizon_js .= "          s.src = location.protocol + '//ak.sail-horizon.com/horizon/v1.js';\n";
-			$horizon_js .= "         var x = document.getElementsByTagName('script')[0];\n";
-			$horizon_js .= "         x.parentNode.insertBefore(s, x);\n";
-			$horizon_js .= "      }\n";
-			$horizon_js .= "     loadHorizon();\n";
-			$horizon_js .= "      var oldOnLoad = window.onload;\n";
-			$horizon_js .= "      window.onload = function() {\n";
-			$horizon_js .= "          if (typeof oldOnLoad === 'function') {\n";
-			$horizon_js .= "            oldOnLoad();\n";
-			$horizon_js .= "         }\n";
-			$horizon_js .= "           Sailthru.setup({\n";
-			$horizon_js .= "              ". $horizon_params ."\n";
-			$horizon_js .= "         });\n";
-			$horizon_js .= "     };\n";
-			$horizon_js .= "  })();\n";
-			$horizon_js .= " </script>\n";
-		}
-
-
-
-		echo $horizon_js;
-
-
-
-	} // end sailthru_client_horizon
-
-
 
 	/*--------------------------------------------*
 	 * Core Functions
@@ -638,7 +497,7 @@ class Sailthru_Subscribe_Fields {
 				|| get_post_meta( $post_id, 'sailthru_meta_tags', TRUE ) ) {
 
 				//remove trailing comma
-				$meta_tags = filter_var( rtrim( $_POST['sailthru_meta_tags'], ',' ), FILTER_SANITIZE_STRING ); 
+				$meta_tags = filter_var( rtrim( $_POST['sailthru_meta_tags'], ',' ), FILTER_SANITIZE_STRING );
 				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
 
 			}

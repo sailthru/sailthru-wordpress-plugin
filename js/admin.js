@@ -102,8 +102,10 @@
     });
     // set up form. make the email template more prominent
     $("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
+
     // datepicker for meta box
     $('.datepicker').datepicker({
         dateFormat: 'yy-mm-dd'
     });
+
 }(jQuery));

@@ -269,10 +269,52 @@ function sailthru_status() {
  *
  */
 function sailthru_verify_setup() {
-	
+
 	return get_option( 'sailthru_api_validated' );
 }
+
 // end sailthru_verify_setup.
+
+// Check Feature is enabled
+function sailthru_check_feature($feature) {
+
+	$features = get_option( 'sailthru_settings' );
+
+	if ( isset ( $settings['features'] ) ) {
+		if ( in_array($feature, $settings['features'])) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function sailthru_spm_ready() {
+
+		$features = get_option( 'sailthru_settings' );
+		$sailthru = get_option( 'sailthru_setup_options' );
+
+		$spm_enabled = false;
+		$js_ready = false;
+
+		if ( isset ( $features['features'] ) ) {
+			if ( in_array('spm_enabled', $features['features'])) {
+				$spm_enabled = true;
+			}
+		}
+
+		if (isset ( $sailthru['sailthru_js_type'] ) ) {
+			if ( $sailthru['sailthru_js_type'] == 'personalize_js' || $sailthru['sailthru_js_type'] == 'personalize_js_custom') {
+				$js_ready = true;
+			}
+		}
+
+		if ($spm_enabled && $js_ready) {
+			return true;
+		} else {
+			return false;
+		}
+
+	}
 
 /**
  * This function verifies that the template is coded correctly
