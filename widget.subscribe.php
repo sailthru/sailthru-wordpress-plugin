@@ -117,7 +117,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		
 		$instance = array(
     		'title' => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
-    		'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING )
+    		'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
+    		'lo_event_name' => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING )
 		);
 
 		$customfields = get_option( 'sailthru_forms_options' );
@@ -156,6 +157,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			(array) $instance, array(
 				'title' => '',
 				'source' => '',
+				'lo_event_name' => '',
 				'sailthru_list' => array( '' ),
 				'field_order' => ''
 			)
@@ -164,6 +166,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$title = $instance['title'];
 		$source = $instance['source'];
+		$lo_event_name = $instance['lo_event_name'];
 		$sailthru_list = $instance['sailthru_list'];
 		$order = $field_order = $instance['field_order'];
 		$widget_id = $this->id;
@@ -348,6 +351,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$vars['source'] = $source;
 
+		// event name
+		if ( isset( $_POST['lo_event_name'] ) && !empty( $_POST['lo_event_name'] ) ) {
+			$event = filter_var( trim( $_POST['lo_event_name'] ), FILTER_SANITIZE_STRING );
+		} else {
+			$event = '';
+		}
+
 		$subscribe_to_lists = array();
 		if ( !empty( $_POST['sailthru_email_list'] ) ) {
 			//add the custom fields info to the api call! This is where the magic happens
@@ -475,7 +485,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 									$result['message'] = "There was a problem with your email address.";
 								}
 							}
-
 						}
 
 						if ( $double_opt_in ) {
@@ -485,10 +494,29 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 						$res = $client->saveUser( $email, $options );
 						$client->setHorizonCookie( $email );
 
+
 					}
 				}
 				catch ( Sailthru_Client_Exception $e ) {
-					//silently fail
+					write_log('Subscribe Failed:'.$e);
+					return;
+				}
+
+				// Fire Event
+				try {
+
+					if ($event !='') {
+						$event_data = array(
+							'id' => $email, 
+							'event' => $event,
+							'vars' => $vars,
+						);
+						$client->apiPost('event', $event_data);
+					}
+
+					
+				} catch ( Sailthru_Client_Exception $e ) {
+					write_log('Event API call Failed:'.$e);
 					return;
 				}
 

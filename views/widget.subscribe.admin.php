@@ -52,6 +52,13 @@
             		<input class="widefat" id="<?php echo $this->get_field_id( 'source' ); ?>" name="<?php echo $this->get_field_name( 'source' ); ?>" type="text" value="<?php echo esc_attr( $source ); ?>" />
             	</label>
             </p>
+              <p>
+            	<label for="<?php echo $this->get_field_id( 'event_name' ); ?>">
+            		<?php _e( 'Lifecycle Optimizer Event Name' ); ?>
+            		<input class="widefat" id="<?php echo $this->get_field_id( 'lo_event_name' ); ?>" name="<?php echo $this->get_field_name( 'lo_event_name' ); ?>" type="text" value="<?php echo esc_attr( $lo_event_name ); ?>" />
+            		<small>use event name to start a Lifecycle Optimizer flow</small>
+            	</label>
+            </p>
             <p>
 			<?php
 			echo '<div class="sortable_widget">';
