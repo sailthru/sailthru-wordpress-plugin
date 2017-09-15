@@ -243,9 +243,8 @@ class Sailthru_Horizon {
 				}
 			}
 		}
-
+		// wp_enqueue_script( 'sailthru-subscribe-widget-admin-jquery-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.admin.js', array( 'jquery' ) );
 		wp_enqueue_script( 'jquery-ui-datepicker', array( 'jquery' ) );
-
 
 		// abandon if we're not on our own pages.
 		if ( !stristr( $hook, 'sailthru' ) &&

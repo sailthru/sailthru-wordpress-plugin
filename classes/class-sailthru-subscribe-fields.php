@@ -141,46 +141,6 @@ class Sailthru_Subscribe_Fields {
 	} // end plugin_textdomain
 
 
-
-	/**
-	 * Registers and enqueues admin-specific JavaScript.
-	 */
-	public function register_admin_scripts( $hook ) {
-
-		/* loads the admin js and css for editing/creating posts to make sure this
-			is only loaded in context rather than everywhere in the admin screens
-		*/
-
-		$screens = array( 'post-new.php', 'post.php', 'edit.php' );
-
-		if ( in_array( $hook, $screens ) ) {
-
-			if ( isset( $_GET['action'] ) ) {
-				if ( $_GET['action'] == 'edit' ) {
-					// datepicker for the meta box on post pages
-					wp_enqueue_script( 'jquery-ui-datepicker', array( 'jquery' ) );
-					wp_enqueue_style( 'jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
-					// our own magic
-					wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array( 'jquery' ) );
-				}
-			}
-		}
-
-		// abandon if we're not on our own pages.
-		if ( !stristr( $hook, 'sailthru' ) &&
-			!stristr( $hook, 'horizon' ) &&
-			!stristr( $hook, 'scout' ) &&
-			!stristr( $hook, 'concierge' ) &&
-			!stristr( $hook, 'settings_configuration_page' ) ) {
-			return;
-		}
-
-		// loads the admin js and css for the configuration pages
-		wp_enqueue_script( 'sailthru-for-wordpress-admin-script', SAILTHRU_PLUGIN_URL . 'js/admin.js' , array( 'jquery' ), '3.9.2' );
-		wp_enqueue_style( 'sailthru-for-wordpress-admin-styles', SAILTHRU_PLUGIN_URL . 'css/admin.css', '3.9.2' );
-
-	} // end register_admin_scripts
-
 	/*--------------------------------------------*
 	 * Core Functions
 	 *---------------------------------------------*/

@@ -7,7 +7,7 @@
 	$widget_id = $this->id;
 
 	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', esc_attr( $instance['title'] ) );
-	$source = empty( $instance['source'] ) ? bloginfo( 'url' )  :  esc_attr( $instance['source'] );
+	$source = empty( $instance['source'] ) ? get_bloginfo( 'url' )  :  esc_attr( $instance['source'] );
 
 	if ( ! empty( $instance['sailthru_list'] ) ) {
 		if ( is_array( $instance['sailthru_list'] ) ) {

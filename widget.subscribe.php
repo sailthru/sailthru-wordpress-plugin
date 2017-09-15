@@ -267,7 +267,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		wp_enqueue_style( 'sailthru-subscribe-admin-styles', SAILTHRU_PLUGIN_URL . 'css/widget.subscribe.admin.css' );
 
 		wp_enqueue_script( 'jquery' );
-		wp_enqueue_script( 'sailthru-subscribe-widget-admin-jquery-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.admin.js', array( 'jquery' ) );
 		wp_enqueue_script( 'jquery-ui-sortable' );
 	} // end register_admin_scripts
 

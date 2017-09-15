@@ -94,18 +94,42 @@
             $('#attr_amount').attr('value', parseInt(second_val, 10));
         }));
 
-    });
+        $('button').on("click", (function(e) {
+            var value = jQuery(this).val();
+            $("#delete_value").val(value);
+        }));
 
-    // add a subscriber
-    $("#sailthru-add-subscriber-form").submit(function(e) {
-        e.preventDefault();
-    });
-    // set up form. make the email template more prominent
-    $("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
+        // add a subscriber
+        $("#sailthru-add-subscriber-form").submit(function(e) {
+            e.preventDefault();
+        });
+        // set up form. make the email template more prominent
+        $("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
 
-    // datepicker for meta box
-    $('.datepicker').datepicker({
-        dateFormat: 'yy-mm-dd'
+        // datepickerfor meta box
+        $('.datepicker').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+
+        $("#sortable").disableSelection();
+        var sort = $("#sortable").sortable({
+            axis: 'y',
+            stop: function(event, ui) {
+                var data = sort.sortable("serialize");
+
+                // sends GET to current page
+                $.ajax({
+                    data: data,
+                });
+                //retrieves the numbered position of the field
+                data = data.match(/\d(\d?)*/g);
+                $(function() {
+                    $("#field_order").val(data);
+                })
+
+            }
+        });
+
     });
 
 }(jQuery));

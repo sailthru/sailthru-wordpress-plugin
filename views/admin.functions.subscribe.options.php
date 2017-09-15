@@ -106,7 +106,7 @@ function sailthru_initialize_forms_options() {
 									echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_label'] ).' </td>';
 									echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_name'] ).' </td>';
 									echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_type'] ).' </td>';
-									echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+									echo '<td><button name="delete" class="button button-primary delete"  type="submit" class="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
 									echo '</tr>';
 								}
 							}
@@ -121,7 +121,7 @@ function sailthru_initialize_forms_options() {
 							echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_label'] ).' </td>';
 							echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_name'] ).' </td>';
 							echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_type'] ).' </td>';
-							echo '<td><button name="delete" class="button button-primary delete"  type="submit" id="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
+							echo '<td><button name="delete" class="button button-primary delete"  type="submit" class="delete" value="'. esc_attr( $i ). '">Delete</button></td>';
 							echo '</tr>';
 						}
 
@@ -542,11 +542,16 @@ function sailthru_html_fields_options_callback() {
 function sailthru_forms_handler( $input ) {
 
 	$fields = get_option( 'sailthru_forms_options' );
+
+	// detects if an empty string has been saved and sets an empty array
+	if (! is_array( $fields) || empty( $fields ) ) {
+		$fields = array();
+	}
 	$output = $fields;
 	$key    = get_option( 'sailthru_forms_key' );
 
 	// save welcome email
-	if ( isset( $input['sailthru_welcome_template'] ) ) {
+	if ( isset( $input['sailthru_welcome_template'] )   && ! empty ( $input['sailthru_welcome_template'] ) ) {
 		$output['sailthru_welcome_template'] = sanitize_text_field( trim( $input['sailthru_welcome_template'] ) );
 	} else {
 		$output['sailthru_welcome_template'] = false;
@@ -634,7 +639,7 @@ function sailthru_forms_handler( $input ) {
 		unset( $output[$input['sailthru_customfield_delete']] );
 		update_option( 'sailthru_forms_options', $output );
 
-		// $order = str_replace( '"'.$input['sailthru_customfield_delete'].'"', '', $order);
+		$order = str_replace( '"'.$input['sailthru_customfield_delete'].'"', '', $order);
 		delete_option( 'sailthru_customfields_order' );
 	}
 	$output['sailthru_customfield_success'] = sanitize_text_field( $input['sailthru_customfield_success'] );
