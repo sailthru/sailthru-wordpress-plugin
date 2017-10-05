@@ -278,13 +278,17 @@ class Sailthru_Horizon {
 				
 				// Load Personalize JS
 
-				$customer_id = $options['sailthru_customer_id'];
+				if ( isset($options['sailthru_customer_id'] ) ) {
+					$customer_id = $options['sailthru_customer_id'];
+				} else {
+					$customer_id = '';
+				}
 
 				// and then grab only what we need and put it in this var
 				$params = array();
 				$params['sailthru_customer_id'] = $customer_id;
 
-				wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/onsite/personalize.v0.0.3.min.js', array( 'scriptaculous' ) );
+				wp_enqueue_script( 'personalize_js', 'https://ak.sail-horizon.com/spm/spm.v1.min.js' );
 				add_action('wp_footer', array( $this, 'sailthru_client_personalize' ), 10);
 
 			} else {
