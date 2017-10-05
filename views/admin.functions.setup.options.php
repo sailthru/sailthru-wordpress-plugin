@@ -278,12 +278,12 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset($options['sailthru_js_type']) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array('horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Personalization Engine JavaScript');
+	$html_options = array('horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag');
 	
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
+	echo '<option value=""> -- No JavaScript Tag --</option>';
+
 		foreach ($html_options as $key => $val) {
-
-
 
 			if ($key == $js_type) {
 				$selected = ' selected';
@@ -431,7 +431,7 @@ function sailthru_setup_handler( $input ) {
 	}
 
 	// javascript type
-	if( isset( $input['sailthru_js_type'] ) && ( $input['sailthru_js_type'] == 'personalize_js') ) {
+	if( isset( $input['sailthru_js_type'] ) ) {
 		$output['sailthru_js_type'] = filter_var( $input['sailthru_js_type'], FILTER_SANITIZE_STRING );
 	} else {
  		$output['sailthru_js_type'] = false;

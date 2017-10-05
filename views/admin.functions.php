@@ -221,7 +221,7 @@ function sailthru_verify_setup() {
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
 
-  if ( empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
+  if ( empty( $sailthru['sailthru_customer_id'] ) && ( $sailthru['sailthru_js_type'] == 'personalize_js' ) ) {
 	add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Sailthru Customer Id' ), 'error' );
   	return false;
   }

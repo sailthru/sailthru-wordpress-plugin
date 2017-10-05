@@ -17,8 +17,6 @@
 
 ?>
 
-<?php var_dump($use_spm); ?>
-
 
 <?php if ($use_spm): ?>
     <div class="sailthru-spm-widget">
