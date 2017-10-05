@@ -344,84 +344,47 @@ function sailthru_override_other_emails_callback() {
 function sailthru_setup_email_template_callback( $args ) {
 
 	$sailthru   = get_option( 'sailthru_setup_options' );
+	if( !isset($sailthru['sailthru_api_key']) || !isset($sailthru['sailthru_api_secret'])) {
+		echo "<p>Sailthru Api Key and Secret must be saved first</p>";
+		return;
+	}
+	$api_key    = $sailthru['sailthru_api_key'];
+	$api_secret = $sailthru['sailthru_api_secret'];
+	$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
-	if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
-		$api_key    = $sailthru['sailthru_api_key'];
-		$api_secret = $sailthru['sailthru_api_secret'];
-
-		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-			try {
-				if ( $client ) {
-					$res = $client->getTemplates();
-				}
-			}
-			catch ( Sailthru_Client_Exception $e ) {
-				// set a variable to use to conditionally display an error when the page has rendered. 
-				$api_error = true;
-			}
-
-
-		if ( isset( $res['error'] ) ) {
-
-			$tpl =  array();
-
-		} else {
-
-			$tpl = $res['templates'];
+	$templates = array();
+	try {
+		$response = $client->getTemplates();
+		if (isset($response['templates'])) {
+			$templates = $response['templates'];
 		}
 
-		// if there are no templates available create a basic one
-		// since multiple settings use this callback, we do this
-		// only if we're in setup mode:
-		if( isset($arg[1]) ) {
-			$has_default_template = 'sailthru_setup_email_template';
-		} else {
-			$has_default_template = false;
-		}
-		if( $has_default_template ) {
-
-			if( isset($tpl) || $tpl != '') {
-
-				$name = get_bloginfo('name');
-				$email = get_bloginfo('admin_email');
-				try {
-
-					if ( $sailthru_client ){
-
-						$template = 'default-template';
-						$options = array(
-							'from_name' => $name,
-							'from_email' => $email,
-							'content_html' => '{body}',
-							'subject' => '{subject}' );
-						$response = $client->saveTemplate($template, $options);
-
-					}
-				} catch ( Sailthru_Client_Exception $e ) {
-						//silently fail
-						return;
-				}
-
-			}
-		}
-
+	} catch ( Sailthru_Client_Exception $e ) {
+		echo "Error connecting to Sailthru: " . $e->getMessage();
+		return;
 	}
 
+	// if there are no templates available create a basic one
+	// since multiple settings use this callback, we do this
+	// only if we're in setup mode:
+	$setup = isset($arg[1]);
+	if( $setup and empty($templates) ) {
+		$template = 'default-template';
+		$options = array(
+			'from_name' => get_bloginfo('name'),
+			'from_email' => get_bloginfo('admin_email'),
+			'content_html' => '{body}',
+			'subject' => '{subject}' );
 
-	if(isset($tpl)){
-		$html = sailthru_create_dropdown( $args, $tpl );
-	} else {
-		$html = sailthru_create_dropdown( $args, array() );
-
-		if ($api_error) {
-			$html .= "<p>We could not connect to the Sailthru API</p>";
-		} else {
-			$html .= "<p>Sailthru Api Key and Secret must be saved first</p>";
+		try {
+			$response = $client->saveTemplate($template, $options);
+		
+		} catch ( Sailthru_Client_Exception $e ) {
+			return; // silently fail
 		}
 	}
 
-	echo $html;
-
+	echo sailthru_create_dropdown( $args, $templates );
 }
 
 
