@@ -356,11 +356,7 @@ function sailthru_setup_email_template_callback( $args ) {
 				}
 			}
 			catch ( Sailthru_Client_Exception $e ) {
-				//silently fail
-				// $tpl = ['']
-				// $html = sailthru_create_dropdown( $args, $tpl );
-				// echo $html;
-				// return;
+				// set a variable to use to conditionally display an error when the page has rendered. 
 				$api_error = true;
 			}
 
