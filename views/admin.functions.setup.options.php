@@ -281,7 +281,6 @@ function sailthru_js_type_callback() {
 	$html_options = array('horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag');
 	
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
-	echo '<option value=""> -- No JavaScript Tag --</option>';
 
 		foreach ($html_options as $key => $val) {
 

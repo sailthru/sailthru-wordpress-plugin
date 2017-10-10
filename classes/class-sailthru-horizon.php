@@ -278,11 +278,7 @@ class Sailthru_Horizon {
 				
 				// Load Personalize JS
 
-				if ( isset($options['sailthru_customer_id'] ) ) {
-					$customer_id = $options['sailthru_customer_id'];
-				} else {
-					$customer_id = '';
-				}
+				$customer_id = isset($options['sailthru_customer_id']) ? $options['sailthru_customer_id'] : '';
 
 				// and then grab only what we need and put it in this var
 				$params = array();
