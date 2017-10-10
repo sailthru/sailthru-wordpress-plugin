@@ -278,12 +278,11 @@ function sailthru_js_type_callback() {
 	$options = get_option( 'sailthru_setup_options' );
 	$js_type = isset($options['sailthru_js_type']) ? $options['sailthru_js_type'] : '';
 
-	$html_options = array('horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Personalization Engine JavaScript');
+	$html_options = array('horizon_js' => 'Horizon JavaScript', 'personalize_js' => 'Sailthru Script Tag');
 	
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
+
 		foreach ($html_options as $key => $val) {
-
-
 
 			if ($key == $js_type) {
 				$selected = ' selected';
@@ -344,78 +343,47 @@ function sailthru_override_other_emails_callback() {
 function sailthru_setup_email_template_callback( $args ) {
 
 	$sailthru   = get_option( 'sailthru_setup_options' );
-	if(isset($sailthru['sailthru_api_key']) && isset($sailthru['sailthru_api_secret'])){
-		$api_key    = $sailthru['sailthru_api_key'];
-		$api_secret = $sailthru['sailthru_api_secret'];
+	if( !isset($sailthru['sailthru_api_key']) || !isset($sailthru['sailthru_api_secret'])) {
+		echo "<p>Sailthru Api Key and Secret must be saved first</p>";
+		return;
+	}
+	$api_key    = $sailthru['sailthru_api_key'];
+	$api_secret = $sailthru['sailthru_api_secret'];
+	$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
-		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-			try {
-				if ( $client ) {
-					$res = $client->getTemplates();
-				}
-			}
-			catch ( Sailthru_Client_Exception $e ) {
-				//silently fail
-				return;
-			}
-
-
-		if ( isset( $res['error'] ) ) {
-
-			$tpl =  array();
-
-		} else {
-
-			$tpl = $res['templates'];
+	$templates = array();
+	try {
+		$response = $client->getTemplates();
+		if (isset($response['templates'])) {
+			$templates = $response['templates'];
 		}
 
-		// if there are no templates available create a basic one
-		// since multiple settings use this callback, we do this
-		// only if we're in setup mode:
-		if( isset($arg[1]) ) {
-			$has_default_template = 'sailthru_setup_email_template';
-		} else {
-			$has_default_template = false;
-		}
-		if( $has_default_template ) {
-
-			if( isset($tpl) || $tpl != '') {
-
-				$name = get_bloginfo('name');
-				$email = get_bloginfo('admin_email');
-				try {
-
-					if ( $sailthru_client ){
-
-						$template = 'default-template';
-						$options = array(
-							'from_name' => $name,
-							'from_email' => $email,
-							'content_html' => '{body}',
-							'subject' => '{subject}' );
-						$response = $client->saveTemplate($template, $options);
-
-					}
-				} catch ( Sailthru_Client_Exception $e ) {
-						//silently fail
-						return;
-				}
-
-			}
-		}
-
+	} catch ( Sailthru_Client_Exception $e ) {
+		echo "Error connecting to Sailthru: " . $e->getMessage();
+		return;
 	}
 
+	// if there are no templates available create a basic one
+	// since multiple settings use this callback, we do this
+	// only if we're in setup mode:
+	$setup = isset($arg[1]);
+	if( $setup and empty($templates) ) {
+		$template = 'default-template';
+		$options = array(
+			'from_name' => get_bloginfo('name'),
+			'from_email' => get_bloginfo('admin_email'),
+			'content_html' => '{body}',
+			'subject' => '{subject}' );
 
-	if(isset($tpl)){
-		$html = sailthru_create_dropdown( $args, $tpl );
-	} else {
-		$html = sailthru_create_dropdown( $args, array() );
-		$html .= "Sailthru Api Key and Secret must be saved first";
+		try {
+			$response = $client->saveTemplate($template, $options);
+		
+		} catch ( Sailthru_Client_Exception $e ) {
+			return; // silently fail
+		}
 	}
 
-	echo $html;
-
+	echo sailthru_create_dropdown( $args, $templates );
 }
 
 
@@ -462,7 +430,7 @@ function sailthru_setup_handler( $input ) {
 	}
 
 	// javascript type
-	if( isset( $input['sailthru_js_type'] ) && ( $input['sailthru_js_type'] == 'personalize_js') ) {
+	if( isset( $input['sailthru_js_type'] ) ) {
 		$output['sailthru_js_type'] = filter_var( $input['sailthru_js_type'], FILTER_SANITIZE_STRING );
 	} else {
  		$output['sailthru_js_type'] = false;

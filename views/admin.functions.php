@@ -221,7 +221,7 @@ function sailthru_verify_setup() {
   $template   = isset( $sailthru['sailthru_setup_email_template'] ) ? $sailthru['sailthru_setup_email_template'] : '';
   $res        = array();
 
-  if ( empty( $input['sailthru_customer_id'] ) && ( $input['sailthru_js_type'] == 'personalize_js' ) ) {
+  if ( empty( $sailthru['sailthru_customer_id'] ) && ( $sailthru['sailthru_js_type'] == 'personalize_js' ) ) {
 	add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Sailthru Customer Id' ), 'error' );
   	return false;
   }
@@ -234,7 +234,14 @@ function sailthru_verify_setup() {
   	// now check to see if we can make an API call
   	//$client = new Sailthru_Client( $api_key, $api_secret );
   	$client = new WP_Sailthru_Client( $api_key, $api_secret );
-  	$res = $client->getTemplates();
+
+  	try {
+  		$res = $client->getTemplates();
+
+  	} catch (Sailthru_Client_Exception $e) {
+		//silently fail
+		return;
+	}
 
   	if ( !isset( $res['error'] ) ) {
   		// we can make a call, now check the template is configured

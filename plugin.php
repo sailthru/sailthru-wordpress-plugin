@@ -3,7 +3,7 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your Wordpress set up.
-Version: 3.0.6
+Version: 3.0.7
 Author: Sailthru
 Author URI: http://sailthru.com
 Author Email: nick@sailthru.com
@@ -35,7 +35,7 @@ License:
  * @var      const    $version    The current version of the plugin.
  */	 
 if( ! defined( 'SAILTHRU_PLUGIN_VERSION') )
-	define( 'SAILTHRU_PLUGIN_VERSION', '3.0.5');
+	define( 'SAILTHRU_PLUGIN_VERSION', '3.0.7');
 
 
 if( ! defined('SAILTHRU_PLUGIN_PATH') )
@@ -277,7 +277,8 @@ if( get_option('sailthru_override_wp_mail')
 
 
 	$sailthru_options = get_option('sailthru_setup_options');
-	if( $sailthru_options['sailthru_override_other_emails'] ) {
+	
+	if( isset( $sailthru_options['sailthru_override_other_emails'] ) && $sailthru_options['sailthru_override_other_emails']) {
 
 		if( !empty( $sailthru_options['sailthru_setup_new_user_override_template'] ) ) {
 

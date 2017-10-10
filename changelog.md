@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.0.7 (2017-10--5)
+Added support for latest version of Sailthru Script Tag and some big fixes. 
+
 
 ## v3.0.6 (2016-07-15)
 
