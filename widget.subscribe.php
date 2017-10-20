@@ -188,11 +188,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * This will only fire when the first_name is present so we can create a username
 	 * it's recommended to uses a first and last name 
 	 */
-	function create_wp_account( $email, $options ) {
+	function create_wp_account( $email, $options, $template = '' ) {
 
 		if ( false === apply_filters( 'sailthru_user_registration_enable', true ) ) {
 			return;
 		}
+
+
 
 		if ( isset( $options['vars']['first_name'] ) && !empty( $options['vars']['first_name'] ) ) {
 				 $first_name = $options['vars']['first_name'];
@@ -200,23 +202,31 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			 $first_name = '';
 		}
 
+
+
 		if ( isset( $options['vars']['last_name'] ) && !empty( $options['vars']['last_name'] ) ) {
 				 $last_name = $options['vars']['last_name'];
 		} else {
 			 $last_name = '';
 		}
 
-		$nickname = $first_name. ' '. $last_name;
+		$nickname = sanitize_text_field( $first_name. ' '. $last_name );
 
+		
 		if ( empty($nickname) ) {
 			$nickname = $email;
 		}
 
 
+		$params = array('options' => $options, 
+						'template' => $template
+					);
+
+
 		if ( email_exists($email) == false ) {
 			$random_password = wp_generate_password( $length=12, $include_standard_special_chars=false );
 			$user = wp_create_user( $email, $random_password, $email );
-			wp_new_user_notification( $user, null, 'user' );
+			wp_new_user_notification( $user, null, 'user', $params );
 
 			$user_vars = $options['vars'];
 			$user_vars['ID'] = $user;
@@ -228,6 +238,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			write_log('Account for '.$email.' exists');
 		}
 		
+
 
 
 	}
@@ -296,81 +307,60 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	/* Core Functions
 	/*--------------------------------------------------*/
 
+	function return_response($response) {
+
+		if ( !empty ( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest' ) {
+			$response = json_encode( $response );
+			echo $response;
+			exit();
+		} else {
+			echo $response['message'];
+			exit();
+		}
+		
+	}
 
 	function add_subscriber() {
 
 		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], "add_subscriber_nonce" ) ) {
-			$result['error'] = true;
+			$result['success'] = false;
 			$result['message'] = "This form does not appear to have been posted from your website and has not been submitted.";
+			$this->return_response($result);
 		}
 
-		// add the lists to the vars so it can be used for double opt in
-		if ( isset( $_POST['sailthru_email_list'] ) ) {
-			$vars['wp_widget_lists'] = explode( ',', filter_var( trim( $_POST['sailthru_email_list'] ), FILTER_SANITIZE_STRING ) );
-		} else {
-			$vars['wp_widget_lists'] = array();
+		$email = !empty( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : false;
+
+		// check if email is valid, if not bail.  
+		if ( !$email ) {
+			$result['success'] = false;
+			$result['message'] = "Please enter a valid email";
+			$this->return_response($result);
 		}
 
-		$email = trim( $_POST['email'] );
-		if ( ! filter_var( $email , FILTER_VALIDATE_EMAIL ) || empty ( $email ) ) {
-			$result['error'] = true;
-			$result['message'] = "Please enter a valid email address.";
-		} else {
-			$email = filter_var( $email, FILTER_VALIDATE_EMAIL );
-		}
+		// check if email address exists in Sailthru.
+		$sailthru   = get_option( 'sailthru_setup_options' );
+		$api_key    = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
 
-		if ( isset( $_POST['first_name'] ) && !empty( $_POST['first_name'] ) ) {
-			$first_name = filter_var( trim( $_POST['first_name'] ), FILTER_SANITIZE_STRING );
-		} else {
-			$first_name = '';
-		}
+		$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
-		if ( isset( $_POST['last_name'] ) && !empty( $_POST['last_name'] ) ) {
-			$last_name = filter_var( trim( $_POST['last_name'] ), FILTER_SANITIZE_STRING );
-		} else {
-			$last_name = '';
-		}
+		if ( $client ) {
 
-		if ( $first_name || $last_name ) {
-
-			$options = array(
-				'vars' => array(
-					'first_name' => $first_name,
-					'last_name'  => $last_name,
-				)
-			);
-
-		}
-
-		// set the source
-		if ( isset( $_POST['source'] ) && !empty( $_POST['source'] ) ) {
-			$source = filter_var( trim( $_POST['source'] ), FILTER_SANITIZE_STRING );
-		} else {
-			$source = get_bloginfo( 'url' );
-		}
-
-		$vars['source'] = $source;
-
-		// event name
-		if ( isset( $_POST['lo_event_name'] ) && !empty( $_POST['lo_event_name'] ) ) {
-			$event = filter_var( trim( $_POST['lo_event_name'] ), FILTER_SANITIZE_STRING );
-		} else {
-			$event = '';
-		}
-
-		$subscribe_to_lists = array();
-		if ( !empty( $_POST['sailthru_email_list'] ) ) {
-			//add the custom fields info to the api call! This is where the magic happens
+			$options = array();
 			$customfields = get_option( 'sailthru_forms_options' );
+			$key = get_option( 'sailthru_forms_key' );
 
-			// check for double opt in setting
-			if ( isset ( $customfields['sailthru_double_opt_in'] ) &&  $customfields['sailthru_double_opt_in'] == true ) {
-				$double_opt_in = true;
+			// set the source
+			if ( isset( $_POST['source'] ) && !empty( $_POST['source'] ) ) {
+				$source = sanitize_text_field(  $_POST['source'] );
 			} else {
-				$double_opt_in = false;
+				$source = get_bloginfo( 'url' );
 			}
 
-			$key = get_option( 'sailthru_forms_key' );
+			// initialize vars with source. 
+			$vars = array('source' => $source);
+			$fields = get_option( 'sailthru_forms_key' );
+
 
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;
@@ -383,26 +373,29 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 						if ( is_array( $_POST['custom_'.$name_stripped] ) ) {
 
 							foreach ( $_POST['custom_'.$name_stripped] as $val ) {
-								$vars[ $name_stripped ] [] = filter_var( trim( $val ), FILTER_SANITIZE_STRING );
+								$var_name = str_replace("custom_", "", $name_stripped);
+								$vars[ $var_name ] [] = sanitize_text_field( $val );
 							}
 
 						} else {
-							$vars[ $name_stripped ] = filter_var( trim( $_POST['custom_'.$name_stripped] ), FILTER_SANITIZE_STRING );
+							$var_name = str_replace("custom_", "", $name_stripped);
+							$vars[ $var_name ] = sanitize_text_field( $_POST['custom_'.$name_stripped] );
 						}
 					}
 				}
+
 			} //end for loop
 
-			if ( empty ( $vars ) ) {
-				$vars = '';
-			}
-
-			$options = array(
-				'vars' => $vars
-			);
-
 			$subscribe_to_lists = array();
+
 			if ( !empty ( $_POST['sailthru_email_list'] ) ) {
+
+				// check for double opt in setting
+				if ( isset ( $customfields['sailthru_double_opt_in'] ) &&  $customfields['sailthru_double_opt_in'] == true ) {
+					$double_opt_in = true;
+				} else {
+					$double_opt_in = false;
+				}
 
 				$lists = explode( ',', $_POST['sailthru_email_list'] );
 
@@ -418,134 +411,135 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			}
 
+			// clean up vars
+			unset($vars['email']);
+			unset($vars['sailthru_nonce']);
+			unset($vars['action']);
+			
+			$options['vars'] = $vars;
 
-			$result['data'] = array(
-				'email' => $email,
-				'options' => $options
+
+			$data = array('id' => $email, 
+					'fields' => array( 
+					'lists' => 1,
+					'keys' => 1,
+				)
 			);
 
-			if ( empty ( $result['error'] ) ) {
+			$profile = false;
 
-				$sailthru   = get_option( 'sailthru_setup_options' );
-				$api_key    = $sailthru['sailthru_api_key'];
-				$api_secret = $sailthru['sailthru_api_secret'];
+			try {
+				$profile = $client->apiGet( 'user', $data);
+			} catch (Sailthru_Client_Exception $e ) {
 
-
-				//$client = new Sailthru_Client( $api_key, $api_secret );
-				$client = new WP_Sailthru_Client( $api_key, $api_secret );
-				try {
-
-					if ( $client ) {
-
-						// first we check to see if this user exists for this list(varname)
-						$user_exists = $client->apiGet( 'user', array( 'id' => $email , 'key' => 'email' ) );
-
-						if ( !isset( $user_exists['error'] )  && $user_exists  ) {
-
-							if ( isset ( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
-
-								$new_lists = array();
-								$save_lists = false;
-
-								// does the user have any lists?
-								if ( isset( $user_exists['lists'] ) && count( $user_exists['lists'] ) > 0 ) {
-
-									// now we need to check which lists they are being subscribed to which they are not a member of.
-									foreach ( $options['lists'] as $list_name => $list_val ) {
-
-										if ( !array_key_exists( $list_name, $user_exists['lists'] ) ) {
-											$new_lists[] = $list_name;
-										}
-
-									}
-
-								} else {
-									// all of the lists are new lists
-									$new_lists = $options['lists'];
-								}
-
-								// if there's any lists the user is not a member of send the welcome email
-								if ( count( $new_lists ) > 0 ) {
-									$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
-								}
-
-							}
-
-						} else {
-
-							// check to see if we get an error that the user does not exist, otherwise throw a real error
-							if ( isset ( $user_exists['errormsg'] ) && strpos( $user_exists['errormsg'] , 'User not found with email' ) !== false ) {
-								// if there's no error we can send the user the welcome email
-								if ( isset ( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
-									$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
-								}
-							} else {
-								if ( $res['ok'] != true ) {
-									$result['error'] = true;
-									$result['message'] = "There was a problem with your email address.";
-								}
-							}
-						}
-
-						if ( $double_opt_in ) {
-							unset( $options['lists'] );
-						}
-						unset( $options['vars']['lists'] );
-						$res = $client->saveUser( $email, $options );
-						$client->setHorizonCookie( $email );
-
-
-					}
+				if ( !strpos( $e->getMessage() , 'User not found with email' ) ) {
+					write_log($e->getMessage());
 				}
-				catch ( Sailthru_Client_Exception $e ) {
-					write_log('Subscribe Failed:'.$e);
-					return;
-				}
-
-				// Fire Event
-				try {
-
-					if ($event !='') {
-						$event_data = array(
-							'id' => $email, 
-							'event' => $event,
-							'vars' => $vars,
-						);
-						$client->apiPost('event', $event_data);
-					}
-
-					
-				} catch ( Sailthru_Client_Exception $e ) {
-					write_log('Event API call Failed:'.$e);
-					return;
-				}
-
-				if ( $res['ok'] != true ) {
-					$result['error'] = true;
-					$result['message'] = "There was an error subscribing you. Please try again later.";
-				}
-
-				$result['result'] = $res;
-
+	
 			}
 
-			// if the enable account option filter is set then run the account setup 
-			if ( has_filter( 'sailthru_user_registration_enable' ) ) {
-				$this->create_wp_account($email,$options);
-			}
+			if ( !empty( $profile ) ) {
+				
+				if ( isset( $profile['lists'] ) && count( $profile['lists'] ) > 0 ) {
 
-			// did this request come from an ajax call?
-			if ( !empty ( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest' ) {
-				$result = json_encode( $result );
-				echo $result;
-				exit();
+					// now we need to check which lists they are being subscribed to which they are not a member of.
+					foreach ( $options['lists'] as $list_name => $list_val ) {
+
+						if ( !array_key_exists( $list_name, $profile['lists'] ) ) {
+							$new_lists[] = $list_name;
+						}
+
+					}
+
+				} else {
+					// all of the lists are new lists
+					$new_lists = $options['lists'];
+				}
+
 			} else {
-				echo $result['message'];
-				exit();
+
+				try {
+					$profile_data = array(
+						'id' => $email,
+						'key' => 'email',
+						'vars' => $options['vars'],
+						'lists' => $options['lists']
+					);
+					$client->apiPost('user', $profile_data );
+					$new_lists = $options['lists'];
+
+				} catch (Sailthru_Client_Exception $e ) {
+					write_log($e);
+				}
 			}
 
-		} // end add_subscriber()
+			// check if the user is a new subscriber to any lists. 
+			$new_subscriber = count($new_lists) > 0 ? true : false;
+
+			if ( isset( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
+				
+				if ($new_subscriber) {
+
+					try {
+						$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
+					} catch (Sailthru_Client_Exception $e ) {
+						write_log($e);
+					}
+
+				}
+				
+			}
+
+			// Handle the Event If it's been set to fire. 
+			if ( isset( $_POST['lo_event_name'] ) && !empty( $_POST['lo_event_name'] ) ) {
+				$event = sanitize_text_field( $_POST['lo_event_name'] );
+			} else {
+				$event = false;
+			}
+
+			if ( $event ) {
+				
+				$event_data = array(
+					'id' => $email, 
+					'event' => $event,
+					'vars' => $options['vars'],
+				);
+
+				try {
+					$client->apiPost('event', $event_data);
+				} catch (Sailthru_Client_Exception $e ) {
+					write_log($e);
+				}
+			}
+
+			if ( has_filter( 'sailthru_user_registration_enable' ) ) {
+				$setup = get_option( 'sailthru_setup_options' );
+				$template = '';
+				if (isset( $setup['sailthru_setup_new_user_override_template'] ) && !empty( $setup['sailthru_setup_new_user_override_template'] ) ) {
+					$template = $setup['sailthru_setup_new_user_override_template'];
+				}
+				$this->create_wp_account( $email, $options, $template );
+			}
+
+			// format response. 
+			$result['success'] = true;
+			$result['message'] = "User Subscribed";
+			$this->return_response($result);
+
+		} else {
+
+			// format response. 
+			$result['success'] = false;
+			$result['message'] = "Sorry, somethign went wrong and we could not subscribe you.";
+			$this->return_response($result);
+		}
+
+		
+
 	}
+
+
+	
 
 } // end class
 
