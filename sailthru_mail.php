@@ -12,10 +12,15 @@
 
 if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) {
 
+
 	
 	// configure the mail override function. 
 	function sailthru_configure_mailer($phpmailer, $template = '') {
 		$phpmailer->Mailer = 'sailthru';
+	}
+
+	function sailthru_set_html_mail_content_type() {
+    	return 'text/html';
 	}
 
 
@@ -59,7 +64,10 @@ if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) 
 					    $sailthru_params['vars']['user'] = $user_vars;
 
 					    $sailthru = get_option( 'sailthru_setup_options' );
-						$sailthru_params['template'] = $sailthru['sailthru_setup_new_user_override_template'];
+
+					    if (isset ( $sailthru['sailthru_setup_new_user_override_template'] ) && !empty( $sailthru['sailthru_setup_new_user_override_template'] ) ) {
+					    	$sailthru_params['template'] = $sailthru['sailthru_setup_new_user_override_template'];
+					    }
 					 
 					    // The blogname option is escaped with esc_html on the way into the database in sanitize_option
 					    // we want to reverse this for the plain text arena of emails.
@@ -71,8 +79,10 @@ if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) 
 					        $message .= sprintf( __( 'Username: %s' ), $user->user_login ) . "\r\n\r\n";
 					        $message .= sprintf( __( 'Email: %s' ), $user->user_email ) . "\r\n";
 					 
-					        @wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message );
-					 
+					 		add_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
+					        @wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message, '', '', $sailthru_params);
+					 		remove_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
+
 					        if ( $switched_locale ) {
 					            restore_previous_locale();
 					        }
@@ -103,8 +113,11 @@ if ( get_option( 'sailthru_setup_complete' ) && !function_exists( 'wp_mail' ) ) 
 					    $message = sprintf(__('Username: %s'), $user->user_login) . "<br/><br/>";
 					    $message .= __('To set your password, visit the following address:') . "<br/><br/>";
 					    $message .= '<a href="'.$url.'">'.wp_login_url().'</a><br/>';
-					 
+					 	
+					 	add_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
 					    wp_mail($user->user_email, sprintf(__('[%s] Your username and password info'), $blogname), $message, '', '', $sailthru_params);
+					    remove_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
+
 					 
 					    if ( $switched_locale ) {
 					        restore_previous_locale();
