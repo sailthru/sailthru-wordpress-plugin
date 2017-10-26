@@ -310,6 +310,22 @@ class Sailthru_Horizon {
 
 
 
+	function useStoredTags( $options ) {
+
+		// run the filters first to overrride the settings screen.
+		if( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
+			return false;
+		} else {
+			
+			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
+	 			return true;
+	 		} else {
+	 			// default setting
+	 			return false;
+	 		}
+		}
+	}
+
 
 		/*-------------------------------------------
 	 * Create the Horizon Script for the <strike>page footer</strike>  page body.
@@ -318,31 +334,8 @@ class Sailthru_Horizon {
 
 	 	$options = get_option('sailthru_setup_options');
 	 	$customer_id = isset( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
-
-	 	// if the content API has been disabled by a filter set stored tags to false
-	 	if( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
-			$stored_tags = 'false';
-		} else {
-			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
-	 			$stored_tags = 'true';
-	 		} else {
-	 			// default setting
-	 			$stored_tags = 'false';
-	 		}
-		}
-
-		if( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
-			$stored_tags = false;
-		} else {
-			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
-	 			$stored_tags = true;
-	 		} else {
-	 			// default setting
-	 			$stored_tags = false;
-	 		}
-		}
-
-		// other config options defined by filters.
+	
+		$stored_tags = $this->useStoredTags( $options ) ? "true" : "false";
 		$auto_track_pageviews = apply_filters( 'sailthru_auto_track__pageviews', true ) ? true: false;
 		$exclude_content = apply_filters( 'sailthru_exclude_content', true ) ? true: false;
 
@@ -350,14 +343,8 @@ class Sailthru_Horizon {
 	 	$customer_id = isset( $options['sailthru_customer_id'] ) && ($options['sailthru_customer_id']) ? $options['sailthru_customer_id'] : '';
 
 	 	$js = '<script type="text/javascript">';
-		$js .= 'Sailthru.init({';
-        $js .= 'customerId: '.esc_attr( $customer_id ) .',';
-        $js .= 'isCustom: true,';
-        
+		$js .= "Sailthru.init({customerId: '". esc_attr( $customer_id ) ."',isCustom: true,useStoredTags: ". $stored_tags .",";
 
-        if (false === $stored_tags ) {
-       		$js .= 'useStoredTags: false,';
-        } 
 
     	if (false === apply_filters( 'sailthru_track_pageviews', true )) {
        		$js .= 'autoTrackPageview: false,';
@@ -368,7 +355,6 @@ class Sailthru_Horizon {
         }
 
         $js = rtrim($js, ',');
-
         $js .= '});</script>';
 
 		if ( !is_404() &&  !is_preview() ) {
