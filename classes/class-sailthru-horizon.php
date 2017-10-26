@@ -310,20 +310,27 @@ class Sailthru_Horizon {
 
 
 
-	function useStoredTags( $options ) {
+	function useContentLibrary( $options ) {
 
-		// run the filters first to overrride the settings screen.
-		if( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
-			return false;
-		} else {
+		// filter takes precedence and needs to be able to override the settings on the pageview.
+		if ( has_filter( 'sailthru_content_api_enable' ) ) {
 			
-			if ( !$options['sailthru_ignore_personalize_stored_tags'] || !isset( $options['sailthru_ignore_personalize_stored_tags'] ) ) {
-	 			return true;
-	 		} else {
-	 			// default setting
-	 			return false;
-	 		}
+			if ( !apply_filters( 'sailthru_content_api_enable' , true ) ) {
+				return false;
+			} else {
+				return true;
+			}
 		}
+
+		// Check if the settings want to use page tags. 
+		$page_tags = isset( $options['sailthru_ignore_personalize_stored_tags'] ) && $options['sailthru_ignore_personalize_stored_tags'] ;		
+		
+		if ($page_tags ) {
+			return false;
+		}
+
+		return true;
+
 	}
 
 
@@ -335,7 +342,7 @@ class Sailthru_Horizon {
 	 	$options = get_option('sailthru_setup_options');
 	 	$customer_id = isset( $options['sailthru_customer_id'] ) ? $options['sailthru_customer_id'] : '';
 	
-		$stored_tags = $this->useStoredTags( $options ) ? "true" : "false";
+		$stored_tags = $this->useContentLibrary( $options ) ? "true" : "false";
 		$auto_track_pageviews = apply_filters( 'sailthru_auto_track__pageviews', true ) ? true: false;
 		$exclude_content = apply_filters( 'sailthru_exclude_content', true ) ? true: false;
 
