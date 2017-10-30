@@ -317,7 +317,7 @@ function sailthru_personalize_stored_tags_callback() {
 
 	$options = get_option( 'sailthru_setup_options' );
 	$ignore_stored_tags = isset($options['sailthru_ignore_personalize_stored_tags']) ? $options['sailthru_ignore_personalize_stored_tags'] : '';
-	echo '<input type="checkbox" id="sailthru_ignore_personalize_stored_tags" name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" value="1"' . checked( 1, esc_attr($ignore_stored_tags), true ) . '/>';
+	echo '<input type="checkbox" id="sailthru_ignore_personalize_stored_tags" name="sailthru_setup_options[sailthru_ignore_personalize_stored_tags]" value="1"' . checked( 1, esc_attr($ignore_stored_tags), false ) . '/>';
 
 }
 

@@ -1,8 +1,11 @@
 # Changelog
 
+## v3.0.8 (2017-10--24)
+Fixed a bug with deployment of Sailthru Script Tag where Sailthru functions are not available due to incorrect Setup of Sailthru.init
+Added filters to allow customers to customize rendering of Script Tag 
+
 ## v3.0.7 (2017-10--5)
 Added support for latest version of Sailthru Script Tag and some big fixes. 
-
 
 ## v3.0.6 (2016-07-15)
 
