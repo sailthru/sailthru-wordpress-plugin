@@ -101,7 +101,7 @@ function sailthru_initialize_forms_options() {
 							if ( $i == (int)$pos ) {
 								if ( isset( $customfields[$i]['sailthru_customfield_label'] ) and !empty( $customfields[$i]['sailthru_customfield_label'] )
 									&& isset( $customfields[$i]['sailthru_customfield_name'] ) and !empty( $customfields[$i]['sailthru_customfield_name'] ) ) {
-									echo '<tr id="pos_'. $i.'">';
+									echo '<tr id="pos_'. esc_attr( $i ).'">' ;
 									echo '<td><span class="icon-sort">&nbsp;</span></td>';
 									echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_label'] ).' </td>';
 									echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_name'] ).' </td>';
@@ -116,7 +116,7 @@ function sailthru_initialize_forms_options() {
 					for ( $i = 1; $i <= $key; $i++ ) {
 						if ( isset( $customfields[$i]['sailthru_customfield_label'] ) and !empty( $customfields[$i]['sailthru_customfield_label'] )
 							&& isset( $customfields[$i]['sailthru_customfield_name'] ) and !empty( $customfields[$i]['sailthru_customfield_name'] ) ) {
-							echo '<tr id="pos_'. $i.'">';
+							echo '<tr id="pos_'. esc_attr( $i ).'">';
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_label'] ).' </td>';
 							echo '<td>'. esc_html( $customfields[$i]['sailthru_customfield_name'] ).' </td>';

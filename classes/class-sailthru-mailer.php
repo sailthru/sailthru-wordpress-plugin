@@ -73,16 +73,16 @@ class SailthruMailer extends PHPMailer {
 
 		try {
 
-			$data = array('email' => $this->email, 
-						   'template' => $this->template, 
-						   'vars' => $this->vars, 
+			$data = array('email' => $this->email,
+						   'template' => $this->template,
+						   'vars' => $this->vars,
 						   'options' => $this->options,
 						   'schedule_time' => $this->schedule_time);
 
 			$send = $client->apiPost('send', $data);
 			return true;
 		} catch ( Sailthru_Client_Exception $exc ) {
-			print $exc;
+			print esc_html( $exc );
 		}
 
 	}

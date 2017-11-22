@@ -20,11 +20,11 @@
 ?>
 <?php if ($use_spm): ?>
     <div class="sailthru-spm-widget">
-         <div id="<?php echo $this->id; ?>"></div>
+         <div id="<?php echo esc_attr( $this->id ); ?>"></div>
           <script type="text/javascript">
             jQuery(function() {
-                SPM.addSection('<?php echo $section; ?>', {
-                    elementId: '<?php echo $this->id; ?>'
+                SPM.addSection('<?php echo esc_js( $section ); ?>', {
+                    elementId: '<?php echo esc_js( $this->id ); ?>'
                 });
                 SPM.personalize({
                     timeout: 2000

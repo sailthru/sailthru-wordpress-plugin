@@ -132,7 +132,7 @@ function sailthru_scout_items_callback( $args ) {
 	}
 	$html .= '</select>';
 
-	echo $html;
+	echo esc_html( $html );
 
 }
 
@@ -149,7 +149,7 @@ function sailthru_scout_includeConsumed_callback( $args ) {
 	$html .= '<option value="true" ' . selected( $saved_value, "true", false ) . '>Yes</option>';
 	$html .= '</select>';
 
-	echo $html;
+	echo esc_html( $html );
 
 }
 
@@ -165,7 +165,7 @@ function sailthru_scout_renderItem_callback( $args ) {
 
 	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
 
-	echo $html;
+	echo esc_html( $html );
 
 }
 

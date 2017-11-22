@@ -317,7 +317,7 @@ class Sailthru_Subscribe_Fields {
 			$text = apply_filters( 'the_content', $text );
 			$text = str_replace( ']]>', ']]>', $text );
 			$text = strip_shortcodes( $text );
-			$text = strip_tags( $text );
+			$text = wp_strip_all_tags( $text );
 			$text = substr( $text, 0, $excerpt_length );
 			$post_description = $this->reverse_strrchr( $text, '.', 1 );
 		}
@@ -352,7 +352,7 @@ class Sailthru_Subscribe_Fields {
 		}
 		$tag_output .= "<!-- END Sailthru Horizon Meta Information -->\n\n";
 
-		echo $tag_output;
+		echo esc_html( $tag_output );
 
 	} // sailthru_horizon_meta_tags
 
@@ -423,7 +423,7 @@ class Sailthru_Subscribe_Fields {
 
 
 
-		echo $html;
+		echo esc_html( $html );
 
 	} // end post_media
 
@@ -442,7 +442,7 @@ class Sailthru_Subscribe_Fields {
 			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] )
 				|| get_post_meta( $post_id, 'sailthru_post_expiration', TRUE ) ) {
 
-				$expiry_time = strtotime( $_POST['sailthru_post_expiration'] );
+				$expiry_time = strtotime( sanitize_text_field ($_POST['sailthru_post_expiration'] ) );
 				if ( $expiry_time ) {
 					$expiry_date = date( 'Y-m-d', $expiry_time );
 
@@ -457,7 +457,7 @@ class Sailthru_Subscribe_Fields {
 				|| get_post_meta( $post_id, 'sailthru_meta_tags', TRUE ) ) {
 
 				//remove trailing comma
-				$meta_tags = filter_var( rtrim( $_POST['sailthru_meta_tags'], ',' ), FILTER_SANITIZE_STRING );
+				$meta_tags = rtrim( sanitize_text_field( $_POST['sailthru_meta_tags'] ), ',' );
 				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
 
 			}

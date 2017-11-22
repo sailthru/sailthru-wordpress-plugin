@@ -66,10 +66,10 @@
 
 			<?php if (sailthru_spm_ready()): ?>
 			<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
-			<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block; margin:15px 0">
+			<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
 				<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
-				<?php echo $section_dropdown; ?>
+				<?php echo esc_html( $section_dropdown ); ?>
 				<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>
 
 			</div>
@@ -94,12 +94,12 @@
 			}
 		?>
 
-		<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
+		<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block;">
 			<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>
 		    <p>
 		    	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
-		    		<?php _e( 'Title:' ); ?>
-		    		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		    		<?php esc_html_e( 'Title:' ); ?>
+		    		<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		    	</label>
 		    </p>
 		</div>

@@ -41,7 +41,7 @@
 						$after_title = '';
 					}
 
-					echo $before_title . wp_kses_post( trim( $title ) ) . $after_title;
+					echo  wp_kses_post( $before_title . trim( $title ) . $after_title );
 				}
 
 				// success message
@@ -54,7 +54,7 @@
 
 			?>
 
-			<div class="success" hidden="hidden"><?php echo $success;?></div>
+			<div class="success" hidden="hidden"><?php echo esc_html( $success );?></div>
 
 			<form method="post" action="#" class="sailthru-add-subscriber-form">
 

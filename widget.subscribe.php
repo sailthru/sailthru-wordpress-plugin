@@ -114,7 +114,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * @param array   old_instance The new instance of values to be generated via the update.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		
+
 		$instance = array(
     		'title' => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
     		'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
@@ -184,9 +184,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 
 	/**
-	 * If enabled then a user is created in WordPress when a newsletter subscription is processed.  
+	 * If enabled then a user is created in WordPress when a newsletter subscription is processed.
 	 * This will only fire when the first_name is present so we can create a username
-	 * it's recommended to uses a first and last name 
+	 * it's recommended to uses a first and last name
 	 */
 	function create_wp_account( $email, $options, $template = '' ) {
 
@@ -212,13 +212,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$nickname = sanitize_text_field( $first_name. ' '. $last_name );
 
-		
+
 		if ( empty($nickname) ) {
 			$nickname = $email;
 		}
 
 
-		$params = array('options' => $options, 
+		$params = array('options' => $options,
 						'template' => $template
 					);
 
@@ -237,7 +237,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		} else {
 			write_log('Account for '.$email.' exists');
 		}
-		
+
 
 
 
@@ -255,7 +255,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$html .= 'var ajaxurl = "'.home_url( 'wp-admin/admin-ajax.php' ).'"';
 		$html .= '</script>';
 
-		echo $html;
+		echo esc_js( $html );
 
 	} // end add_ajax_library
 
@@ -317,7 +317,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			echo $response['message'];
 			exit();
 		}
-		
+
 	}
 
 	function add_subscriber() {
@@ -330,7 +330,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$email = !empty( $_POST['email'] ) ? sanitize_email( $_POST['email'] ) : false;
 
-		// check if email is valid, if not bail.  
+		// check if email is valid, if not bail.
 		if ( !$email ) {
 			$result['success'] = false;
 			$result['message'] = "Please enter a valid email";
@@ -357,7 +357,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				$source = get_bloginfo( 'url' );
 			}
 
-			// initialize vars with source. 
+			// initialize vars with source.
 			$vars = array('source' => $source);
 			$fields = get_option( 'sailthru_forms_key' );
 
@@ -387,8 +387,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			} //end for loop
 
 			$subscribe_to_lists = array();
-
-			if ( !empty ( $_POST['sailthru_email_list'] ) ) {
+      $sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
+			if ( !empty ( $sailthru_email_list ) ) {
 
 				// check for double opt in setting
 				if ( isset ( $customfields['sailthru_double_opt_in'] ) &&  $customfields['sailthru_double_opt_in'] == true ) {
@@ -397,7 +397,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 					$double_opt_in = false;
 				}
 
-				$lists = explode( ',', $_POST['sailthru_email_list'] );
+				$lists = explode( ',', $sailthru_email_list );
 
 				foreach ( $lists as $key => $list ) {
 					$subscribe_to_lists[ $list ] = 1;
@@ -415,12 +415,12 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			unset($vars['email']);
 			unset($vars['sailthru_nonce']);
 			unset($vars['action']);
-			
+
 			$options['vars'] = $vars;
 
 
-			$data = array('id' => $email, 
-					'fields' => array( 
+			$data = array('id' => $email,
+					'fields' => array(
 					'lists' => 1,
 					'keys' => 1,
 				)
@@ -435,11 +435,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				if ( !strpos( $e->getMessage() , 'User not found with email' ) ) {
 					write_log($e->getMessage());
 				}
-	
+
 			}
 
 			if ( !empty( $profile ) ) {
-				
+
 				if ( isset( $profile['lists'] ) && count( $profile['lists'] ) > 0 ) {
 
 					// now we need to check which lists they are being subscribed to which they are not a member of.
@@ -473,11 +473,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
-			// check if the user is a new subscriber to any lists. 
+			// check if the user is a new subscriber to any lists.
 			$new_subscriber = count($new_lists) > 0 ? true : false;
 
 			if ( isset( $customfields['sailthru_welcome_template'] ) && !empty ( $customfields['sailthru_welcome_template'] ) ) {
-				
+
 				if ($new_subscriber) {
 
 					try {
@@ -487,10 +487,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 					}
 
 				}
-				
+
 			}
 
-			// Handle the Event If it's been set to fire. 
+			// Handle the Event If it's been set to fire.
 			if ( isset( $_POST['lo_event_name'] ) && !empty( $_POST['lo_event_name'] ) ) {
 				$event = sanitize_text_field( $_POST['lo_event_name'] );
 			} else {
@@ -498,9 +498,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			if ( $event ) {
-				
+
 				$event_data = array(
-					'id' => $email, 
+					'id' => $email,
 					'event' => $event,
 					'vars' => $options['vars'],
 				);
@@ -521,25 +521,25 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				$this->create_wp_account( $email, $options, $template );
 			}
 
-			// format response. 
+			// format response.
 			$result['success'] = true;
 			$result['message'] = "User Subscribed";
 			$this->return_response($result);
 
 		} else {
 
-			// format response. 
+			// format response.
 			$result['success'] = false;
 			$result['message'] = "Sorry, somethign went wrong and we could not subscribe you.";
 			$this->return_response($result);
 		}
 
-		
+
 
 	}
 
 
-	
+
 
 } // end class
 

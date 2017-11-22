@@ -170,7 +170,7 @@ function sailthru_concierge_from_callback( $args ) {
 	$html .= '<option value="bottom" ' . selected( $saved_value, "bottom", false ) . '>Bottom</option>';
 	$html .= '</select>';
 
-	echo $html;
+	echo esc_html( $html );
 
 }
 
@@ -195,7 +195,7 @@ function sailthru_concierge_delay_callback( $args ) {
 	$html .= '<option value="1000" ' . selected( $saved_value, "1000", false ) . '>10 secs</option>';
 	$html .= '</select>';
 
-	echo $html;
+	echo esc_html( $html );
 
 }
 

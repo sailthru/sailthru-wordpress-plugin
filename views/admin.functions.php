@@ -89,10 +89,10 @@ function sailthru_toggle_feature_callback( $args ) {
 	// Fully formed checkbox
 	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1,  $options[ $option_name ], false ) . '/>';
 
-	// Add alabel next to the checkbox
+	// Add a label next to the checkbox
 	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;'  . esc_html( $label ) . '</label>';
 
-	echo $html;
+	echo esc_html( $html );
 
 } // end sailthru_toggle_feature_callback
 

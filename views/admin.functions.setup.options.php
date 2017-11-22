@@ -280,7 +280,7 @@ function sailthru_js_type_callback() {
 		} else {
 			$selected = '';
 		}
-		echo '<option value="'.$key.'"'.$selected.'>'.$val.'</option>';
+		echo '<option value="'.esc_attr( $key ).'"'.esc_attr( $selected ).'>'.esc_attr( $val ).'</option>';
 	}
 	echo '</select>';
 
