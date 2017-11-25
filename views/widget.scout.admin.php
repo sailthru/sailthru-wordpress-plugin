@@ -5,103 +5,102 @@
 		$sailthru = get_option( 'sailthru_setup_options' );
 
 		// check to see if Sailthru is setup first
-		if( ! is_array( $sailthru ) ) {
+	if ( ! is_array( $sailthru ) ) {
 
-			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
-			return;
+		echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
+		return;
 
-		}
+	}
 
 		// user should select if this is a Scout or SPM block add a check box for this instance
 
-		if (isset ( $sailthru['sailthru_js_type'] ) && $sailthru['sailthru_js_type'] == 'personalize_js'  ) {
-			// Use Personalize JS
-			$api_key    = $sailthru['sailthru_api_key'];
-			$api_secret = $sailthru['sailthru_api_secret'];
-			$client = new WP_Sailthru_Client( $api_key, $api_secret );
+	if ( isset( $sailthru['sailthru_js_type'] ) && $sailthru['sailthru_js_type'] == 'personalize_js' ) {
+		// Use Personalize JS
+		$api_key    = $sailthru['sailthru_api_key'];
+		$api_secret = $sailthru['sailthru_api_secret'];
+		$client     = new WP_Sailthru_Client( $api_key, $api_secret );
 
 
-			// Check the user has access to SPM.
-			$settings = $client->apiGet('settings');
-			// set to be disabled by default for a safe fallback
-			$spm_enabled = false;
+		// Check the user has access to SPM.
+		$settings = $client->apiGet( 'settings' );
+		// set to be disabled by default for a safe fallback
+		$spm_enabled = false;
 
-			// Get the SPM settings
-			if (isset ($settings['features']['spm_enabled']) && $settings['features']['spm_enabled']) {
-				$spm_enabled = $settings['features']['spm_enabled'];
-			}
+		// Get the SPM settings
+		if ( isset( $settings['features']['spm_enabled'] ) && $settings['features']['spm_enabled'] ) {
+			$spm_enabled = $settings['features']['spm_enabled'];
+		}
 
-			// Get Sections
-			try {
+		// Get Sections
+		try {
 
-				if ($spm_enabled) {
+			if ( $spm_enabled ) {
 
-					$sections = $client->apiGet('section');
+				$sections = $client->apiGet( 'section' );
 
-					// get sections
-					if (is_array ( $sections )) {
+				// get sections
+				if ( is_array( $sections ) ) {
 
-						$section_dropdown = '<select name="'.$this->get_field_name( 'sailthru_spm_section' ).'">';
-						$section_dropdown .= '<option value="">-- Select --</option>';
+					$section_dropdown  = '<select name="' . $this->get_field_name( 'sailthru_spm_section' ) . '">';
+					$section_dropdown .= '<option value="">-- Select --</option>';
 
-						foreach ( $sections as $list ) {
-							foreach ($list as $section) {
-								if ($section['section_id'] == $section_id) {
-									$selected = ' selected';
-								} else {
-									$selected = '';
-								}
-								$section_dropdown .= '<option value="'.$section['section_id'].'"'.$selected.'>'.$section['name'].'</option>';
+					foreach ( $sections as $list ) {
+						foreach ( $list as $section ) {
+							if ( $section['section_id'] == $section_id ) {
+								$selected = ' selected';
+							} else {
+								$selected = '';
 							}
+							$section_dropdown .= '<option value="' . $section['section_id'] . '"' . $selected . '>' . $section['name'] . '</option>';
 						}
-						$section_dropdown .= '</select>';
 					}
+					$section_dropdown .= '</select>';
 				}
-
-			} catch (Exception $e) {
-				print "We could not retrieve the SPM sections.";
 			}
+		} catch ( Exception $e ) {
+			print 'We could not retrieve the SPM sections.';
+		}
 
-			?>
+		?>
 
-			<?php if (sailthru_spm_ready()): ?>
+		<?php if ( sailthru_spm_ready() ) : ?>
 			<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
-			<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block; margin:15px 0">
+			<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
 				<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
-				<?php echo $section_dropdown; ?>
+				<?php echo esc_html( $section_dropdown ); ?>
 				<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>
 
 			</div>
-			<?php else: ?>
+			<?php else : ?>
 			<p>SPM is not enabled for this account, please contact your Account Manager to find out more. </p>
 			<?php endif; ?>
 
 		<?php
 
-		} else {
+	} else {
 
-			/*
-			 * If Scout is not on, advise the user
-			 */
-			$scout = get_option( 'sailthru_scout_options' );
+		/*
+		* If Scout is not on, advise the user
+		*/
+		$scout = get_option( 'sailthru_scout_options' );
 
-			if( ! isset( $scout['sailthru_scout_is_on'] ) ||  ! $scout['sailthru_scout_is_on'] ) {
+		if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on'] ) {
 
-				echo '<p>Don\'t forget to <a href="' . esc_url( menu_page_url( 'scout_configuration_menu', false ) ) . '">enable Scout</a> before setting up this widget.</p>';
-				return;
+			echo '<p>Don\'t forget to <a href="' . esc_url( menu_page_url( 'scout_configuration_menu', false ) ) . '">enable Scout</a> before setting up this widget.</p>';
+			return;
 
-			}
+		}
 		?>
 
-		<div id="<?php echo $this->get_field_id( 'title' ); ?>_div" style="display: block;">
-			<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>
-		    <p>
-		    	<label for="<?php echo $this->get_field_id( 'title' ); ?>">
-		    		<?php _e( 'Title:' ); ?>
-		    		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
-		    	</label>
-		    </p>
+		<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block;">
+		<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>
+		<p>
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>">
+			<?php esc_html_e( 'Title:' ); ?>
+			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
+		</label>
+		</p>
 		</div>
 		<?php
-		}
+	}

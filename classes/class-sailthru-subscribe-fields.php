@@ -32,11 +32,9 @@ class Sailthru_Subscribe_Fields {
 		// Register the Horizon meta tags
 		add_action( 'wp_head', array( $this, 'sailthru_horizon_meta_tags' ) );
 
-
 		// Setup the meta box hooks
 		add_action( 'add_meta_boxes', array( $this, 'sailthru_post_metabox' ) );
 		add_action( 'save_post', array( $this, 'save_custom_meta_data' ) );
-
 
 	} // end constructor
 
@@ -49,10 +47,11 @@ class Sailthru_Subscribe_Fields {
 	 */
 	public static function activate( $network_wide ) {
 
-		if ( ! current_user_can( 'activate_plugins' ) )
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
+		}
 
-		// signal that it's ok to override Wordpress's built-in email functions
+		// signal that it's ok to override WordPress's built-in email functions
 		if ( false == get_option( 'sailthru_override_wp_mail' ) ) {
 			add_option( 'sailthru_override_wp_mail', 1 );
 		} // end if
@@ -68,10 +67,11 @@ class Sailthru_Subscribe_Fields {
 	 */
 	public static function deactivate( $network_wide ) {
 
-		if ( ! current_user_can( 'activate_plugins' ) )
+		if ( ! current_user_can( 'activate_plugins' ) ) {
 			return;
+		}
 
-		// stop overriding Wordpress's built in email functions
+		// stop overriding WordPress's built in email functions
 		if ( false != get_option( 'sailthru_override_wp_mail' ) ) {
 			delete_option( 'sailthru_override_wp_mail' );
 		}
@@ -107,8 +107,6 @@ class Sailthru_Subscribe_Fields {
 			delete_option( 'sailthru_integrations_options' );
 		}
 
-
-
 	} // end deactivate
 
 	/**
@@ -131,12 +129,11 @@ class Sailthru_Subscribe_Fields {
 		$domain = 'sailthru-for-wordpress-locale';
 		$locale = apply_filters( 'plugin_locale', get_locale(), $domain );
 		load_textdomain( $domain, SAILTHRU_PLUGIN_PATH . $domain . '-' . $locale . '.mo' );
-		load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
+		load_plugin_textdomain( $domain, false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
 
 		// Add a thumbnail size for concierge
 		add_theme_support( 'post-thumbnails' );
 		add_image_size( 'concierge-thumb', 50, 50 );
-
 
 	} // end plugin_textdomain
 
@@ -149,7 +146,7 @@ class Sailthru_Subscribe_Fields {
 	 */
 	function sailthru_menu() {
 
-		$sailthru_menu = add_menu_page(
+		$sailthru_menu                       = add_menu_page(
 			'Sailthru',                                         // The value used to populate the browser's title bar when the menu page is active
 			__( 'Sailthru', 'sailthru-for-wordpress' ),         // The text of the menu in the administrator's sidebar
 			'manage_options',                                   // What roles are able to access the menu
@@ -157,9 +154,9 @@ class Sailthru_Subscribe_Fields {
 			array( $this, 'load_sailthru_admin_display' ),      // The callback function used to render this menu
 			SAILTHRU_PLUGIN_URL . 'img/sailthru-menu-icon.png'  // The icon to represent the menu item
 		);
-		$this->admin_views[$sailthru_menu] = 'sailthru_configuration_page';
+		$this->admin_views[ $sailthru_menu ] = 'sailthru_configuration_page';
 
-		$redundant_menu = add_submenu_page(
+		$redundant_menu                       = add_submenu_page(
 			'sailthru_configuration_page',
 			__( 'Welcome', 'sailthru-for-wordpress' ),
 			__( 'Welcome', 'sailthru-for-wordpress' ),
@@ -167,10 +164,9 @@ class Sailthru_Subscribe_Fields {
 			'sailthru_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$redundant_menu] = 'sailthru_configuration_page';
+		$this->admin_views[ $redundant_menu ] = 'sailthru_configuration_page';
 
-
-		$settings_menu = add_submenu_page(
+		$settings_menu                       = add_submenu_page(
 			'sailthru_configuration_page',
 			__( 'Settings', 'sailthru-for-wordpress' ),
 			__( 'Settings', 'sailthru-for-wordpress' ),
@@ -178,12 +174,9 @@ class Sailthru_Subscribe_Fields {
 			'settings_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$settings_menu] = 'settings_configuration_page';
+		$this->admin_views[ $settings_menu ] = 'settings_configuration_page';
 
-
-
-
-		$concierge_menu = add_submenu_page(
+		$concierge_menu                       = add_submenu_page(
 			'sailthru_configuration_page',                          // The ID of the top-level menu page to which this submenu item belongs
 			__( 'Concierge Options', 'sailthru-for-wordpress' ),    // The value used to populate the browser's title bar when the menu page is active
 			__( 'Concierge Options', 'sailthru-for-wordpress' ),    // The label of this submenu item displayed in the menu
@@ -191,11 +184,9 @@ class Sailthru_Subscribe_Fields {
 			'concierge_configuration_page',                         // The ID used to represent this submenu item
 			array( $this, 'load_sailthru_admin_display' )           // The callback function used to render the options for this submenu item
 		);
-		$this->admin_views[$concierge_menu] = 'concierge_configuration_page';
+		$this->admin_views[ $concierge_menu ] = 'concierge_configuration_page';
 
-
-
-		$scout_menu = add_submenu_page(
+		$scout_menu                       = add_submenu_page(
 			'sailthru_configuration_page',
 			__( 'Scout Options', 'sailthru-for-wordpress' ),
 			__( 'Scout Options', 'sailthru-for-wordpress' ),
@@ -203,9 +194,9 @@ class Sailthru_Subscribe_Fields {
 			'scout_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$scout_menu] = 'scout_configuration_page';
+		$this->admin_views[ $scout_menu ] = 'scout_configuration_page';
 
-		$scout_menu = add_submenu_page(
+		$scout_menu                       = add_submenu_page(
 			'sailthru_configuration_page',
 			__( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ),
 			__( 'Subscribe Widget Fields', 'sailthru-for-wordpress' ),
@@ -213,9 +204,9 @@ class Sailthru_Subscribe_Fields {
 			'custom_fields_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$scout_menu] = 'customforms_configuration_page';
+		$this->admin_views[ $scout_menu ] = 'customforms_configuration_page';
 
-		$forms_menu = add_submenu_page(
+		$forms_menu                       = add_submenu_page(
 			'customforms_configuration_page',
 			__( 'Custom Forms', 'sailthru-for-wordpress' ),
 			__( 'Custom Forms', 'sailthru-for-wordpress' ),
@@ -223,9 +214,9 @@ class Sailthru_Subscribe_Fields {
 			'customforms_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$forms_menu] = 'customforms_configuration_page';
+		$this->admin_views[ $forms_menu ] = 'customforms_configuration_page';
 
-		$integrations_menu = add_submenu_page(
+		$integrations_menu                       = add_submenu_page(
 			'sailthru_configuration_page',
 			__( 'Integrations', 'sailthru-for-wordpress' ),
 			__( 'Integrations', 'sailthru-for-wordpress' ),
@@ -233,17 +224,16 @@ class Sailthru_Subscribe_Fields {
 			'integrations_configuration_page',
 			array( $this, 'load_sailthru_admin_display' )
 		);
-		$this->admin_views[$integrations_menu] = 'integrations_configuration_page';
-
+		$this->admin_views[ $integrations_menu ] = 'integrations_configuration_page';
 
 	} // end sailthru_menu
 
 	/**
 	 * Renders a simple page to display for the theme menu defined above.
 	 */
-	function load_sailthru_admin_display( ) {
+	function load_sailthru_admin_display() {
 
-		$active_tab = empty( $this->views[current_filter()] ) ? '' : $this->views[current_filter()] ;
+		$active_tab = empty( $this->views[ current_filter() ] ) ? '' : $this->views[ current_filter() ];
 		// display html
 		include SAILTHRU_PLUGIN_PATH . 'views/admin.php';
 
@@ -260,8 +250,9 @@ class Sailthru_Subscribe_Fields {
 		}
 
 		// filter to disable all output
-		if ( false === apply_filters( 'sailthru_horizon_meta_tags_enable', true ) )
+		if ( false === apply_filters( 'sailthru_horizon_meta_tags_enable', true ) ) {
 			return;
+		}
 
 		global $post;
 
@@ -270,18 +261,18 @@ class Sailthru_Subscribe_Fields {
 		$horizon_tags = array();
 
 		// date
-		$post_date = get_the_date( 'Y-m-d H:i:s' );
-		$horizon_tags['sailthru.date'] =  esc_attr( $post_date );
+		$post_date                     = get_the_date( 'Y-m-d H:i:s' );
+		$horizon_tags['sailthru.date'] = esc_attr( $post_date );
 
 		// title
-		$post_title = get_the_title();
+		$post_title                     = get_the_title();
 		$horizon_tags['sailthru.title'] = esc_attr( $post_title );
 
 		// tags in the order of priority
 		// first sailthru tags
 		$post_tags = get_post_meta( $post_object->ID, 'sailthru_meta_tags', true );
 
-		// wordpress tags
+		// WordPress tags
 		if ( empty( $post_tags ) ) {
 			$post_tags = get_the_tags();
 			if ( $post_tags ) {
@@ -289,7 +280,7 @@ class Sailthru_Subscribe_Fields {
 			}
 		}
 
-		// wordpress categories
+		// WordPress categories
 		if ( empty( $post_tags ) ) {
 			$post_categories = get_the_category( $post_object->ID );
 			foreach ( $post_categories as $post_category ) {
@@ -302,23 +293,23 @@ class Sailthru_Subscribe_Fields {
 			$horizon_tags['sailthru.tags'] = $post_tags;
 		}
 
-
 		// author << works on display name. best option?
 		$post_author = get_the_author();
-		if ( ! empty( $post_author ) )
+		if ( ! empty( $post_author ) ) {
 			$horizon_tags['sailthru.author'] = $post_author;
+		}
 
 		// description
 		$post_description = get_the_excerpt();
 		if ( empty( $post_description ) ) {
 			$excerpt_length = 250;
 			// get the entire post and then strip it down to just sentences.
-			$text = $post_object->post_content;
-			$text = apply_filters( 'the_content', $text );
-			$text = str_replace( ']]>', ']]>', $text );
-			$text = strip_shortcodes( $text );
-			$text = strip_tags( $text );
-			$text = substr( $text, 0, $excerpt_length );
+			$text             = $post_object->post_content;
+			$text             = apply_filters( 'the_content', $text );
+			$text             = str_replace( ']]>', ']]>', $text );
+			$text             = strip_shortcodes( $text );
+			$text             = wp_strip_all_tags( $text );
+			$text             = substr( $text, 0, $excerpt_length );
 			$post_description = $this->reverse_strrchr( $text, '.', 1 );
 		}
 		$horizon_tags['sailthru.description'] = esc_html( $post_description );
@@ -328,31 +319,33 @@ class Sailthru_Subscribe_Fields {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 			$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
 
-			$post_image = $image[0];
-			$horizon_tags['sailthru.image.full'] = esc_attr( $post_image );
-			$post_thumbnail = $thumb[0];
+			$post_image                           = $image[0];
+			$horizon_tags['sailthru.image.full']  = esc_attr( $post_image );
+			$post_thumbnail                       = $thumb[0];
 			$horizon_tags['sailthru.image.thumb'] = $post_thumbnail;
 		}
 
 		// expiration date
 		$post_expiration = get_post_meta( $post_object->ID, 'sailthru_post_expiration', true );
 
-		if ( ! empty( $post_expiration ) )
+		if ( ! empty( $post_expiration ) ) {
 			$horizon_tags['sailthru.expire_date'] = esc_attr( $post_expiration );
+		}
 
 		$horizon_tags = apply_filters( 'sailthru_horizon_meta_tags', $horizon_tags, $post_object );
 
 		$tag_output = "\n\n<!-- BEGIN Sailthru Horizon Meta Information -->\n";
 		foreach ( (array) $horizon_tags as $tag_name => $tag_content ) {
-			if ( empty( $tag_content ) )
+			if ( empty( $tag_content ) ) {
 				continue; // Don't ever output empty tags
-			$meta_tag = sprintf( '<meta name="%s" content="%s" />', esc_attr( $tag_name ), esc_attr( $tag_content ) );
+			}
+			$meta_tag    = sprintf( '<meta name="%s" content="%s" />', esc_attr( $tag_name ), esc_attr( $tag_content ) );
 			$tag_output .= apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag );
 			$tag_output .= "\n";
 		}
 		$tag_output .= "<!-- END Sailthru Horizon Meta Information -->\n\n";
 
-		echo $tag_output;
+		echo esc_html( $tag_output );
 
 	} // sailthru_horizon_meta_tags
 
@@ -398,9 +391,8 @@ class Sailthru_Subscribe_Fields {
 	 */
 	public function post_metabox_display( $post ) {
 
-
 		$sailthru_post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
-		$sailthru_meta_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
+		$sailthru_meta_tags       = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
 
 		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 
@@ -411,7 +403,6 @@ class Sailthru_Subscribe_Fields {
 		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
 		$html .= '</p><!-- /.description -->';
 
-
 		// post meta tags
 		$html .= '<p>&nbsp;</p>';
 		$html .= '<p><strong>Sailthru Meta Tags</strong></p>';
@@ -421,9 +412,7 @@ class Sailthru_Subscribe_Fields {
 		$html .= '</p><!-- /.description -->';
 		$html .= '<p class="howto">Separate tags with commas</p>';
 
-
-
-		echo $html;
+		echo esc_html( $html );
 
 	} // end post_media
 
@@ -440,28 +429,26 @@ class Sailthru_Subscribe_Fields {
 
 			// Did the user set an expiry date, or are they clearing an old one?
 			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] )
-				|| get_post_meta( $post_id, 'sailthru_post_expiration', TRUE ) ) {
+				|| get_post_meta( $post_id, 'sailthru_post_expiration', true ) ) {
 
-				$expiry_time = strtotime( $_POST['sailthru_post_expiration'] );
+				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
 				if ( $expiry_time ) {
 					$expiry_date = date( 'Y-m-d', $expiry_time );
 
 					// Save the date. hehe.
 					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
 				}
-
 			} // end if
 
 			// Did the user set some meta tags, or are they clearing out old tags?
 			if ( ! empty( $_POST['sailthru_meta_tags'] ) && isset( $_POST['sailthru_meta_tags'] )
-				|| get_post_meta( $post_id, 'sailthru_meta_tags', TRUE ) ) {
+				|| get_post_meta( $post_id, 'sailthru_meta_tags', true ) ) {
 
 				//remove trailing comma
-				$meta_tags = filter_var( rtrim( $_POST['sailthru_meta_tags'], ',' ), FILTER_SANITIZE_STRING );
+				$meta_tags = rtrim( sanitize_text_field( $_POST['sailthru_meta_tags'] ), ',' );
 				update_post_meta( $post_id, 'sailthru_meta_tags', $meta_tags );
 
 			}
-
 		} // end if
 
 	} // end save_custom_meta_data
@@ -479,8 +466,8 @@ class Sailthru_Subscribe_Fields {
 	 */
 	function user_can_save( $post_id, $nonce ) {
 
-		$is_autosave = wp_is_post_autosave( $post_id );
-		$is_revision = wp_is_post_revision( $post_id );
+		$is_autosave    = wp_is_post_autosave( $post_id );
+		$is_revision    = wp_is_post_revision( $post_id );
 		$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], plugin_basename( __FILE__ ) ) );
 
 		// Return true if the user is able to save; otherwise, false.

@@ -6,17 +6,17 @@ require_once ABSPATH . WPINC . '/class-smtp.php';
 
 class SailthruMailer extends PHPMailer {
 
-	public $vars = [];
-	public $options = [];
-	public $template = '';
+	public $vars          = [];
+	public $options       = [];
+	public $template      = '';
 	public $schedule_time = 'now';
-	public $email = '';
+	public $email         = '';
 
 
 	public function addVar( $key, $value ) {
 
-		if ( !empty( $key ) ) {
-			$this->vars[$key] = $value;
+		if ( ! empty( $key ) ) {
+			$this->vars[ $key ] = $value;
 		}
 
 	}
@@ -25,7 +25,7 @@ class SailthruMailer extends PHPMailer {
 	public function sailthruSend() {
 
 		if ( count( $this->getAllRecipientAddresses() ) > 0 ) {
-			$this->email = implode( ",", array_keys( $this->getAllRecipientAddresses() ) );
+			$this->email = implode( ',', array_keys( $this->getAllRecipientAddresses() ) );
 		} else {
 			throw new phpmailerException( 'Email address was not provided' );
 		}
@@ -35,13 +35,12 @@ class SailthruMailer extends PHPMailer {
 			$this->mailer = 'mail';
 		}
 
-
 		// Add the CC's
 		if ( count( $this->getCcAddresses() ) > 0 ) {
 
 			$cc = '';
 			foreach ( $this->getCcAddresses() as $email ) {
-				$cc .= $email[0].',';
+				$cc .= $email[0] . ',';
 			}
 			$this->options['headers']['Cc'] = rtrim( $cc, ',' );
 
@@ -52,7 +51,7 @@ class SailthruMailer extends PHPMailer {
 
 			$bcc = '';
 			foreach ( $this->getBccAddresses() as $email ) {
-				$bcc .= $email[0].',';
+				$bcc .= $email[0] . ',';
 			}
 			$this->options['headers']['Bcc'] = rtrim( $bcc, ',' );
 
@@ -60,29 +59,31 @@ class SailthruMailer extends PHPMailer {
 
 		// Get the reply To Addresses
 		if ( count( $this->getReplyToAddresses() ) > 0 ) {
-			$this->options['headers']['replyto'] = implode( ",", array_keys( $this->getReplyToAddresses() ) );
+			$this->options['headers']['replyto'] = implode( ',', array_keys( $this->getReplyToAddresses() ) );
 		}
 
 		$this->vars['subject'] = $this->Subject;
-		$this->vars['body'] = $this->MIMEBody;
+		$this->vars['body']    = $this->MIMEBody;
 
-		$sailthru = get_option( 'sailthru_setup_options' );
-		$api_key = $sailthru['sailthru_api_key'];
+		$sailthru   = get_option( 'sailthru_setup_options' );
+		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
-		$client = new WP_Sailthru_Client( $api_key, $api_secret );
+		$client     = new WP_Sailthru_Client( $api_key, $api_secret );
 
 		try {
 
-			$data = array('email' => $this->email, 
-						   'template' => $this->template, 
-						   'vars' => $this->vars, 
-						   'options' => $this->options,
-						   'schedule_time' => $this->schedule_time);
+			$data = array(
+				'email'         => $this->email,
+				'template'      => $this->template,
+				'vars'          => $this->vars,
+				'options'       => $this->options,
+				'schedule_time' => $this->schedule_time,
+			);
 
-			$send = $client->apiPost('send', $data);
+			$send = $client->apiPost( 'send', $data );
 			return true;
 		} catch ( Sailthru_Client_Exception $exc ) {
-			print $exc;
+			print esc_html( $exc );
 		}
 
 	}
@@ -93,21 +94,21 @@ class SailthruMailer extends PHPMailer {
 		try {
 			// Choose the mailer and send through it
 			switch ( $this->Mailer ) {
-			case 'sailthru':
-				return $this->sailthruSend();
-			case 'sendmail':
-			case 'qmail':
-				return $this->sendmailSend( $this->MIMEHeader, $this->MIMEBody );
-			case 'smtp':
-				return $this->smtpSend( $this->MIMEHeader, $this->MIMEBody );
-			case 'mail':
-				return $this->mailSend( $this->MIMEHeader, $this->MIMEBody );
-			default:
-				$sendMethod = $this->Mailer.'Send';
-				if ( method_exists( $this, $sendMethod ) ) {
-					return $this->$sendMethod( $this->MIMEHeader, $this->MIMEBody );
-				}
-				return $this->mailSend( $this->MIMEHeader, $this->MIMEBody );
+				case 'sailthru':
+					return $this->sailthruSend();
+				case 'sendmail':
+				case 'qmail':
+					return $this->sendmailSend( $this->MIMEHeader, $this->MIMEBody );
+				case 'smtp':
+					return $this->smtpSend( $this->MIMEHeader, $this->MIMEBody );
+				case 'mail':
+					return $this->mailSend( $this->MIMEHeader, $this->MIMEBody );
+				default:
+					$sendMethod = $this->Mailer . 'Send';
+					if ( method_exists( $this, $sendMethod ) ) {
+						return $this->$sendMethod( $this->MIMEHeader, $this->MIMEBody );
+					}
+					return $this->mailSend( $this->MIMEHeader, $this->MIMEBody );
 			}
 		} catch ( phpmailerException $exc ) {
 			$this->setError( $exc->getMessage() );
