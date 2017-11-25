@@ -3,7 +3,7 @@
 $verify_setup = sailthru_verify_setup();
 ?>
 
-<?php if ( isset( $verify_setup['error'] ) && !empty( $verify_setup['error'] )  ) : ?>
+<?php if ( isset( $verify_setup['error'] ) && ! empty( $verify_setup['error'] ) ) : ?>
 	<?php if ( $verify_setup['errormessage'] == 'template not configured' ) : ?>
 		<div class="error settings-error">
 		<p>The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions.</p>

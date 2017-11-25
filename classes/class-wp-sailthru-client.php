@@ -9,7 +9,7 @@
  */
 class WP_Sailthru_Client extends Sailthru_Client {
 
-	 protected $api_uri = 'https://api.sailthru.com';
+	protected $api_uri = 'https://api.sailthru.com';
 
 	/**
 	 * Prepare JSON payload
@@ -18,22 +18,22 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
 		// Get the plugin and version and add to API calls
 		if ( function_exists( 'get_plugin_data' ) ) {
-			$plugin_info = get_plugin_data( __DIR__.'/../plugin.php' );
-			$version = !empty( $plugin_info['Version'] ) ? $plugin_info['Version'] : '';
+			$plugin_info = get_plugin_data( __DIR__ . '/../plugin.php' );
+			$version     = ! empty( $plugin_info['Version'] ) ? $plugin_info['Version'] : '';
 		} else {
 			$version = '';
 		}
 
-		$integration = 'WordPress Integration - '. $version;
+		$integration         = 'WordPress Integration - ' . $version;
 		$data['integration'] = $integration;
 
-		$payload =  array(
+		$payload        = array(
 			'api_key' => $this->api_key,
-			'format' => 'json',
-			'json' => json_encode( $data )
+			'format'  => 'json',
+			'json'    => json_encode( $data ),
 		);
 		$payload['sig'] = Sailthru_Util::getSignatureHash( $payload, $this->secret );
-		if ( !empty( $binary_data ) ) {
+		if ( ! empty( $binary_data ) ) {
 			$payload = array_merge( $payload, $binary_data );
 		}
 		return $payload;
@@ -42,14 +42,14 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
 	/**
 	 * Overload method to transparently intercept calls.
-	 * Perform an HTTP request using the Wordpress HTTP API.
+	 * Perform an HTTP request using the WordPress HTTP API.
 	 *
 	 * @param string  $url
 	 * @param array   $data
 	 * @param string  $method
 	 * @return string
 	 */
-	function httpRequestCurl( $action, array $data, $method = 'POST', $options = [ ] ) {
+	function httpRequestCurl( $action, array $data, $method = 'POST', $options = [] ) {
 
 		$url = $this->api_uri . '/' . $action;
 
@@ -69,15 +69,15 @@ class WP_Sailthru_Client extends Sailthru_Client {
 				'blocking'    => true,
 				'headers'     => array(),
 				'body'        => $data, // Data passed to us by the user.
-				'cookies'     => array()
+				'cookies'     => array(),
 			);
 		}
 
 		// start debugging of call
 		$debug_params = array(
-			'api' => $url,
-			'payload' => $data ,
-			'method' => $method,
+			'api'     => $url,
+			'payload' => $data,
+			'method'  => $method,
 		);
 
 		if ( 'GET' == $method ) {
@@ -88,7 +88,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 			write_log( $debug_params );
 			$reply = wp_remote_post( $url, $data );
 		}
-		// end debugging call 
+		// end debugging call
 
 		if ( isset( $reply ) ) {
 			//debug response
@@ -101,14 +101,13 @@ class WP_Sailthru_Client extends Sailthru_Client {
 				if ( wp_remote_retrieve_response_code( $reply ) == 200 ) {
 					return $reply['body'];
 				} else {
-					
+
 					$resp = json_decode( $reply['body'] );
-					if (!empty ( $resp->errormsg ) )  {
+					if ( ! empty( $resp->errormsg ) ) {
 						return  $resp->errormsg;
 					} else {
 						return false;
 					}
-					
 				}
 			}
 		} else {

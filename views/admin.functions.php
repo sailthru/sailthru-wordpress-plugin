@@ -27,11 +27,11 @@ function sailthru_html_text_input_callback( $args ) {
 	$default_value = $args[2];
 	$html_id       = $args[3];
 	if ( isset( $args[4] ) ) {
-		$hint          = $args[4];
+		$hint = $args[4];
 	} else {
 		$hint = '';
 	}
-	$options       = get_option( $collection );
+	$options = get_option( $collection );
 
 	// Make sure the element is defined in the options. If not, we'll use the preferred default.
 	$value = '';
@@ -44,7 +44,7 @@ function sailthru_html_text_input_callback( $args ) {
 	// Render the output
 	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
 	if ( isset( $hint ) ) {
-		echo '<div class="instructions">'.esc_html( $hint ).'</div>';
+		echo '<div class="instructions">' . esc_html( $hint ) . '</div>';
 	}
 
 } // end sailthru_html_text_input_callback.
@@ -74,7 +74,7 @@ function sailthru_toggle_feature_callback( $args ) {
 	// Read the options collection
 	$options = get_option( $collection );
 
-	if (empty( $options ) ) {
+	if ( empty( $options ) ) {
 		$options = array();
 	}
 
@@ -85,12 +85,11 @@ function sailthru_toggle_feature_callback( $args ) {
 		$options[ $option_name ] = 0; // evaluates to not checked
 	}
 
-
 	// Fully formed checkbox
-	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1,  $options[ $option_name ], false ) . '/>';
+	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1, $options[ $option_name ], false ) . '/>';
 
 	// Add a label next to the checkbox
-	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;'  . esc_html( $label ) . '</label>';
+	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;' . esc_html( $label ) . '</label>';
 
 	echo esc_html( $html );
 
@@ -124,12 +123,10 @@ function sailthru_sanitize_text_input( $input ) {
 		foreach ( $input as $key => $val ) {
 			if ( $key === 'sailthru_scout_renderItem' ) {
 				$output[ $key ] = esc_js( $input[ $key ] );
-			} else if ( isset ( $input[ $key ] ) ) {
+			} elseif ( isset( $input[ $key ] ) ) {
 					$output[ $key ] = sanitize_text_field( stripslashes( $input[ $key ] ) );
-				} // end if
-
+			} // end if
 		} // end foreach
-
 	} // end if
 
 	// Return the new collection
@@ -174,15 +171,13 @@ function sailthru_create_dropdown( $args, $values ) {
 	} else {
 		$instructions = false;
 	}
-	$current     = get_option( $collection );
+	$current = get_option( $collection );
 
 	if ( isset( $current[ $option_name ] ) ) {
 		$saved_value = $current[ $option_name ];
 	} else {
 		$saved_value = '';
 	}
-
-
 
 	$html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
 
@@ -198,7 +193,7 @@ function sailthru_create_dropdown( $args, $values ) {
 
 	$html .= '</select>';
 
-	if ( !empty( $instructions ) ) {
+	if ( ! empty( $instructions ) ) {
 		$html .= '<p class="description">' . $instructions . '</p>';
 	}
 
@@ -213,7 +208,7 @@ function sailthru_create_dropdown( $args, $values ) {
  */
 function sailthru_account_settings() {
 
-	$settings   = get_option( 'sailthru_setup_options' );
+	$settings = get_option( 'sailthru_setup_options' );
 
 	if ( ! empty( $settings['sailthru_api_key'] ) && ! empty( $settings['sailthru_api_secret'] ) ) {
 
@@ -237,32 +232,32 @@ function sailthru_account_settings() {
 function sailthru_status() {
 
 	// default to false
-	$status = array (
+	$status = array(
 		'setup' => false,
-		'api' => false,
+		'api'   => false,
 	);
 
-	$api =  get_option( 'sailthru_api_validated' );
+	$api = get_option( 'sailthru_api_validated' );
 
-	if ($api != '0' || $api != false) {
+	if ( $api != '0' || $api != false ) {
 		$status['api'] = true;
 	} else {
 		// invalidate the setup if the API is invalid
 		update_option( 'sailthru_setup_complete', false );
 	}
 
-	$setup =  get_option( 'sailthru_setup_complete' );
-	if ($setup != '0' || $setup != false) {
+	$setup = get_option( 'sailthru_setup_complete' );
+	if ( $setup != '0' || $setup != false ) {
 		$status['setup'] = true;
 	}
 
 	return $status;
 }
 
- function sailthru_invalidate($api, $setup) {
+function sailthru_invalidate( $api, $setup ) {
 	update_option( 'sailthru_setup_complete', $setup );
 	update_option( 'sailthru_api_validated', $api );
- }
+}
 
 /**
  * This function verifies Sailthru is working by making an API Call to Sailthru
@@ -276,12 +271,12 @@ function sailthru_verify_setup() {
 // end sailthru_verify_setup.
 
 // Check Feature is enabled
-function sailthru_check_feature($feature) {
+function sailthru_check_feature( $feature ) {
 
 	$features = get_option( 'sailthru_settings' );
 
-	if ( isset ( $settings['features'] ) ) {
-		if ( in_array($feature, $settings['features'])) {
+	if ( isset( $settings['features'] ) ) {
+		if ( in_array( $feature, $settings['features'] ) ) {
 			return true;
 		}
 	}
@@ -294,27 +289,27 @@ function sailthru_spm_ready() {
 		$sailthru = get_option( 'sailthru_setup_options' );
 
 		$spm_enabled = false;
-		$js_ready = false;
+		$js_ready    = false;
 
-		if ( isset ( $features['features'] ) ) {
-			if ( in_array('spm_enabled', $features['features'])) {
-				$spm_enabled = true;
-			}
+	if ( isset( $features['features'] ) ) {
+		if ( in_array( 'spm_enabled', $features['features'] ) ) {
+			$spm_enabled = true;
 		}
-
-		if (isset ( $sailthru['sailthru_js_type'] ) ) {
-			if ( $sailthru['sailthru_js_type'] == 'personalize_js' || $sailthru['sailthru_js_type'] == 'personalize_js_custom') {
-				$js_ready = true;
-			}
-		}
-
-		if ($spm_enabled && $js_ready) {
-			return true;
-		} else {
-			return false;
-		}
-
 	}
+
+	if ( isset( $sailthru['sailthru_js_type'] ) ) {
+		if ( $sailthru['sailthru_js_type'] == 'personalize_js' || $sailthru['sailthru_js_type'] == 'personalize_js_custom' ) {
+			$js_ready = true;
+		}
+	}
+
+	if ( $spm_enabled && $js_ready ) {
+		return true;
+	} else {
+		return false;
+	}
+
+}
 
 /**
  * This function verifies that the template is coded correctly
