@@ -281,6 +281,9 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					$post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
 					if ( ! empty( $post_expiration ) ) {
 						$data['expire_date'] = esc_attr( $post_expiration );
+					} else {
+						// set the expiry date in the future as you can't unset the value via the API
+						$data['expire_date'] = date('Y-m-d', strtotime('+5 years'));
 					}
 
 					// get all the custom fields and add them to the vars
