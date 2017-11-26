@@ -206,7 +206,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 									//check if the field is required
 									if ( 'checked' === $instance[ 'show_' . $name_stripped . '_required' ] ) {
 
-										if ( 'hidden !== $customfields[ $field_key ]['sailthru_customfield_type'] ' ) {
+										if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 											echo '<label for="custom_' . esc_attr( $name_stripped ) . '" class="sailthru-widget-label sailthru-widget-required">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . ' </label>';
 										}
 

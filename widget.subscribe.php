@@ -237,13 +237,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 * Adds the WordPress Ajax Library to the frontend.
 	 */
 	public function add_ajax_library() {
-
-		$html  = '<script type="text/javascript">';
-		$html .= 'var ajaxurl = "' . home_url( 'wp-admin/admin-ajax.php' ) . '"';
-		$html .= '</script>';
-
-		echo esc_js( $html );
-
+		echo '<script type="text/javascript">';
+		echo 'var ajaxurl = "' . esc_js( home_url( 'wp-admin/admin-ajax.php' ) ) . '"';
+		echo '</script>';
 	} // end add_ajax_library
 
 	/*--------------------------------------------------*/
@@ -336,8 +332,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		if ( $client ) {
 
 			$options      = array();
-			$customfields = get_option( 'sailthru_forms_options' );
-			$key          = get_option( 'sailthru_forms_key' );
 
 			// set the source
 			if ( isset( $_POST['source'] ) && ! empty( $_POST['source'] ) ) {
@@ -348,7 +342,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			// initialize vars with source.
 			$vars         = array( 'source' => $source );
-			$customfields = get_option( 'sailthru_forms_key' );
+			$customfields = get_option( 'sailthru_forms_options' );
+			$key          = get_option( 'sailthru_forms_key' );
 
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;

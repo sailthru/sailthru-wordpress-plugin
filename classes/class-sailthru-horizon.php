@@ -607,22 +607,20 @@ class Sailthru_Horizon {
 		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 
 		// post expiration
-		$html  = '<p><strong>Sailthru Post Expiration</strong></p>';
-		$html .= '<input id="sailthru_post_expiration" type="text" placeholder="YYYY-MM-DD" name="sailthru_post_expiration" value="' . esc_attr( $sailthru_post_expiration ) . '" size="25" class="datepicker" />';
-		$html .= '<p class="description">';
-		$html .= 'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
-		$html .= '</p><!-- /.description -->';
+		echo '<p><strong>Sailthru Post Expiration</strong></p>';
+		echo  '<input id="sailthru_post_expiration" type="text" placeholder="YYYY-MM-DD" name="sailthru_post_expiration" value="' . esc_attr( $sailthru_post_expiration ) . '" size="25" class="datepicker" />';
+		echo  '<p class="description">';
+		echo  'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
+		echo  '</p><!-- /.description -->';
 
 		// post meta tags
-		$html .= '<p>&nbsp;</p>';
-		$html .= '<p><strong>Sailthru Meta Tags</strong></p>';
-		$html .= '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr( $sailthru_meta_tags ) . '" size="25"  />';
-		$html .= '<p class="description">';
-		$html .= 'Tags are used to measure user interests and later to send them content customized to their tastes.';
-		$html .= '</p><!-- /.description -->';
-		$html .= '<p class="howto">Separate tags with commas</p>';
-
-		echo esc_html( $html );
+		echo  '<p>&nbsp;</p>';
+		echo  '<p><strong>Sailthru Meta Tags</strong></p>';
+		echo  '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr( $sailthru_meta_tags ) . '" size="25"  />';
+		echo  '<p class="description">';
+		echo  'Tags are used to measure user interests and later to send them content customized to their tastes.';
+		echo  '</p><!-- /.description -->';
+		echo  '<p class="howto">Separate tags with commas</p>';
 
 	} // end post_media
 
@@ -642,11 +640,14 @@ class Sailthru_Horizon {
 				|| get_post_meta( $post_id, 'sailthru_post_expiration', true ) ) {
 
 				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
+
 				if ( $expiry_time ) {
 					$expiry_date = date( 'Y-m-d', $expiry_time );
 
 					// Save the date. hehe.
 					update_post_meta( $post_id, 'sailthru_post_expiration', esc_attr( $expiry_date ) );
+				} else {
+					update_post_meta( $post_id, 'sailthru_post_expiration', null );
 				}
 			} // end if
 

@@ -252,12 +252,12 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					}
 					// image & thumbnail
 					if ( has_post_thumbnail( $post->ID ) ) {
-						$image                   = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-						$thumb                   = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-						$post_image              = $image[0];
-						$data['images']['full']  = esc_attr( $post_image );
-						$post_thumbnail          = $thumb[0];
-						$data['images']['thumb'] = $post_thumbnail;
+						$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+						$thumb                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
+						$post_image                     = $image[0];
+						$data['images']['full']['url']  = esc_attr( $post_image );
+						$post_thumbnail                 = $thumb[0];
+						$data['images']['thumb']['url'] = $post_thumbnail;
 					}
 					$post_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
 					// WordPress tags.
