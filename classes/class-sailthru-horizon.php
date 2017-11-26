@@ -82,57 +82,57 @@ class Sailthru_Horizon {
 
 		// we don't know if the API keys, etc, will still be
 		// good, so kill the flag that said we knew.
-		if ( false != get_option( 'sailthru_setup_complete' ) ) {
+		if ( false !== get_option( 'sailthru_setup_complete' ) ) {
 			delete_option( 'sailthru_setup_complete' );
 		}
 
 		// remove all setup information including API key info
-		if ( false != get_option( 'sailthru_setup_options' ) ) {
+		if ( false !== get_option( 'sailthru_setup_options' ) ) {
 			delete_option( 'sailthru_setup_options' );
 		}
 
 		// remove concierge settings
-		if ( false != get_option( 'sailthru_concierge_options' ) ) {
+		if ( false !== get_option( 'sailthru_concierge_options' ) ) {
 			delete_option( 'sailthru_concierge_options' );
 		}
 
 		// remove scout options
-		if ( false != get_option( 'sailthru_scout_options' ) ) {
+		if ( false !== get_option( 'sailthru_scout_options' ) ) {
 			delete_option( 'sailthru_scout_options' );
 		}
 
 		// remove custom fields options
-		if ( false != get_option( 'sailthru_forms_options' ) ) {
+		if ( false !== get_option( 'sailthru_forms_options' ) ) {
 			delete_option( 'sailthru_forms_options' );
 		}
 
-		if ( false != get_option( 'sailthru_customfields_order_widget' ) ) {
+		if ( false !== get_option( 'sailthru_customfields_order_widget' ) ) {
 			delete_option( 'sailthru_customfields_order_widget' );
 		}
 
-		if ( false != get_option( 'sailthru_customfields_order' ) ) {
+		if ( false !== get_option( 'sailthru_customfields_order' ) ) {
 			delete_option( 'sailthru_customfields_order' );
 		}
 
-		if ( false != get_option( 'sailthru_forms_key' ) ) {
+		if ( false !== get_option( 'sailthru_forms_key' ) ) {
 			delete_option( 'sailthru_forms_key' );
 		}
 
 		// remove integrations options
-		if ( false != get_option( 'sailthru_integrations_options' ) ) {
+		if ( false !== get_option( 'sailthru_integrations_options' ) ) {
 			delete_option( 'sailthru_integrations_options' );
 		}
 
-		if ( false != get_option( 'sailthru_setup_complete' ) ) {
-			update_option( 'sailthru_setup_complete', $setup );
+		if ( false !== get_option( 'sailthru_setup_complete' ) ) {
+			delete_option( 'sailthru_setup_complete' );
 		}
 
-		if ( false != get_option( 'sailthru_api_validated' ) ) {
-			update_option( 'sailthru_api_validated', $setup );
+		if ( false !== get_option( 'sailthru_api_validated' ) ) {
+			delete_option( 'sailthru_api_validated' );
 		}
 
 		//remove plugin version number
-		if ( false != get_option( 'sailthru_plugin_version' ) ) {
+		if ( false !== get_option( 'sailthru_plugin_version' ) ) {
 			delete_option( 'sailthru_plugin_version' );
 		}
 
@@ -162,7 +162,7 @@ class Sailthru_Horizon {
 		// changes to <3.0.5
 		// delete custom subscribe widget fields from the database,
 		// don't just hide them.
-		if ( $sailthru_plugin_version <= '3.0.5' || $sailthru_plugin_version == false ) {
+		if ( $sailthru_plugin_version <= '3.0.5' || $sailthru_plugin_version === false ) {
 
 			$customfields = get_option( 'sailthru_forms_options' );
 			$key          = get_option( 'sailthru_forms_key' );
@@ -224,10 +224,10 @@ class Sailthru_Horizon {
 
 		$screens = array( 'post-new.php', 'post.php', 'edit.php', 'admin.php' );
 
-		if ( in_array( $hook, $screens ) ) {
+		if ( in_array( $hook, $screens, true ) ) {
 
 			if ( isset( $_GET['action'] ) ) {
-				if ( $_GET['action'] == 'edit' ) {
+				if ( $_GET['action'] === 'edit' ) {
 					// datepicker for the meta box on post pages
 					wp_enqueue_style( 'jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 					// our own magic
@@ -268,9 +268,14 @@ class Sailthru_Horizon {
 			// through to be seen in the html source so just stick it in this var
 			$options = get_option( 'sailthru_setup_options' );
 
+			if ( isset( $options['sailthru_js_type'] ) && 'none' === $options['sailthru_js_type'] || empty( $options['sailthru_js_type'] ) ) {
+				return;
+			}
+
 			// check what JS version is being used.
 
-			if ( isset( $options['sailthru_js_type'] ) && $options['sailthru_js_type'] == 'personalize_js' || $options['sailthru_js_type'] == 'personalize_js_custom' ) {
+			if ( isset( $options['sailthru_js_type'] ) && 'personalize_js' === $options['sailthru_js_type'] || 'personalize_js_custom' === $options['sailthru_js_type'] ) {
+
 
 				$customer_id = $options['sailthru_customer_id'];
 
@@ -283,17 +288,17 @@ class Sailthru_Horizon {
 						),
 					);
 
-					if ( $options['sailthru_js_type'] == 'personalize_js_custom' ) {
+					if ( 'personalize_js_custom' === $options['sailthru_js_type'] ) {
 						// override defaults
-						if ( $options['sailthru_js_auto_track_pageview'] == 'false' ) {
+						if ( 'false' === $options['sailthru_js_auto_track_pageview'] ) {
 							$params['options']['autoTrackPageview'] = (bool) false;
 						}
 
-						if ( $options['sailthru_ignore_personalize_stored_tags'] == 'false' ) {
+						if ( 'false' === $options['sailthru_ignore_personalize_stored_tags'] ) {
 							$params['options']['useStoredTags'] = (bool) false;
 						}
 
-						if ( $options['sailthru_js_exclude_content'] == 'true' ) {
+						if ( 'true' === $options['sailthru_js_exclude_content'] ) {
 							$params['options']['excludeContent'] = (bool) true;
 						}
 					}
@@ -387,7 +392,7 @@ class Sailthru_Horizon {
 
 		if ( sailthru_verify_setup() ) {
 
-			if ( isset( $options['sailthru_js_type'] ) && $options['sailthru_js_type'] == 'horizon_js' ) {
+			if ( isset( $options['sailthru_js_type'] ) && 'horizon_js' === $options['sailthru_js_type'] ) {
 
 				$concierge_menu                       = add_submenu_page(
 					'sailthru_configuration_page',       // The ID of the top-level menu page to which this submenu item belongs

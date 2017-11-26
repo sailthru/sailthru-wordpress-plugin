@@ -14,7 +14,7 @@
 
 		// user should select if this is a Scout or SPM block add a check box for this instance
 
-	if ( isset( $sailthru['sailthru_js_type'] ) && $sailthru['sailthru_js_type'] == 'personalize_js' ) {
+	if ( isset( $sailthru['sailthru_js_type'] ) && 'personalize_js' === $sailthru['sailthru_js_type'] ) {
 		// Use Personalize JS
 		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
@@ -46,7 +46,7 @@
 
 					foreach ( $sections as $list ) {
 						foreach ( $list as $section ) {
-							if ( $section['section_id'] == $section_id ) {
+							if ( $section['section_id'] === $section_id ) {
 								$selected = ' selected';
 							} else {
 								$selected = '';
@@ -96,7 +96,7 @@
 		<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block;">
 		<p>Use the Scout configuration page to choose your settings for this sidebar widget.</p>
 		<p>
-		<label for="<?php echo $this->get_field_id( 'title' ); ?>">
+		<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>">
 			<?php esc_html_e( 'Title:' ); ?>
 			<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 		</label>

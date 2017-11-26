@@ -80,7 +80,7 @@ class SailthruMailer extends PHPMailer {
 				'schedule_time' => $this->schedule_time,
 			);
 
-			$send = $client->apiPost( 'send', $data );
+			$client->apiPost( 'send', $data );
 			return true;
 		} catch ( Sailthru_Client_Exception $exc ) {
 			print esc_html( $exc );

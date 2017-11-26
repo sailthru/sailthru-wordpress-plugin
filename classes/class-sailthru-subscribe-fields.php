@@ -52,7 +52,7 @@ class Sailthru_Subscribe_Fields {
 		}
 
 		// signal that it's ok to override WordPress's built-in email functions
-		if ( false == get_option( 'sailthru_override_wp_mail' ) ) {
+		if ( false === get_option( 'sailthru_override_wp_mail' ) ) {
 			add_option( 'sailthru_override_wp_mail', 1 );
 		} // end if
 
@@ -72,38 +72,38 @@ class Sailthru_Subscribe_Fields {
 		}
 
 		// stop overriding WordPress's built in email functions
-		if ( false != get_option( 'sailthru_override_wp_mail' ) ) {
+		if ( false !== get_option( 'sailthru_override_wp_mail' ) ) {
 			delete_option( 'sailthru_override_wp_mail' );
 		}
 
 		// we don't know if the API keys, etc, will still be
 		// good, so kill the flag that said we knew.
-		if ( false != get_option( 'sailthru_setup_complete' ) ) {
+		if ( false !== get_option( 'sailthru_setup_complete' ) ) {
 			delete_option( 'sailthru_setup_complete' );
 		}
 
 		// remove all setup information including API key info
-		if ( false != get_option( 'sailthru_setup_options' ) ) {
+		if ( false !== get_option( 'sailthru_setup_options' ) ) {
 			delete_option( 'sailthru_setup_options' );
 		}
 
 		// remove concierge settings
-		if ( false != get_option( 'sailthru_concierge_options' ) ) {
+		if ( false !== get_option( 'sailthru_concierge_options' ) ) {
 			delete_option( 'sailthru_concierge_options' );
 		}
 
 		// remove scout options
-		if ( false != get_option( 'sailthru_scout_options' ) ) {
+		if ( false !== get_option( 'sailthru_scout_options' ) ) {
 			delete_option( 'sailthru_scout_options' );
 		}
 
 		// remove custom fields options
-		if ( false != get_option( 'sailthru_forms_options' ) ) {
+		if ( false !== get_option( 'sailthru_forms_options' ) ) {
 			delete_option( 'sailthru_forms_options' );
 		}
 
 		// remove integrations options
-		if ( false != get_option( 'sailthru_integrations_options' ) ) {
+		if ( false !== get_option( 'sailthru_integrations_options' ) ) {
 			delete_option( 'sailthru_integrations_options' );
 		}
 

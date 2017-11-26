@@ -75,7 +75,7 @@
 			// if there are custom fields...
 			if ( isset( $customfields ) && ! empty( $customfields ) ) {
 				//If these were sorted display in proper order
-				if ( isset( $order ) && $order != '' ) {
+				if ( isset( $order ) && ! empty( $order ) ) {
 					$order_list = explode( ',', $order );
 					$order_list = array_unique( $order_list );
 				}
@@ -88,7 +88,7 @@
 					for ( $j = 0; $j < count( $order_list ); $j++ ) {
 						$field_key = (int) $order_list[ $j ];
 						for ( $i = 0; $i <= $key; $i++ ) {
-							if ( $i == $field_key ) {
+							if ( $i === $field_key ) {
 								echo esc_html( '<tr id="pos_' . $field_key . '">' );
 								if ( isset( $customfields[ $i ]['sailthru_customfield_name'] )
 										&& ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
@@ -144,7 +144,7 @@
 				// widget was created.
 				foreach ( $customfields as $index => $customfield ) {
 
-					if ( is_numeric( $index ) && $index > $last_listed && ! in_array( $index, $order_list ) ) {
+					if ( is_numeric( $index ) && $index > $last_listed && ! in_array( $index, $order_list, true ) ) {
 						echo esc_html( '<tr id="pos_' . $index . '">' );
 						if ( isset( $customfields[ $index ]['sailthru_customfield_label'] ) && ! empty( $customfields[ $index ]['sailthru_customfield_label'] )
 								&& isset( $customfields[ $index ]['sailthru_customfield_name'] ) && ! empty( $customfields[ $index ]['sailthru_customfield_name'] ) ) {
@@ -231,7 +231,7 @@
 						$list_key = '';
 					}
 					?>
-					<?php if ( $list['type'] != 'smart' ) : ?>
+					<?php if ( $list['type'] !== 'smart' ) : ?>
 						<br />
 						<input type="checkbox" value="<?php echo esc_attr( $list['name'] ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'sailthru_list' ) ); ?>[<?php echo esc_attr( $key ); ?>]" id="<?php echo esc_attr( $this->get_field_id( 'sailthru_list' ) . '-' . $key ); ?>" <?php checked( $list_key, $list['name'] ); ?>  />
 						<label for=""><?php echo esc_html( $list['name'] ); ?></label>

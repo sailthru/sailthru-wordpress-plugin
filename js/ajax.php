@@ -27,34 +27,34 @@ require_once( '../lib/Sailthru_Util.php' );
 require_once( '../lib/Sailthru_Client.php' );
 
 $return = array();
-	$return['error'] = false;
-	$return['message'] = '';
+$return['error']   = false;
+$return['message'] = '';
 
 switch( $_POST['sailthru_action'] )
 {
 
 	case "add_subscriber":
 		$email = trim( $_POST['email'] );
-		if( ! filter_var($email , FILTER_VALIDATE_EMAIL) || empty($email) ) {
-			$return['error'] = true;
-			$return['message'] = "Please enter a valid email address.";
+		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) || empty( $email ) ) {
+			$return['error']   = true;
+			$return['message'] = 'Please enter a valid email address.';
 		} else {
-			$email = filter_var($email, FILTER_VALIDATE_EMAIL);
+			$email = filter_var( $email, FILTER_VALIDATE_EMAIL );
 		}
 
-		if( isset($_POST['first_name'] ) && !empty($_POST['first_name'] ) ){
-			$first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING);
+		if ( isset( $_POST['first_name'] ) && !empty( $_POST['first_name'] ) ){
+			$first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING );
 		} else {
 			$first_name = '';
 		}
 
-		if( isset($_POST['last_name']) && !empty($_POST['last_name'] ) ){
-			$last_name = filter_var(trim($_POST['last_name']), FILTER_SANITIZE_STRING);
+		if ( isset( $_POST['last_name'] ) && !empty( $_POST['last_name'] ) ){
+			$last_name = filter_var( trim( $_POST['last_name'] ), FILTER_SANITIZE_STRING ) ;
 		} else {
 			$last_name = '';
 		}
 
-		if( $first_name || $last_name ) {
+		if ( $first_name || $last_name ) {
 
 			$options = array(
 				'vars' => array(
@@ -66,7 +66,7 @@ switch( $_POST['sailthru_action'] )
 		}
 
 		$subscribe_to_lists = array();
-			if( !empty($_POST['sailthru_email_list'] ) ) {
+			if ( !empty($_POST['sailthru_email_list'] ) ) {
 
 				$lists = explode(',', $_POST['sailthru_email_list']);
 
@@ -93,7 +93,7 @@ switch( $_POST['sailthru_action'] )
 			'options' => $options
 		);
 
-		if( $return['error'] == false ) {
+		if ( $return['error'] == false ) {
 
 			$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];
@@ -121,5 +121,5 @@ switch( $_POST['sailthru_action'] )
 }
 
 
-echo json_encode( $return );
+echo wp_json_encode( $return );
 die();

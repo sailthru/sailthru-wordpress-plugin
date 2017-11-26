@@ -23,7 +23,7 @@ function sailthru_field_class( $class, $type = '' ) {
 }
 
 function sailthru_field_id( $id ) {
-	if ( ! empty( $class ) ) {
+	if ( ! empty( $id ) ) {
 		return 'id="' . esc_attr( $id ) . '"';
 	}
 	return '';
@@ -98,12 +98,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 
 		extract( $args, EXTR_SKIP );
-
-		echo $before_widget;
-
+		if ( isset( $before_widget ) ) {
+			echo wp_kses_post( $before_widget );
+		}
 		include SAILTHRU_PLUGIN_PATH . 'views/widget.subscribe.display.php';
-
-		echo $after_widget;
+		if ( isset( $after_widget ) ) {
+			echo wp_kses_post( $after_widget );
+		}
 
 	} // end widget
 
@@ -213,7 +214,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			'template' => $template,
 		);
 
-		if ( email_exists( $email ) == false ) {
+		if ( false === email_exists( $email ) ) {
 			$random_password = wp_generate_password( $length = 12, $include_standard_special_chars = false );
 			$user            = wp_create_user( $email, $random_password, $email );
 			wp_new_user_notification( $user, null, 'user', $params );
@@ -294,12 +295,12 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function return_response( $response ) {
 
-		if ( ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) == 'xmlhttprequest' ) {
-			$response = json_encode( $response );
-			echo $response;
+		if ( ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'xmlhttprequest' === strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) {
+			$response = wp_json_encode( $response );
+			echo wp_kses_post( $response );
 			exit();
 		} else {
-			echo $response['message'];
+			echo wp_kses_post( $response['message'] );
 			exit();
 		}
 
@@ -308,8 +309,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	function add_subscriber() {
 
 		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], 'add_subscriber_nonce' ) ) {
-			$result['success'] = false;
-			$result['message'] = 'This form does not appear to have been posted from your website and has not been submitted.';
+
+			$result = array(
+				'success' => false,
+				'message' => 'This form does not appear to have been posted from your website and has not been submitted.',
+			);
 			$this->return_response( $result );
 		}
 
@@ -343,8 +347,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			// initialize vars with source.
-			$vars   = array( 'source' => $source );
-			$fields = get_option( 'sailthru_forms_key' );
+			$vars         = array( 'source' => $source );
+			$customfields = get_option( 'sailthru_forms_key' );
 
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;
@@ -373,7 +377,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			if ( ! empty( $sailthru_email_list ) ) {
 
 				// check for double opt in setting
-				if ( isset( $customfields['sailthru_double_opt_in'] ) && $customfields['sailthru_double_opt_in'] == true ) {
+				if ( isset( $customfields['sailthru_double_opt_in'] ) && true === $customfields['sailthru_double_opt_in'] ) {
 					$double_opt_in = true;
 				} else {
 					$double_opt_in = false;
@@ -459,7 +463,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				if ( $new_subscriber ) {
 
 					try {
-						$send_mail = $client->send( $customfields['sailthru_welcome_template'], $email, $vars );
+						$client->send( $customfields['sailthru_welcome_template'], $email, $vars );
 					} catch ( Sailthru_Client_Exception $e ) {
 						write_log( $e );
 					}
@@ -498,8 +502,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			// format response.
-			$result['success'] = true;
-			$result['message'] = 'User Subscribed';
+			$result = array(
+				'success' => true,
+				'message' => 'User Subscribed',
+			);
+
 			$this->return_response( $result );
 
 		} else {
@@ -555,7 +562,7 @@ function sailthru_widget_shortcode( $atts ) {
 
 	if ( ! empty( $atts['modal'] ) ) {
 
-		if ( $atts['modal'] == 'true' ) {
+		if ( 'true' === $atts['modal'] ) {
 			$before_widget = '<div id="mask"></div><a id="show_shortcode" href="#">' . esc_html( $atts['text'] ) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
 			$after_widget  = '</div></div>';
 		} else {

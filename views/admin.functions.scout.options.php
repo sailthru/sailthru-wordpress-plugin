@@ -6,7 +6,7 @@
  * ------------------------------------------------------------------------ */
 function sailthru_intialize_scout_options() {
 
-	if ( false == get_option( 'sailthru_scout_options' ) ) {
+	if ( false === get_option( 'sailthru_scout_options' ) ) {
 		add_option( 'sailthru_scout_options' );
 	} // end if
 
@@ -121,16 +121,14 @@ function sailthru_scout_items_callback( $args ) {
 	$scout       = get_option( 'sailthru_scout_options' );
 	$saved_value = isset( $scout['sailthru_scout_numVisible'] ) ? $scout['sailthru_scout_numVisible'] : 5;
 
-	$html = '<select name="sailthru_scout_options[sailthru_scout_numVisible]">';
+	echo '<select name="sailthru_scout_options[sailthru_scout_numVisible]">';
 
 	$i = 0;
 	while ( $i <= 40 ) {
-		$html .= '<option value="' . $i . '" ' . selected( esc_attr( $saved_value ), $i, false ) . '>' . $i . '</option>';
+		echo  '<option value="' . esc_attr( $i ) . '" ' . esc_attr( selected( $saved_value, $i, false ) ) . '>' . esc_attr( $i ) . '</option>';
 		$i++;
 	}
-	$html .= '</select>';
-
-	echo esc_html( $html );
+	echo  '</select>';
 
 }
 
@@ -142,12 +140,10 @@ function sailthru_scout_includeConsumed_callback( $args ) {
 	$scout       = get_option( 'sailthru_scout_options' );
 	$saved_value = isset( $scout['sailthru_scout_includeConsumed'] ) ? $scout['sailthru_scout_includeConsumed'] : '';
 
-	$html  = '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
-	$html .= '<option value="false" ' . selected( $saved_value, 'false', false ) . '>No</option>';
-	$html .= '<option value="true" ' . selected( $saved_value, 'true', false ) . '>Yes</option>';
-	$html .= '</select>';
-
-	echo esc_html( $html );
+	echo  '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
+	echo  '<option value="false" ' . esc_attr( selected( $saved_value, 'false', false ) ) . '>No</option>';
+	echo  '<option value="true" ' . esc_attr( selected( $saved_value, 'true', false ) ) . '>Yes</option>';
+	echo  '</select>';
 
 }
 
@@ -161,9 +157,7 @@ function sailthru_scout_renderItem_callback( $args ) {
 	$scout       = get_option( 'sailthru_scout_options' );
 	$saved_value = isset( $scout['sailthru_scout_renderItem'] ) ? $scout['sailthru_scout_renderItem'] : '';
 
-	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
-
-	echo esc_html( $html );
+	echo '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
 
 }
 

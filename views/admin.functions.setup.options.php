@@ -278,7 +278,7 @@ function sailthru_js_type_callback() {
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
 
-		if ( $key == $js_type ) {
+		if ( $key === $js_type ) {
 			$selected = ' selected';
 		} else {
 			$selected = '';
@@ -417,7 +417,7 @@ function sailthru_setup_email_template_callback( $args ) {
 		}
 		if ( $has_default_template ) {
 
-			if ( isset( $tpl ) || $tpl != '' ) {
+			if ( isset( $tpl ) || ! empty( $tpl ) ) {
 
 				$name  = get_bloginfo( 'name' );
 				$email = get_bloginfo( 'admin_email' );
@@ -445,18 +445,18 @@ function sailthru_setup_email_template_callback( $args ) {
 
 	// Render the Drop Downs
 	if ( isset( $tpl ) ) {
-		$html = sailthru_create_dropdown( $args, $tpl );
+		// escaped in function.
+		echo sailthru_create_dropdown( $args, $tpl );
 	} else {
-		$html = sailthru_create_dropdown( $args, array() );
+		// escaped in function.
+		echo sailthru_create_dropdown( $args, array() );
 
 		if ( ! empty( $api_error ) ) {
-			$html .= '<p>We could not connect to the Sailthru API</p>';
+			echo '<p>We could not connect to the Sailthru API</p>';
 		} else {
-			$html .= '<p>Sailthru Api Key and Secret must be saved first</p>';
+			echo  '<p>Sailthru Api Key and Secret must be saved first</p>';
 		}
 	}
-
-	echo $html;
 
 }
 
@@ -568,7 +568,7 @@ function sailthru_setup_handler( $input ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-api-key-fail', __( 'Sailthru will not function without an API key.' ), 'error' );
 	}
 
-	if ( empty( $output['sailthru_horizon_domain'] ) && ( $input['sailthru_js_type'] == 'horizon_js' ) ) {
+	if ( empty( $output['sailthru_horizon_domain'] ) && ( 'horizon_js' === $input['sailthru_js_type'] ) ) {
 		add_settings_error( 'sailthru-notices', 'sailthru-horizon-domain-fail', __( 'Please enter your Horizon domain.' ), 'error' );
 	} else {
 
@@ -577,7 +577,7 @@ function sailthru_setup_handler( $input ) {
 		$output['sailthru_horizon_domain'] = str_ireplace( 'www.', '', $output['sailthru_horizon_domain'] );
 
 		// remove trailing
-		if ( substr( $output['sailthru_horizon_domain'], -1 ) == '/' ) {
+		if ( substr( $output['sailthru_horizon_domain'], -1 ) === '/' ) {
 			$output['sailthru_horizon_domain'] = substr( $output['sailthru_horizon_domain'], 0, -1 );
 		}
 	}

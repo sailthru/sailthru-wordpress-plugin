@@ -159,7 +159,7 @@ function sailthru_create_wordpress_template() {
 
 			try {
 				if ( $client ) {
-					$new_template = $client->saveTemplate(
+					$client->saveTemplate(
 						'wordpress-template',
 						array(
 							'name'         => $wordpress_template,
@@ -193,10 +193,10 @@ function sailthru_user_login( $user_login, $user ) {
 		$id      = $user->user_email;
 		$options = array(
 			'login'  => array(
-				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'user_agent' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ),
 				'key'        => 'email',
-				'ip'         => $_SERVER['SERVER_ADDR'],
-				'site'       => $_SERVER['HTTP_HOST'],
+				'ip'         => sanitize_text_field( $_SERVER['SERVER_ADDR'] ),
+				'site'       => sanitize_text_field ($_SERVER['HTTP_HOST'] ) ,
 			),
 			'fields' => array( 'keys' => 1 ),
 		);
@@ -237,6 +237,7 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 			$client     = new WP_Sailthru_Client( $api_key, $api_secret );
 			try {
 				if ( $client ) {
+					$data = array();
 					// Prepare the Content API Params
 					$data['url']               = get_permalink( $post->ID );
 					$data['title']             = $post->post_title;

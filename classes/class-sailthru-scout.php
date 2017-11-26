@@ -50,20 +50,21 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		// Is scout turned on?
 
 		// Don't load scout if using Personalize J
-		if ( isset( $options['sailthru_js_type'] ) && ! empty( $options['sailthru_js_type'] ) ) {
+		if ( isset( $options['sailthru_js_type'] ) && 'horizon_js' !== $options['sailthru_js_type'] ) {
 			return;
 		}
 
 		wp_enqueue_style( 'sailthru-scout-widget-styles', SAILTHRU_PLUGIN_URL . 'css/widget.scout.css' );
+
 		/**
 		 * Filter the Sailthru Scout status.
 		 *
 		 * @param bool    $status True if Scout is turned on.
 		 */
-		if ( isset( $params['sailthru_scout_is_on'] ) && $params['sailthru_scout_is_on'] && apply_filters( 'sailthru_scout_on', true ) ) {
+		if ( isset( $params['sailthru_scout_is_on'] ) && $params['sailthru_scout_is_on'] === "1") {
 
 			// Check first, otherwise js could throw errors.
-			if ( get_option( 'sailthru_setup_complete' ) ) {
+			if ( "1" ===  get_option( 'sailthru_setup_complete' ) ) {
 
 				// If conceirge is on, we want noPageView to be set to true
 				$conceirge = get_option( 'sailthru_concierge_options' );
@@ -71,7 +72,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 				if ( isset( $conceirge['sailthru_concierge_is_on'] ) && $conceirge['sailthru_concierge_is_on'] && apply_filters( 'sailthru_concierge_on', true ) ) {
 					$params['sailthru_scout_noPageview'] = 'true';
 				}
-
+				wp_enqueue_script( 'sailthru_scout_js', '//ak.sail-horizon.com/scout/v1.js' );
 				add_action( 'wp_footer', array( $this, 'scout_js' ), 10 );
 
 			} // End if sailthru setup is done.
@@ -97,9 +98,11 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		$scout_params   = array();
 
 		// if we're using Personalize JS then don't use Scout
-		if ( isset( $options['sailthru_js_type'] ) && ! empty( $options['sailthru_js_type'] ) ) {
+		if ( isset( $options['sailthru_js_type'] ) && 'horizon_js' !== $options['sailthru_js_type'] )  {
 			return;
 		}
+
+		echo 'ccccccc';
 
 		// inlcudeConsumed?
 		if ( isset( $scout['sailthru_scout_includeConsumed'] ) && strlen( $scout['sailthru_scout_includeConsumed'] ) > 0 ) {
@@ -142,26 +145,21 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			}
 		}
 
-		/** This filter is documented in class-sailthru-horizon.php */
-		if ( $scout['sailthru_scout_is_on'] == 1 && apply_filters( 'sailthru_scout_on', true ) ) {
-
-			echo '<script type="text/javascript" src="//ak.sail-horizon.com/scout/v1.js"></script>';
-			echo "<script type=\"text/javascript\">\n";
-			echo "    SailthruScout.setup( {\n";
-			echo "        domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "',\n";
-			if ( is_array( $scout_params ) ) {
-				foreach ( $scout_params as $key => $val ) {
-					if ( strlen( $val ) > 0 ) {
-						echo '        ' . esc_js( $val ) . ",\n";
-					}
+		echo "<script type=\"text/javascript\">\n";
+		echo "    SailthruScout.setup( {\n";
+		echo "        domain: '" . esc_js( $options['sailthru_horizon_domain'] ) . "',\n";
+		if ( is_array( $scout_params ) ) {
+			foreach ( $scout_params as $key => $val ) {
+				if ( strlen( $val ) > 0 ) {
+					echo '        ' . esc_js( $val ) . ",\n";
 				}
 			}
-			if ( ! empty( $filter ) ) {
-				echo $filter;
-			}
-			echo "    } );\n";
-			echo "</script>\n";
 		}
+		if ( ! empty( $filter ) ) {
+			echo wp_kses_post( $filter );
+		}
+		echo "    } );\n";
+		echo "</script>\n";
 
 	}
 
@@ -232,13 +230,11 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 * @param array args     The array of form elements.
 	 * @param array instance The current instance of the widget.
 	 */
-	function widget( $args, $instance ) {
-
+	function widget($args, $instance) {
 		extract( $args, EXTR_SKIP );
-		echo $before_widget;
-		include SAILTHRU_PLUGIN_PATH . 'views/widget.scout.display.php';
-		echo $after_widget;
-
+		echo wp_kses_post( $before_widget );
+		include( SAILTHRU_PLUGIN_PATH . 'views/widget.scout.display.php' );
+		echo wp_kses_post( $after_widget );
 	}
 	/**
 	 * Processes the widget's options to be saved.
