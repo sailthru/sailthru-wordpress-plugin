@@ -4,11 +4,11 @@ $verify_setup = sailthru_verify_setup();
 ?>
 
 <?php if ( isset( $verify_setup['error'] ) && ! empty( $verify_setup['error'] ) ) : ?>
-	<?php if ( $verify_setup['errormessage'] == 'template not configured' ) : ?>
+	<?php if ( 'template not configured' === $verify_setup['errormessage'] ) : ?>
 		<div class="error settings-error">
 		<p>The template you have selected is not configured correctly. Please check the <a href="http://docs.sailthru.com/developers/client-libraries/wordpress-plugin">documentation<a/> for instructions.</p>
 		</div>
-	<?php elseif ( $verify_setup['errormessage'] == 'select a template' ) : ?>
+	<?php elseif ( 'select a template' === $verify_setup['errormessage'] ) : ?>
 		<div class="error settings-error">
 		<p><a href="?page=settings_configuration_page#sailthru_setup_email_template">Select a Sailthru template</a> to use for all WordPress emails.</p>
 		</div>

@@ -86,13 +86,10 @@ function sailthru_toggle_feature_callback( $args ) {
 	}
 
 	// Fully formed checkbox
-	$html = '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1, $options[ $option_name ], false ) . '/>';
+	echo '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1, $options[ $option_name ], false ) . '/>';
 
 	// Add a label next to the checkbox
-	$html .= '<label for="' . esc_attr( $html_id ) . '">&nbsp;' . esc_html( $label ) . '</label>';
-
-	echo esc_html( $html );
-
+	echo '<label for="' . esc_attr( $html_id ) . '">&nbsp;' . esc_html( $label ) . '</label>';
 } // end sailthru_toggle_feature_callback
 
 
@@ -239,7 +236,7 @@ function sailthru_status() {
 
 	$api = get_option( 'sailthru_api_validated' );
 
-	if ( $api != '0' || $api != false ) {
+	if ( '0' !== $api || false !== $api ) {
 		$status['api'] = true;
 	} else {
 		// invalidate the setup if the API is invalid
@@ -247,7 +244,7 @@ function sailthru_status() {
 	}
 
 	$setup = get_option( 'sailthru_setup_complete' );
-	if ( $setup != '0' || $setup != false ) {
+	if ( '0' !== $setup || false !== $setup ) {
 		$status['setup'] = true;
 	}
 
@@ -273,10 +270,10 @@ function sailthru_verify_setup() {
 // Check Feature is enabled
 function sailthru_check_feature( $feature ) {
 
-	$features = get_option( 'sailthru_settings' );
+	$settings = get_option( 'sailthru_settings' );
 
 	if ( isset( $settings['features'] ) ) {
-		if ( in_array( $feature, $settings['features'] ) ) {
+		if ( in_array( $feature, $settings['features'], true ) ) {
 			return true;
 		}
 	}
@@ -292,13 +289,13 @@ function sailthru_spm_ready() {
 		$js_ready    = false;
 
 	if ( isset( $features['features'] ) ) {
-		if ( in_array( 'spm_enabled', $features['features'] ) ) {
+		if ( in_array( 'spm_enabled', $features['features'], true ) ) {
 			$spm_enabled = true;
 		}
 	}
 
 	if ( isset( $sailthru['sailthru_js_type'] ) ) {
-		if ( $sailthru['sailthru_js_type'] == 'personalize_js' || $sailthru['sailthru_js_type'] == 'personalize_js_custom' ) {
+		if ( 'personalize_js' === $sailthru['sailthru_js_type'] || 'personalize_js_custom' === $sailthru['sailthru_js_type'] ) {
 			$js_ready = true;
 		}
 	}
@@ -319,7 +316,7 @@ function sailthru_verify_template( $tpl ) {
 
 	$errors = array();
 
-	if ( $tpl['subject'] != '{subject}' ) {
+	if ( '{subject}' !== $tpl['subject'] ) {
 		$errors = 'Your template needs to have {subject} as the subject line.';
 	}
 

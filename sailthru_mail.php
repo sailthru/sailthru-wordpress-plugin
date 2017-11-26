@@ -61,6 +61,7 @@ if ( get_option( 'sailthru_setup_complete' ) && ! function_exists( 'wp_mail' ) )
 				global $wpdb, $wp_hasher;
 				$user      = get_userdata( $user_id );
 				$user_vars = get_user_meta( $user_id );
+				$sailthru_params = array();
 
 				$sailthru_params['vars']['user'] = $user_vars;
 

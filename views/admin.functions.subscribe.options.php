@@ -39,14 +39,13 @@ function sailthru_initialize_forms_options() {
 		}
 
 		if ( isset( $tpl ) ) {
-			$html = sailthru_create_dropdown( $args, $tpl );
+			// escaped in function.
+			echo  sailthru_create_dropdown( $args, $tpl );
 		} else {
-			$html  = sailthru_create_dropdown( $args, array() );
-			$html .= 'Sailthru Api Key and Secret must be saved first';
+			// escaped in function.
+			echo  sailthru_create_dropdown( $args, array() );
+			echo 'Sailthru Api Key and Secret must be saved first';
 		}
-
-		echo $html;
-
 	}
 
 	/**
@@ -93,7 +92,7 @@ function sailthru_initialize_forms_options() {
 					$order_list = explode( ',', $order );
 					foreach ( $order_list as $pos ) {
 						for ( $i = 1; $i <= (int) $key; $i++ ) {
-							if ( $i == (int) $pos ) {
+							if ( $i === (int) $pos ) {
 								if ( isset( $customfields[ $i ]['sailthru_customfield_label'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_label'] )
 									&& isset( $customfields[ $i ]['sailthru_customfield_name'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
 									echo '<tr id="pos_' . esc_attr( $i ) . '">';
@@ -209,11 +208,11 @@ function sailthru_initialize_forms_options() {
 		for ( $i = 0; $i < $key; $i++ ) {
 			$field_key = $i + 1;
 			if ( ! empty( $customfields[ $field_key ] ) ) {
-				if ( $customfields[ $field_key ]['sailthru_customfield_name'] != '' ) {
+				if ( ! empty( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
 
 					$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
 					//select field
-					if ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'select' ) {
+					if ( 'select' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 						echo '
 					        <label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_name'] ) . ':</label>
 							<select name="custom_' . esc_attr( $name_stripped ) . '" id="sailthru_' . esc_attr( $name_stripped ) . '_name">';
@@ -225,7 +224,7 @@ function sailthru_initialize_forms_options() {
 						}
 						echo '</select>';
 					} //radio field
-					elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'radio' ) {
+					elseif ( 'radio' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 
 						$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
 						echo '<label >' . esc_html( $customfields[ $field_key ]['sailthru_customfield_name'] ) . ':</label>';
@@ -235,14 +234,14 @@ function sailthru_initialize_forms_options() {
 							echo '<input type="radio" name="custom_' . esc_attr( $name_stripped ) . '" value="' . esc_attr( $vals[0] ) . '"> ' . esc_html( $vals[1] );
 						}
 					} //hidden field
-					elseif ( $customfields[ $field_key ]['sailthru_customfield_type'] == 'hidden' ) {
+					elseif ( 'hidden' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 						echo 'hidden field: ' . esc_html( $customfields[ $field_key ]['sailthru_customfield_name'] ) . '';
 					} //field is a text input
 					else {
 
 						echo '<div class="sailthru_form_input">';
 						//check if the field is required
-						if ( $customfields[ $field_key ]['sailthru_customfield_type'] != 'hidden' ) {
+						if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 							echo '<br /><label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_name'] ) . ':</label>';
 						}
 						echo '<input type="' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_type'] ) . '" name="custom_' . esc_attr( $name_stripped ) . '" id="sailthru_' . esc_attr( $name_stripped ) . '_name" />';
@@ -291,7 +290,7 @@ function sailthru_initialize_forms_options() {
 	}
 
 	// If the section options don't exist, create them.
-	if ( false == get_option( 'sailthru_forms_options' ) ) {
+	if ( false === get_option( 'sailthru_forms_options' ) ) {
 		add_option( 'sailthru_forms_options' );
 	} // end if
 
@@ -543,7 +542,7 @@ function sailthru_forms_handler( $input ) {
 	} else {
 		$order = false;
 	}
-	if ( isset( $order ) and $order != '' ) {
+	if ( isset( $order ) and ! empty( $order ) ) {
 		update_option( 'sailthru_customfields_order', $order );
 	}
 	if ( isset( $key ) ) {
@@ -566,7 +565,7 @@ function sailthru_forms_handler( $input ) {
 			$output[ $new_key ]['sailthru_customfield_attr'] = sanitize_text_field( $input['sailthru_customfield_attr'] );
 		}
 
-		if ( $input['sailthru_customfield_type'] == 'select' || $input['sailthru_customfield_type'] == 'radio' || $input['sailthru_customfield_type'] == 'checkbox' ) {
+		if ( 'select' === $input['sailthru_customfield_type'] || 'radio' === $input['sailthru_customfield_type'] || 'checkbox' === $input['sailthru_customfield_type'] ) {
 
 			$amount = sanitize_text_field( $input['sailthru_customfield_value_val'] );
 			$values = '';
@@ -583,15 +582,15 @@ function sailthru_forms_handler( $input ) {
 			$output[ $new_key ]['sailthru_customfield_value'] = $values;
 			$values = rtrim( $values, ',' );
 		}
-		if ( $input['sailthru_customfield_type'] == 'hidden' ) {
+		if ( 'hidden' === $input['sailthru_customfield_type'] ) {
 			$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field( $input['sailthru_customfield_value2'] );
 		}
 		if ( ! empty( $input['sailthru_customfield_attr1'] ) && ! empty( $input['sailthru_customfield_attr2'] ) ) {
 			$amount = $input['sailthru_customfield_attr_val'];
 			$values = '';
 			for ( $i = 1; $i <= $amount; $i++ ) {
-				if ( $i != $amount ) {
-					if ( $i % 2 == 0 ) {
+				if ( $i !== $amount ) {
+					if ( $i % 2 === 0 ) {
 						$values .= sanitize_text_field( $input[ 'sailthru_customfield_attr' . $i ] ) . ',';
 					} else {
 						$values .= sanitize_text_field( $input[ 'sailthru_customfield_attr' . $i ] ) . ':';

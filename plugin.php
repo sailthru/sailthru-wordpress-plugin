@@ -159,7 +159,7 @@ function sailthru_create_wordpress_template() {
 
 			try {
 				if ( $client ) {
-					$new_template = $client->saveTemplate(
+					$client->saveTemplate(
 						'wordpress-template',
 						array(
 							'name'         => $wordpress_template,
@@ -193,10 +193,10 @@ function sailthru_user_login( $user_login, $user ) {
 		$id      = $user->user_email;
 		$options = array(
 			'login'  => array(
-				'user_agent' => $_SERVER['HTTP_USER_AGENT'],
+				'user_agent' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ),
 				'key'        => 'email',
-				'ip'         => $_SERVER['SERVER_ADDR'],
-				'site'       => $_SERVER['HTTP_HOST'],
+				'ip'         => sanitize_text_field( $_SERVER['SERVER_ADDR'] ),
+				'site'       => sanitize_text_field ($_SERVER['HTTP_HOST'] ) ,
 			),
 			'fields' => array( 'keys' => 1 ),
 		);
@@ -237,6 +237,7 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 			$client     = new WP_Sailthru_Client( $api_key, $api_secret );
 			try {
 				if ( $client ) {
+					$data = array();
 					// Prepare the Content API Params
 					$data['url']               = get_permalink( $post->ID );
 					$data['title']             = $post->post_title;
@@ -251,12 +252,12 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					}
 					// image & thumbnail
 					if ( has_post_thumbnail( $post->ID ) ) {
-						$image                   = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-						$thumb                   = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-						$post_image              = $image[0];
-						$data['images']['full']  = esc_attr( $post_image );
-						$post_thumbnail          = $thumb[0];
-						$data['images']['thumb'] = $post_thumbnail;
+						$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+						$thumb                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
+						$post_image                     = $image[0];
+						$data['images']['full']['url']  = esc_attr( $post_image );
+						$post_thumbnail                 = $thumb[0];
+						$data['images']['thumb']['url'] = $post_thumbnail;
 					}
 					$post_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
 					// WordPress tags.
@@ -280,6 +281,9 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					$post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
 					if ( ! empty( $post_expiration ) ) {
 						$data['expire_date'] = esc_attr( $post_expiration );
+					} else {
+						// set the expiry date in the future as you can't unset the value via the API
+						$data['expire_date'] = date('Y-m-d', strtotime('+5 years'));
 					}
 
 					// get all the custom fields and add them to the vars

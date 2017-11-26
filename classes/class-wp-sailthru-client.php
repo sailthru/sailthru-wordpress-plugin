@@ -30,7 +30,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 		$payload        = array(
 			'api_key' => $this->api_key,
 			'format'  => 'json',
-			'json'    => json_encode( $data ),
+			'json'    => wp_json_encode( $data ),
 		);
 		$payload['sig'] = Sailthru_Util::getSignatureHash( $payload, $this->secret );
 		if ( ! empty( $binary_data ) ) {
@@ -53,7 +53,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
 		$url = $this->api_uri . '/' . $action;
 
-		if ( 'GET' == $method ) {
+		if ( 'GET' === $method ) {
 			$url_with_params = $url;
 			if ( count( $data ) > 0 ) {
 				$url_with_params .= '?' . http_build_query( $data );
@@ -63,7 +63,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 			// Build a WP approved array.
 			$data = array(
 				'method'      => 'POST',
-				'timeout'     => 45,
+				'timeout'     => 3,
 				'redirection' => 5,
 				'httpversion' => '1.0',
 				'blocking'    => true,
@@ -80,10 +80,14 @@ class WP_Sailthru_Client extends Sailthru_Client {
 			'method'  => $method,
 		);
 
-		if ( 'GET' == $method ) {
+		if ( 'GET' === $method ) {
 			$debug_params['request'] = $url_with_params;
 			write_log( $debug_params );
-			$reply = wp_remote_get( $url, $data );
+			if ( defined( 'WPCOM_IS_VIP_ENV' ) && true === WPCOM_IS_VIP_ENV ) {
+				$reply = vip_safe_wp_remote_get( $url, $data );
+			} else {
+				$reply = wp_remote_get( $url, $data );
+			}
 		} else {
 			write_log( $debug_params );
 			$reply = wp_remote_post( $url, $data );
@@ -98,7 +102,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 				throw new Sailthru_Client_Exception( "Bad response received from $url: " . $reply->get_error_message() );
 			} else {
 
-				if ( wp_remote_retrieve_response_code( $reply ) == 200 ) {
+				if ( wp_remote_retrieve_response_code( $reply ) === 200 ) {
 					return $reply['body'];
 				} else {
 
