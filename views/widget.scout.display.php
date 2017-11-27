@@ -5,6 +5,7 @@
 	// check if this is an SPM widget or a Scout Widget
 if ( sailthru_spm_ready() ) {
 	$use_spm = true;
+	$section = empty( $instance['sailthru_spm_section'] ) ? ' ' :  $instance['sailthru_spm_section'];
 } else {
 	$use_spm = false;
 	$title   = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
@@ -17,6 +18,7 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
 }
 	// Grab the settings from $instance and fill out default values as needed.
 	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
+
 ?>
 <?php if ( $use_spm ) : ?>
 	<div class="sailthru-spm-widget">
