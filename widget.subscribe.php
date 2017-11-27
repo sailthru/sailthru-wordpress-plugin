@@ -367,6 +367,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			} //end for loop
 
+
 			$subscribe_to_lists  = array();
 			$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
 			if ( ! empty( $sailthru_email_list ) ) {
@@ -433,6 +434,21 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 					// all of the lists are new lists
 					$new_lists = $options['lists'];
 				}
+
+				try {
+					$profile_data = array(
+						'id'    => $email,
+						'key'   => 'email',
+						'vars'  => $options['vars'],
+						'lists' => $options['lists'],
+					);
+					$client->apiPost( 'user', $profile_data );
+					$new_lists = $options['lists'];
+
+				} catch ( Sailthru_Client_Exception $e ) {
+					write_log( $e );
+				}
+
 			} else {
 
 				try {
