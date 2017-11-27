@@ -41,7 +41,7 @@
 				// get sections
 				if ( is_array( $sections ) ) {
 
-					$section_dropdown  = '<select name="' . $this->get_field_name( 'sailthru_spm_section' ) . '">';
+					$section_dropdown  = '<select name="' . esc_attr( $this->get_field_name( 'sailthru_spm_section' ) ) . '">';
 					$section_dropdown .= '<option value="">-- Select --</option>';
 
 					foreach ( $sections as $list ) {
@@ -51,7 +51,7 @@
 							} else {
 								$selected = '';
 							}
-							$section_dropdown .= '<option value="' . $section['section_id'] . '"' . $selected . '>' . $section['name'] . '</option>';
+							$section_dropdown .= '<option value="' . esc_attr( $section['section_id'] ) . '"' . esc_attr( $selected ) . '>' . esc_attr( $section['name'] ) . '</option>';
 						}
 					}
 					$section_dropdown .= '</select>';
@@ -68,7 +68,7 @@
 			<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block; margin:15px 0">
 				<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>
 				<input type="hidden" value="personalize_js" name="sailthru_widget_type" />
-				<?php echo esc_html( $section_dropdown ); ?>
+				<?php echo $section_dropdown; ?>
 				<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>
 
 			</div>

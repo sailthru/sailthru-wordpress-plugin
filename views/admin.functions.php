@@ -285,14 +285,13 @@ function sailthru_spm_ready() {
 		$features = get_option( 'sailthru_settings' );
 		$sailthru = get_option( 'sailthru_setup_options' );
 
+
 		$spm_enabled = false;
 		$js_ready    = false;
 
-	if ( isset( $features['features'] ) ) {
-		if ( in_array( 'spm_enabled', $features['features'], true ) ) {
-			$spm_enabled = true;
+		if ( isset( $features['features']['spm_enabled'] ) ) {
+			$spm_enabled = $features['features']['spm_enabled'] == '1' ? true : false;
 		}
-	}
 
 	if ( isset( $sailthru['sailthru_js_type'] ) ) {
 		if ( 'personalize_js' === $sailthru['sailthru_js_type'] || 'personalize_js_custom' === $sailthru['sailthru_js_type'] ) {
