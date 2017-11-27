@@ -12,9 +12,7 @@
 
 	}
 
-		// user should select if this is a Scout or SPM block add a check box for this instance
-
-	if ( isset( $sailthru['sailthru_js_type'] ) && 'personalize_js' === $sailthru['sailthru_js_type'] ) {
+	if ( isset( $sailthru['sailthru_js_type'] ) && ( 'personalize_js' === $sailthru['sailthru_js_type'] || 'personalize_js_custom' === $sailthru['sailthru_js_type'] ) ) {
 		// Use Personalize JS
 		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
