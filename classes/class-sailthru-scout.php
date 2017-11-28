@@ -197,7 +197,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		$post_content = '<div id="sailthru-scout"><div class="loading">Loading, please wait...</div></div>';
 
 		// If the page doesn't already exist, then create it.
-		$create_page = function_exists( 'wpcom_vip_get_page_by_title' ) ? null == wpcom_vip_get_page_by_title( $title ) : null == get_page_by_title( $title );
+		$create_page = function_exists( 'wpcom_vip_get_page_by_title' ) ? null === wpcom_vip_get_page_by_title( $title ) : null === get_page_by_title( $title );
 		if ( $create_page ) {
 			// Set the post ID so that we know the post was created successfully.
 			$post_id = wp_insert_post(

@@ -59,8 +59,8 @@ if ( get_option( 'sailthru_setup_complete' ) && ! function_exists( 'wp_mail' ) )
 				}
 
 				global $wpdb, $wp_hasher;
-				$user      = get_userdata( $user_id );
-				$user_vars = get_user_meta( $user_id );
+				$user            = get_userdata( $user_id );
+				$user_vars       = get_user_attribute( $user_id );
 				$sailthru_params = array();
 
 				$sailthru_params['vars']['user'] = $user_vars;
@@ -82,7 +82,13 @@ if ( get_option( 'sailthru_setup_complete' ) && ! function_exists( 'wp_mail' ) )
 					$message        .= sprintf( __( 'Email: %s' ), $user->user_email ) . "\r\n";
 
 					add_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
-					@wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message, '', '', $sailthru_params );
+
+					try {
+						wp_mail( get_option( 'admin_email' ), sprintf( __( '[%s] New User Registration' ), $blogname ), $message, '', '', $sailthru_params );
+					} catch ( Exception $e ) {
+						// write log will only write to the logs when in debug mode.
+						write_log( $e );
+					}
 					remove_filter( 'wp_mail_content_type', 'sailthru_set_html_mail_content_type' );
 
 					if ( $switched_locale ) {

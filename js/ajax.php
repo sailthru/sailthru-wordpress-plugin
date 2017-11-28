@@ -93,16 +93,17 @@ switch( $_POST['sailthru_action'] )
 			'options' => $options
 		);
 
-		if ( $return['error'] == false ) {
+		if ( false === $return['error'] ) {
 
 			$sailthru = get_option('sailthru_setup_options');
 			$api_key = $sailthru['sailthru_api_key'];
 			$api_secret = $sailthru['sailthru_api_secret'];
 
 			$client = new Sailthru_Client( $api_key, $api_secret );
-				$res = $client->saveUser($email, $options);
+			$res = $client->saveUser($email, $options);
 
-			if( $res['ok'] != true ) {
+
+			if( $res['ok'] !== 'true' ) {
 				$result['error'] = true;
 				$result['message'] = "There was an error subscribing you. Please try again later.";
 			}

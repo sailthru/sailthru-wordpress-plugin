@@ -1,4 +1,3 @@
-console.log(tag.options);
 
 if (tag.concierge.enabled == true) {
 
