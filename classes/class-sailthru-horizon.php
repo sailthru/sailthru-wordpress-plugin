@@ -544,18 +544,17 @@ class Sailthru_Horizon {
 
 		$horizon_tags = apply_filters( 'sailthru_horizon_meta_tags', $horizon_tags, $post_object );
 
-		$tag_output = "\n\n<!-- BEGIN Sailthru Horizon Meta Information -->\n";
+		echo "\n\n<!-- BEGIN Sailthru Horizon Meta Information -->\n";
 		foreach ( (array) $horizon_tags as $tag_name => $tag_content ) {
 			if ( empty( $tag_content ) ) {
 				continue; // Don't ever output empty tags
 			}
 			$meta_tag    = sprintf( '<meta name="%s" content="%s" />', esc_attr( $tag_name ), esc_attr( $tag_content ) );
-			$tag_output .= apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag );
-			$tag_output .= "\n";
+			echo apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag );
+			echo  "\n";
 		}
-		$tag_output .= "<!-- END Sailthru Horizon Meta Information -->\n\n";
+		echo "<!-- END Sailthru Horizon Meta Information -->\n\n";
 
-		echo esc_html( $tag_output );
 
 	} // sailthru_horizon_meta_tags
 
