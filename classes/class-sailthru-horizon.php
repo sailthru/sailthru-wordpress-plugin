@@ -550,7 +550,7 @@ class Sailthru_Horizon {
 				continue; // Don't ever output empty tags
 			}
 			$meta_tag    = sprintf( '<meta name="%s" content="%s" />', esc_attr( $tag_name ), esc_attr( $tag_content ) );
-			echo apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag );
+			echo wp_kses( apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag ), array( 'meta' => array( 'name' => array(), 'content' => array() ) ) );
 			echo  "\n";
 		}
 		echo "<!-- END Sailthru Horizon Meta Information -->\n\n";
