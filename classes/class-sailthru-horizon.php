@@ -288,7 +288,11 @@ class Sailthru_Horizon {
 						),
 					);
 
+					
 					if ( 'personalize_js_custom' === $options['sailthru_js_type'] ) {
+
+						$params['isCustom'] = true;
+
 						// override defaults
 						if ( 'false' === $options['sailthru_js_auto_track_pageview'] ) {
 							$params['options']['autoTrackPageview'] = (bool) false;
@@ -305,7 +309,7 @@ class Sailthru_Horizon {
 
 					if ( ! is_404() && ! is_preview() && apply_filters( 'sailthru_add_spm_js', true ) ) {
 						wp_enqueue_script( 'personalize_js', '//ak.sail-horizon.com/spm/spm.v1.min.js' );
-						wp_register_script( 'tag', plugin_dir_url( __DIR__ ) . 'js/tag.js' );
+						wp_register_script( 'tag', plugin_dir_url( __DIR__ ) . 'js/tag.js', array('jquery') );
 						wp_localize_script( 'tag', 'tag', $params );
 						wp_enqueue_script( 'tag' );
 					}

@@ -22,9 +22,9 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
 ?>
 <?php if ( $use_spm ) : ?>
 	<div class="sailthru-spm-widget">
-		 <div id="<?php echo esc_attr( $this->id ); ?>"></div>
+		 <div id="<?php echo esc_attr( $this->id ); ?>-container"></div>
 		  <script type="text/javascript">
-              jQuery(function() {
+              window.addEventListener('load', function() {
                   Sailthru.personalize({
                       sections: [
                           {
