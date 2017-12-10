@@ -288,7 +288,7 @@ class Sailthru_Horizon {
 						),
 					);
 
-					
+
 					if ( 'personalize_js_custom' === $options['sailthru_js_type'] ) {
 
 						$params['isCustom'] = true;
