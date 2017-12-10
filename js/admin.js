@@ -82,7 +82,7 @@
             new_val = new_val + 1;
             var second_val = new_val + 1;
             $('#sailthru_value_fields_block').append('<div><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][value]" type="text"  placeholder="display value"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][label]" type="text"  placeholder="value"/></div>');
-            $('#value_amount').attr('value', new_val);
+            $('#value_amount').attr('value', parseInt(new_val, 10));
         }));
 
         $('#add_attr').on("click", (function(e) {
@@ -91,8 +91,44 @@
             new_val = new_val + 1;
             var second_val = new_val + 1;
             $('#sailthru_attr_fields_block').append('<div><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + new_val + ']" type="text"  placeholder="attribute"/><input class="attribute" name="sailthru_forms_options[sailthru_customfield_attr' + second_val + ']" type="text"  placeholder="value"/></div>');
-            $('#attr_amount').attr('value', second_val);
+            $('#attr_amount').attr('value', parseInt(second_val, 10));
         }));
+
+        $('button').on("click", (function(e) {
+            var value = jQuery(this).val();
+            $("#delete_value").val(value);
+        }));
+
+        // add a subscriber
+        $("#sailthru-add-subscriber-form").submit(function(e) {
+            e.preventDefault();
+        });
+        // set up form. make the email template more prominent
+        $("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
+
+        // datepickerfor meta box
+        $('.datepicker').datepicker({
+            dateFormat: 'yy-mm-dd'
+        });
+
+        $("#sortable").disableSelection();
+        var sort = $("#sortable").sortable({
+            axis: 'y',
+            stop: function(event, ui) {
+                var data = sort.sortable("serialize");
+
+                // sends GET to current page
+                $.ajax({
+                    data: data,
+                });
+                //retrieves the numbered position of the field
+                data = data.match(/\d(\d?)*/g);
+                $(function() {
+                    $("#field_order").val(data);
+                })
+
+            }
+        });
 
     });
 

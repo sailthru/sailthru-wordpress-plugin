@@ -6,7 +6,7 @@
  * ------------------------------------------------------------------------ */
 function sailthru_intialize_scout_options() {
 
-	if ( false == get_option( 'sailthru_scout_options' ) ) {
+	if ( false === get_option( 'sailthru_scout_options' ) ) {
 		add_option( 'sailthru_scout_options' );
 	} // end if
 
@@ -17,72 +17,71 @@ function sailthru_intialize_scout_options() {
 		'sailthru_scout_options'
 	);
 
-		add_settings_field(
+	add_settings_field(
+		'sailthru_scout_is_on',
+		__( 'Scout Enabled', 'sailthru-for-wordpress' ),
+		'sailthru_toggle_feature_callback',
+		'sailthru_scout_options',
+		'sailthru_scout_settings_section',
+		array(
+			'sailthru_scout_options',
 			'sailthru_scout_is_on',
-			__( 'Scout Enabled', 'sailthru-for-wordpress' ),
-			'sailthru_toggle_feature_callback',
+			'1',
+			'sailthru_scout_is_on',
+			'Yes',
+		)
+	);
+
+	/*
+		 * If Scout is not on, let's not show all the options
+		 */
+	$scout = get_option( 'sailthru_scout_options' );
+
+	if ( isset( $scout['sailthru_scout_is_on'] ) && $scout['sailthru_scout_is_on'] ) {
+
+		add_settings_field(
+			'sailthru_scout_numVisible',
+			__( 'The number of items to render at a time', 'sailthru-for-wordpress' ),
+			'sailthru_scout_items_callback',
 			'sailthru_scout_options',
 			'sailthru_scout_settings_section',
 			array(
 				'sailthru_scout_options',
-				'sailthru_scout_is_on',
-				'1',
-				'sailthru_scout_is_on',
-				'Yes'
+				'sailthru_scout_numVisible',
+				'10',
+				'sailthru_scout_numVisible',
 			)
 		);
 
-		/*
-		 * If Scout is not on, let's not show all the options
-		 */
-		$scout = get_option( 'sailthru_scout_options' );
-
-		if ( isset( $scout['sailthru_scout_is_on'] ) &&  $scout['sailthru_scout_is_on'] ) {
-
-			add_settings_field(
-				'sailthru_scout_numVisible',
-				__( 'The number of items to render at a time', 'sailthru-for-wordpress' ),
-				'sailthru_scout_items_callback',
+		add_settings_field(
+			'sailthru_scout_includeConsumed',
+			__( 'Include content that has already been consumed by the user?', 'sailthru-for-wordpress' ),
+			'sailthru_scout_includeConsumed_callback',
+			'sailthru_scout_options',
+			'sailthru_scout_settings_section',
+			array(
 				'sailthru_scout_options',
-				'sailthru_scout_settings_section',
-				array(
-					'sailthru_scout_options',
-					'sailthru_scout_numVisible',
-					'10',
-					'sailthru_scout_numVisible'
-				)
-			);
-
-			add_settings_field(
 				'sailthru_scout_includeConsumed',
-				__( 'Include content that has already been consumed by the user?', 'sailthru-for-wordpress' ),
-				'sailthru_scout_includeConsumed_callback',
-				'sailthru_scout_options',
-				'sailthru_scout_settings_section',
-				array(
-					'sailthru_scout_options',
-					'sailthru_scout_includeConsumed',
-					'false',
-					'sailthru_scout_includeConsumed'
-				)
-			);
+				'false',
+				'sailthru_scout_includeConsumed',
+			)
+		);
 
-			add_settings_field(
+		add_settings_field(
+			'sailthru_scout_renderItem',
+			__( 'Override rendering function? (Please do not include &lt;p&gt;&lt;/p&gt; tags -- <a href="http://docs.sailthru.com/documentation/products/scout" target="_blank">details here</a>.)', 'sailthru-for-wordpress' ),
+			'sailthru_scout_renderItem_callback',
+			'sailthru_scout_options',
+			'sailthru_scout_settings_section',
+			array(
+				'sailthru_scout_options',
 				'sailthru_scout_renderItem',
-				__( 'Override rendering function? (Please do not include &lt;p&gt;&lt;/p&gt; tags -- <a href="http://docs.sailthru.com/documentation/products/scout" target="_blank">details here</a>.)', 'sailthru-for-wordpress' ),
-				'sailthru_scout_renderItem_callback',
-				'sailthru_scout_options',
-				'sailthru_scout_settings_section',
-				array(
-					'sailthru_scout_options',
-					'sailthru_scout_renderItem',
-					'false',
-					'sailthru_scout_renderItem'
-				)
-			);
+				'false',
+				'sailthru_scout_renderItem',
+			)
+		);
 
-		} // end if concierge is on
-
+	} // end if concierge is on
 
 	register_setting(
 		'sailthru_scout_options',
@@ -119,20 +118,17 @@ function sailthru_scout_options_callback() {
  */
 function sailthru_scout_items_callback( $args ) {
 
-	$scout = get_option( 'sailthru_scout_options' );
-	$saved_value = isset( $scout['sailthru_scout_numVisible'] )  ? $scout['sailthru_scout_numVisible'] : 5 ;
+	$scout       = get_option( 'sailthru_scout_options' );
+	$saved_value = isset( $scout['sailthru_scout_numVisible'] ) ? $scout['sailthru_scout_numVisible'] : 5;
 
-
-	$html = '<select name="sailthru_scout_options[sailthru_scout_numVisible]">';
+	echo '<select name="sailthru_scout_options[sailthru_scout_numVisible]">';
 
 	$i = 0;
 	while ( $i <= 40 ) {
-		$html .= '<option value="'.$i.'" ' . selected( $saved_value, $i, false ) . '>' . $i . '</option>';
+		echo  '<option value="' . esc_attr( $i ) . '" ' . esc_attr( selected( $saved_value, $i, false ) ) . '>' . esc_attr( $i ) . '</option>';
 		$i++;
 	}
-	$html .= '</select>';
-
-	echo $html;
+	echo  '</select>';
 
 }
 
@@ -141,15 +137,13 @@ function sailthru_scout_items_callback( $args ) {
  */
 function sailthru_scout_includeConsumed_callback( $args ) {
 
-	$scout = get_option( 'sailthru_scout_options' );
-		$saved_value = isset( $scout['sailthru_scout_includeConsumed'] ) ? $scout['sailthru_scout_includeConsumed'] : '';
+	$scout       = get_option( 'sailthru_scout_options' );
+	$saved_value = isset( $scout['sailthru_scout_includeConsumed'] ) ? $scout['sailthru_scout_includeConsumed'] : '';
 
-	$html = '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
-		$html .= '<option value="false" ' . selected( $saved_value, "false", false) . '>No</option>';
-		$html .= '<option value="true" ' . selected( $saved_value, "true", false) . '>Yes</option>';
-	$html .= '</select>';
-
-	echo $html;
+	echo  '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
+	echo  '<option value="false" ' . esc_attr( selected( $saved_value, 'false', false ) ) . '>No</option>';
+	echo  '<option value="true" ' . esc_attr( selected( $saved_value, 'true', false ) ) . '>Yes</option>';
+	echo  '</select>';
 
 }
 
@@ -160,12 +154,10 @@ function sailthru_scout_includeConsumed_callback( $args ) {
  */
 function sailthru_scout_renderItem_callback( $args ) {
 
-	$scout = get_option( 'sailthru_scout_options' );
-		$saved_value = isset( $scout['sailthru_scout_renderItem'] ) ? $scout['sailthru_scout_renderItem'] : '';
+	$scout       = get_option( 'sailthru_scout_options' );
+	$saved_value = isset( $scout['sailthru_scout_renderItem'] ) ? $scout['sailthru_scout_renderItem'] : '';
 
-	$html = '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
-
-	echo $html;
+	echo '<textarea name="sailthru_scout_options[sailthru_scout_renderItem]">' . esc_textarea( $saved_value ) . '</textarea>';
 
 }
 
