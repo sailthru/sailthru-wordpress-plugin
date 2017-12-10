@@ -1,5 +1,16 @@
 # Changelog
 
+## v3.1 (2017-12-10)
+Added ability to select JS versions in the setup
+Added new flag to check for API readiness. Must re-save keys ato add flag
+Added a check to verify if SPM is enabled on Sailthru customer account
+Subscribe widget now supports instance level source var
+Subscribe widget now can add an Event API call when converting
+Non VIP customers can create a WordPress user when new users subscribe via the subscribe widget
+Fixed a number of bugs, and updated coding standards to WordPress VIP
+Concierge and Scout disabled when Sailthru Script Tag is enabled
+Added support for latest SPM and Sailthru Script Tag. 
+
 ## v3.0.8 (2017-10--24)
 Fixed a bug with deployment of Sailthru Script Tag where Sailthru functions are not available due to incorrect Setup of Sailthru.init
 Added filters to allow customers to customize rendering of Script Tag 
