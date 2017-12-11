@@ -60,6 +60,14 @@ class Sailthru_Horizon {
 			add_option( 'sailthru_override_wp_mail', 1 );
 		} // end if
 
+		if ( true === get_option( 'sailthru_setup_complete' ) || true === get_option( 'sailthru_api_validated' ) ) {
+			update_option( 'sailthru_api_validated', true );
+			update_option( 'sailthru_setup_complete', true );
+		} else {
+			update_option( 'sailthru_api_validated', false );
+			update_option( 'sailthru_setup_complete', false );
+		}
+
 	} // end activate
 
 	/**
