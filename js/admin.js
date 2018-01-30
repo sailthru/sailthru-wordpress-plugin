@@ -49,6 +49,8 @@
 
         $('.selection').parent().parent().hide();
         $('#type').closest('table').find("tr").last().hide();
+        // hide hidden field
+        $("#sailthru_customfield_hidden_value").closest('tr').hide();
 
         $('.sailthru-del-field').click(function(e) {
             e.preventDefault();
@@ -57,7 +59,16 @@
 
         $('#type').on("change", (function() {
 
-            if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'hidden' || $(this).attr('value') == 'checkbox') {
+            // toggle fields for hidden field inputs
+            if ($(this).attr('value') == 'hidden') {
+               $("#sailthru_customfield_hidden_value").closest('tr').show();
+               $("#sailthru_customfield_label").closest('tr').hide();
+            } else {
+                $("#sailthru_customfield_hidden_value").closest('tr').hide();
+                $("#sailthru_customfield_label").closest('tr').show();
+            }
+
+            if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'checkbox') {
                 $(this).closest('table').find("tr").last().show();
                 $('#add_value').show();
                 $("input[name*=sailthru_customfield_value1]").show();
