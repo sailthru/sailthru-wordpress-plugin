@@ -30,7 +30,7 @@
 				user_input,
 				function(data) {
 					data = jQuery.parseJSON(data);
-					if( data.error == true ) {
+					if( data.success == false ) {
 						$(".sailthru-add-subscriber-errors").html(data.message);
 					} else {
 						$('#sailthru-modal .sailthru-signup-widget-close').fadeIn();
