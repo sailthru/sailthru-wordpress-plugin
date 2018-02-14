@@ -187,21 +187,21 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 									
 									echo '<div class="checkbox">';
 									echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
-
-									$html_array = count( $items ) > 1 ? '[]' : '';
 									
 									foreach ( $items as $item ) {
 										
 										if ( ! empty( $item ) ) {
 											$vals = explode( ':', $item );
-											
+
 											echo '<input ';
 
 											if ( 'checked' === $instance[ 'show_' . esc_attr( $name_stripped ) . '_required' ] ) {
 												echo 'required=required ';
 											}
+
+
 											
-											echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) . $html_array.'" value="' . esc_attr( $vals[1] ) . '"  ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
+											echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"  ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
 										}
 									}
 									echo '</div>';
@@ -296,7 +296,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 								echo '</div>';
 							} elseif ( 'checkbox' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 								$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-								$html_array = count( $items ) > 1 ? '[]' : '';
 
 								echo '<div class="checkbox">';
 								echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
@@ -309,7 +308,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 										echo 'required=required ';
 									}
 
-									echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) . $html_array. '" value="' . esc_attr( $vals[1] ) . '"> ' . esc_html( isset( $vals[0] ) ? $vals[0] : '' ) . '';
+									echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"> ' . esc_html( isset( $vals[0] ) ? $vals[0] : '' ) . '';
 								}
 
 								echo '</div>';
