@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.2.0 (2018-02-18)
+Fixed bug with rendering of checkboxes on widget subscription.
+Fixed issue with validation of email addresses on subscription widget. 
+Fixed PHP warnings on newly created instance on subscription widget if debugging is turned on. 
+
+
 ## v3.1 (2017-12-10)
 Added ability to select JS versions in the setup
 Added new flag to check for API readiness. Must re-save keys ato add flag
