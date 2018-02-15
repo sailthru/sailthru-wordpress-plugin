@@ -11,6 +11,39 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
 	protected $api_uri = 'https://api.sailthru.com';
 
+
+	private function cleanDebugParams( $debug_params ) {
+
+		if ( isset( $debug_params['payload']['api_key'] ) ) {
+			unset( $debug_params['payload']['api_key'] );
+		}
+
+		if ( isset( $debug_params['payload']['sig'] ) ) {
+			unset( $debug_params['payload']['sig'] );
+		}
+
+		if ( isset( $debug_params['api'] ) ) {
+			$url = $debug_params['api'];
+
+			if ( $url = wp_parse_url( $url ) ) {
+				$debug_params['api'] = $url['scheme'] . '://' . $url['host'] . $url['path'];
+			}
+		}
+
+		if ( isset( $debug_params['request'] ) ) {
+			$url = $debug_params['request'];
+			if ( $url = wp_parse_url( $url ) ) {
+				$query = $url['query'];
+				parse_str( $url['query'], $params );
+				unset( $params['api_key'] );
+				unset( $params['sig'] );
+				http_build_query( $params );
+				$debug_params['request'] = $url['scheme'] . '://' . $url['host'] . $url['path'] . '?' . http_build_query( $params );
+			}
+		}
+		return $debug_params;
+	}
+
 	/**
 	 * Prepare JSON payload
 	 */
@@ -81,17 +114,19 @@ class WP_Sailthru_Client extends Sailthru_Client {
 		);
 
 		if ( 'GET' === $method ) {
+
 			$debug_params['request'] = $url_with_params;
-			write_log( $debug_params );
+
 			if ( defined( 'WPCOM_IS_VIP_ENV' ) && true === WPCOM_IS_VIP_ENV ) {
 				$reply = vip_safe_wp_remote_get( $url, $data );
 			} else {
 				$reply = wp_remote_get( $url, $data );
 			}
 		} else {
-			write_log( $debug_params );
 			$reply = wp_remote_post( $url, $data );
 		}
+
+		write_log( $this->cleanDebugParams( $debug_params ) );
 		// end debugging call
 
 		if ( isset( $reply ) ) {

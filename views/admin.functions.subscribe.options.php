@@ -76,6 +76,7 @@ function sailthru_initialize_forms_options() {
 		echo '<p>Use the form below to create a custom field library. Each created field will be available in our Sailthru Subscribe widget and saved to Sailthru user profiles.</p>';
 
 		if ( ! empty( $customfields ) ) {
+
 			echo '<table class="wp-list-table widefat">';
 			echo '<thead>';
 			echo '<th scope="col" class=manage-column">&nbsp;</th>';
@@ -93,8 +94,7 @@ function sailthru_initialize_forms_options() {
 					foreach ( $order_list as $pos ) {
 						for ( $i = 1; $i <= (int) $key; $i++ ) {
 							if ( $i === (int) $pos ) {
-								if ( isset( $customfields[ $i ]['sailthru_customfield_label'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_label'] )
-									&& isset( $customfields[ $i ]['sailthru_customfield_name'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
+								if ( isset( $customfields[ $i ]['sailthru_customfield_name'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
 									echo '<tr id="pos_' . esc_attr( $i ) . '">';
 									echo '<td><span class="icon-sort">&nbsp;</span></td>';
 									echo '<td>' . esc_html( $customfields[ $i ]['sailthru_customfield_label'] ) . ' </td>';
@@ -108,8 +108,7 @@ function sailthru_initialize_forms_options() {
 					}
 				} else {
 					for ( $i = 1; $i <= $key; $i++ ) {
-						if ( isset( $customfields[ $i ]['sailthru_customfield_label'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_label'] )
-							&& isset( $customfields[ $i ]['sailthru_customfield_name'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
+						if ( isset( $customfields[ $i ]['sailthru_customfield_name'] ) and ! empty( $customfields[ $i ]['sailthru_customfield_name'] ) ) {
 							echo '<tr id="pos_' . esc_attr( $i ) . '">';
 							echo '<td><span class="icon-sort">&nbsp;</span></td>';
 							echo '<td>' . esc_html( $customfields[ $i ]['sailthru_customfield_label'] ) . ' </td>';
@@ -390,6 +389,21 @@ function sailthru_initialize_forms_options() {
 	);
 
 	add_settings_field(
+		'sailthru_customfield_hidden_value',     // ID used to identify the field throughout the theme
+		__( 'Field Value', 'sailthru-for-wordpress' ), // The label to the left of the option interface element
+		'sailthru_html_text_input_callback',   // The name of the function responsible for rendering the option interface
+		'sailthru_forms_options',      // The page on which this option will be displayed
+		'sailthru_forms_section',      // The name of the section to which this field belongs
+		array(           // The array of arguments to pass to the callback. In this case, just a description.
+			'sailthru_forms_options',
+			'sailthru_customfield_hidden_value',
+			'',
+			'sailthru_customfield_hidden_value',
+			'Value of hidden field',
+		)
+	);
+
+	add_settings_field(
 		'sailthru_customfield_field_order',
 		__( '', 'sailthru-for-wordpress' ),
 		'field_order',
@@ -565,13 +579,14 @@ function sailthru_forms_handler( $input ) {
 			$output[ $new_key ]['sailthru_customfield_attr'] = sanitize_text_field( $input['sailthru_customfield_attr'] );
 		}
 
+
 		if ( 'select' === $input['sailthru_customfield_type'] || 'radio' === $input['sailthru_customfield_type'] || 'checkbox' === $input['sailthru_customfield_type'] ) {
 
 			$amount = sanitize_text_field( $input['sailthru_customfield_value_val'] );
 			$values = '';
 			$amount = count( $input['sailthru_customfield_value'] );
 
-			for ( $i = 0; $i <= $amount; $i++ ) {
+			for ( $i = 0; $i < $amount; $i++ ) {
 
 				if ( ! empty( $input['sailthru_customfield_value'][ $i ]['value'] ) ) {
 					$values .= sanitize_text_field( $input['sailthru_customfield_value'][ $i ]['value'] ) . ':';
@@ -579,12 +594,14 @@ function sailthru_forms_handler( $input ) {
 				}
 			} //end for
 
-			$output[ $new_key ]['sailthru_customfield_value'] = $values;
 			$values = rtrim( $values, ',' );
+			$output[ $new_key ]['sailthru_customfield_value'] = $values;
 		}
+		
 		if ( 'hidden' === $input['sailthru_customfield_type'] ) {
-			$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field( $input['sailthru_customfield_value2'] );
+			$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field( $input['sailthru_customfield_hidden_value'] );
 		}
+
 		if ( ! empty( $input['sailthru_customfield_attr1'] ) && ! empty( $input['sailthru_customfield_attr2'] ) ) {
 			$amount = $input['sailthru_customfield_attr_val'];
 			$values = '';
@@ -601,6 +618,7 @@ function sailthru_forms_handler( $input ) {
 			}
 			$output[ $new_key ]['sailthru_customfield_attr'] = $values;
 		}
+
 	}// end if empty field name
 
 	if ( ! empty( $input['sailthru_customfield_delete'] ) ) {

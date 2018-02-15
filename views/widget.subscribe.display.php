@@ -157,7 +157,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 									foreach ( $items as $item ) {
 										if ( ! empty( $item ) ) {
 											$vals = explode( ':', $item );
-											echo '<option value="' . esc_attr( $vals[0] ) . '">' . esc_attr( $vals[1] ) . '</option>';
+											echo '<option value="' . esc_attr( $vals[1] ) . '">' . esc_attr( $vals[0] ) . '</option>';
 										}
 									}
 
@@ -177,26 +177,31 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 											if ( 'checked' === $instance[ 'show_' . esc_attr( $name_stripped ) . '_required' ] ) {
 												echo 'required=required ';
 											}
-											echo 'type="radio" name="custom_' . esc_attr( $name_stripped ) . '" value="' . esc_attr( $vals[0] ) . '" ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
+											echo 'type="radio" name="custom_' . esc_attr( $name_stripped ) . '" value="' . esc_attr( $vals[1] ) . '" ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
 										}
 									}
 
 									echo '</div>';
 								} elseif ( 'checkbox' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
-
 									$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+									
 									echo '<div class="checkbox">';
 									echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
-
+									
 									foreach ( $items as $item ) {
+										
 										if ( ! empty( $item ) ) {
 											$vals = explode( ':', $item );
+
 											echo '<input ';
 
 											if ( 'checked' === $instance[ 'show_' . esc_attr( $name_stripped ) . '_required' ] ) {
 												echo 'required=required ';
 											}
-											echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) . '[]" value="' . esc_attr( $vals[0] ) . '"  ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[1] ) . '';
+
+
+											
+											echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"  ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
 										}
 									}
 									echo '</div>';
@@ -206,9 +211,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 									//check if the field is required
 									if ( 'checked' === $instance[ 'show_' . $name_stripped . '_required' ] ) {
 
-										if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type'] ) {
-											echo '<label for="custom_' . esc_attr( $name_stripped ) . '" class="sailthru-widget-label sailthru-widget-required">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . ' </label>';
-										}
+										echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
 
 										echo '<input ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) ) . ' type="' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_type'] ) . '" ';
 
@@ -220,9 +223,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 
 									} else {
 
-										if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type'] ) {
-											echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
-										}
+										echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
 
 										echo '<input ';
 
@@ -272,7 +273,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 
 								foreach ( $items as $item ) {
 									$vals = explode( ':', $item );
-									echo '<option value="' . esc_attr( $vals[0] ) . '">' . esc_attr( isset( $vals[1] ) ? $vals[1] : '' ) . '</option>';
+									echo '<option value="' . esc_attr( $vals[1] ) . '">' . esc_attr( isset( $vals[0] ) ? $vals[0] : '' ) . '</option>';
 								}
 
 								echo '</select>';
@@ -289,12 +290,13 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 										echo 'required=required ';
 									}
 
-									echo 'type="radio" name="custom_' . esc_attr( $name_stripped ) . '" value="' . esc_attr( $vals[0] ) . '"> ' . esc_html( isset( $vals[1] ) ? $vals[1] : '' ) . '';
+									echo 'type="radio" name="custom_' . esc_attr( $name_stripped ) . '" value="' . esc_attr( $vals[1] ) . '"> ' . esc_html( isset( $vals[0] ) ? $vals[0] : '' ) . '';
 								}
 
 								echo '</div>';
 							} elseif ( 'checkbox' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 								$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
+
 								echo '<div class="checkbox">';
 								echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
 
@@ -306,7 +308,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 										echo 'required=required ';
 									}
 
-									echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) . '[]" value="' . esc_attr( $vals[0] ) . '"> ' . esc_html( isset( $vals[1] ) ? $vals[1] : '' ) . '';
+									echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"> ' . esc_html( isset( $vals[0] ) ? $vals[0] : '' ) . '';
 								}
 
 								echo '</div>';
@@ -321,10 +323,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 								//check if the field is required
 								if ( isset( $instance[ 'show_' . $name_stripped . '_required' ] ) && 'checked' === $instance[ 'show_' . $name_stripped . '_required' ] ) {
 
-									if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type']  ) {
-										echo '<label for="custom_' . esc_attr( $name_stripped ) . '" class="sailthru-widget-label sailthru-widget-required">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . ' </label>';
-									}
-
 									echo '<input ' . esc_attr( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'] ) ) . ' type="' . esc_attr( $customfields[ $field_key ]['sailthru_customfield_type'] ) . '" ';
 
 									if ( 'hidden' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
@@ -334,10 +332,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 									echo esc_attr( sailthru_attributes( $attributes ) ) . 'required="required" name="custom_' . esc_attr( $name_stripped ) . '" id="sailthru_' . esc_attr( $name_stripped ) . '_name" class="form-control"/>';
 
 								} else {
-
-									if ( 'hidden' !== $customfields[ $field_key ]['sailthru_customfield_type'] ) {
-										echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
-									}
 
 									echo '<input ';
 
