@@ -300,17 +300,14 @@ class Sailthru_Subscribe_Fields {
 		}
 
 		// description
-		$post_description = get_the_excerpt();
+		$post_description = $post_object->post_excerpt;
 		if ( empty( $post_description ) ) {
-			$excerpt_length = 250;
 			// get the entire post and then strip it down to just sentences.
 			$text             = $post_object->post_content;
 			$text             = apply_filters( 'the_content', $text );
-			$text             = str_replace( ']]>', ']]>', $text );
 			$text             = strip_shortcodes( $text );
 			$text             = wp_strip_all_tags( $text );
-			$text             = substr( $text, 0, $excerpt_length );
-			$post_description = $this->reverse_strrchr( $text, '.', 1 );
+			$post_description = $text;
 		}
 		$horizon_tags['sailthru.description'] = esc_html( $post_description );
 
@@ -348,19 +345,6 @@ class Sailthru_Subscribe_Fields {
 		echo esc_html( $tag_output );
 
 	} // sailthru_horizon_meta_tags
-
-
-	/*-------------------------------------------
-	 * Utility Functions
-	 *------------------------------------------*/
-
-	/*
-	 * Returns the portion of haystack which goes until the last occurrence of needle
-	 * Credit: http://www.wprecipes.com/wordpress-improved-the_excerpt-function
-	 */
-	function reverse_strrchr( $haystack, $needle, $trail ) {
-		return strrpos( $haystack, $needle ) ? substr( $haystack, 0, strrpos( $haystack, $needle ) + $trail ) : false;
-	}
 
 
 	/*--------------------------------------------*

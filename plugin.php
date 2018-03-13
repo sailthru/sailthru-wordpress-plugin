@@ -1,6 +1,6 @@
 <?php
 /**
-Plugin Name: Sailthru for WordPress
+Plugin Name: Sailthru for WordPress (HTV)
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your WordPress set up.
 Version: 3.2.0
@@ -248,7 +248,7 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					if ( ! empty( $post->post_excerpt ) ) {
 						$data['description'] = $post->post_excerpt;
 					} else {
-						$data['description'] = wp_trim_words( $post->post_content, 250, '' );
+						$data['description'] = $post->post_content;
 					}
 					// image & thumbnail
 					if ( has_post_thumbnail( $post->ID ) ) {
