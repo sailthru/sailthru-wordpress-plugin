@@ -1,6 +1,6 @@
 <?php
 /**
-Plugin Name: Sailthru for WordPress
+Plugin Name: Sailthru for WordPress (HTV)
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your WordPress set up.
 Version: 3.2.0
