@@ -505,6 +505,19 @@ function sailthru_setup_handler( $input ) {
 				'domains'     => $settings['domains'],
 			);
 
+			if ( true === apply_filters( 'sailthru_slim_settings', true ) ) {
+				
+				if ( array_key_exists ( 'spm_enabled', $settings['features'] ) ) {
+   					$spm = $settings['features']['spm_enabled'];
+   				}
+
+				unset($st_settings['features']);
+				unset($st_settings['domains']);
+				$st_settings['features']['spm_enabled'] = $spm;
+			}
+
+			$st_settings = apply_filters( 'sailthru_settings_api_filter', $st_settings );
+
 			update_option( 'sailthru_settings', $st_settings );
 			update_option( 'sailthru_api_validated', true );
 		} else {
