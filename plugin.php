@@ -307,7 +307,7 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 
 				}
 			} catch ( Sailthru_Client_Exception $e ) {
-				//silently fail
+				write_log($e);
 				return;
 			}
 		}

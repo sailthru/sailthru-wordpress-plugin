@@ -598,7 +598,7 @@ class Sailthru_Horizon {
 			'sailthru-post-data',
 			__( 'Sailthru Post Data', 'sailthru' ),
 			array( $this, 'post_metabox_display' ),
-			'post',
+			['post', 'page'],
 			'side',
 			'high'
 		);
