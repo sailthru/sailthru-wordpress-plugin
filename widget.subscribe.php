@@ -545,7 +545,6 @@ function sailthru_register_subscribe_widget() {
 }
 add_action( 'widgets_init', 'sailthru_register_subscribe_widget' );
 
-
 function sailthru_widget_shortcode( $atts ) {
 
 	// Configure defaults and extract the attributes into variables
