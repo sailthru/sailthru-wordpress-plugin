@@ -238,7 +238,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function add_ajax_library() {
 		echo '<script type="text/javascript">';
-		echo 'var sailthru_vars = { "ajaxurl" : "' . esc_js( home_url( 'wp-admin/admin-ajax.php' ) ) . '"}';
+		echo 'var sailthru_vars = ' . wp_json_encode( [ 'ajaxurl' => admin_url( 'admin-ajax.php' ) ]);
 		echo '</script>';
 	} // end add_ajax_library
 
