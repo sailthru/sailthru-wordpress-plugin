@@ -61,6 +61,7 @@ require_once SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php';
  */
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php';
+require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-content.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-mailer.php';
 
@@ -303,8 +304,11 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 						}
 					}
 
+					// Get the Whitelisted vars from the settings screen. 
+					$whitelist = explode(', ', $sailthru['content_vars']);
+
 					// Apply vars whitelist filtering to only include vars that are white listed. 
-					$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $data['vars']);
+					$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $whitelist);
 					
 					// Remove everything except the whitelisted vars.
 					foreach ( $whitelist as $key ) {
