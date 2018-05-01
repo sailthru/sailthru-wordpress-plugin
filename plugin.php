@@ -302,6 +302,23 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 							}
 						}
 					}
+
+					// Apply vars whitelist filtering to only include vars that are white listed. 
+					$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $data['vars']);
+					
+					// Remove everything except the whitelisted vars.
+					foreach ( $whitelist as $key ) {
+
+						if ( isset ( $data['vars'][$key]) )  {
+							unset( $data['vars'][$key] );
+						}
+					}
+
+					// If there are no vars left, remove it as a parameter. 
+					if ( empty ($data['vars'] ) ) {
+						unset( $data['vars'] );
+					}
+
 					// Make the API call to Sailthru
 					$api = $client->apiPost( 'content', $data );
 
