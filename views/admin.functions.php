@@ -332,17 +332,12 @@ function sailthru_spm_admin_widget( $spm_sections,  $active_section_id, $field_n
 	if ( isset( $spm_sections['sections'] ) &&  count( $spm_sections['sections'] ) > 0 ) {
 		echo '<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>';
 		echo '<input type="hidden" value="personalize_js" name="sailthru_widget_type" />';
-		echo '<select name="' . $field_name . '">';
+		echo '<select name="' . esc_attr( $field_name ) . '">';
 		echo '<option value="">-- Select --</option>';
 
 		foreach ( $spm_sections['sections'] as $section ) {
 
-			if ( $section['section_id'] === $active_section_id ) {
-				$selected = ' selected';
-			} else {
-				$selected = '';
-			}
-			echo  '<option value="' . esc_attr( $section['section_id'] ) . '"' . esc_attr( $selected ) . '>' . esc_attr( $section['name'] ) . '</option>';
+			echo  '<option value="' . esc_attr( $section['section_id'] ) . '"' . selected( $section['section_id'] , $active_section_id ) . '>' . esc_html( $section['name'] ) . '</option>';
 
 		}
 		echo  '</select>';
