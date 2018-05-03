@@ -267,7 +267,7 @@ class Sailthru_Scout_Widget extends WP_Widget {
 			)
 		);
 		$title      = esc_attr( $instance['title'] );
-		$section_id = esc_attr( $instance['sailthru_spm_section'] );
+		$active_section_id = esc_attr( $instance['sailthru_spm_section'] );
 
 		// Display the admin form.
 		include SAILTHRU_PLUGIN_PATH . 'views/widget.scout.admin.php';
