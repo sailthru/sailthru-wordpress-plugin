@@ -572,7 +572,7 @@ function sailthru_widget_shortcode( $atts ) {
 	if ( ! empty( $atts['modal'] ) ) {
 
 		if ( 'true' === $atts['modal'] ) {
-			$before_widget = '<div id="mask"></div><a id="show_shortcode" href="#">' . esc_html( $atts['text'] ) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
+			$before_widget = '<div id="mask"></div><a class="show_shortcode" href="#">' . esc_html( $atts['text'] ) . '</a><div id="sailthru-modal"><div class="sailthru_shortcode_hidden">';
 			$after_widget  = '</div></div>';
 		} else {
 			$before_widget = '<div class="sailthru_shortcode">';

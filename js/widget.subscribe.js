@@ -3,14 +3,14 @@
 	$(function () {
 		$('#sailthru-modal').hide();
 
-		$( "#show_shortcode" ).on( "click", function( e ) {
+		$( ".show_shortcode" ).on( "click", function( e ) {
 			e.preventDefault();
 			var posTop = $(this).offset().top;
 			var modal = $( "#sailthru-modal");
    		 	modal.css("top", '100px');
    		 	modal.css("left", Math.max(0, (($(window).width() - $(modal).outerWidth()) / 2) + $(window).scrollLeft()) + "px");
 
-   		 	$('.sailthru-signup-widget-close').show();
+   		 	$('.sailthru_shortcode_hidden .sailthru-signup-widget-close').show();
    		 	modal.fadeIn();
 
 		});
