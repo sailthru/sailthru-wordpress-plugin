@@ -25,20 +25,24 @@
 			e.preventDefault();
 			var user_input = $(this).serialize();
 			var form = $(this);
-			$.post(
-				sailthru_vars.ajaxurl,
-				user_input,
-				function(data) {
-					data = jQuery.parseJSON(data);
-					if( data.success == false ) {
-						$('#'+ form.attr('id') + " .sailthru-add-subscriber-errors").html(data.message);
-					} else {
-						$('#sailthru-modal .sailthru-signup-widget-close').fadeIn();
-						$(form).html('');
-						$(form).parent().find(".success").show();
-					}
-				}
-			);
+			$.ajax({
+                url: sailthru_vars.ajaxurl,
+                type: 'post',
+                data: user_input,
+                dataType: "json",
+                xhrFields: {
+                    withCredentials: true
+                },
+                success: function (data, status) {
+                    if (data.success == false) {
+                        $('#' + form.attr('id') + " .sailthru-add-subscriber-errors").html(data.message);
+                    } else {
+                        $('#sailthru-modal .sailthru-signup-widget-close').fadeIn();
+                        $(form).html('');
+                        $(form).parent().find(".success").show();
+                    }
+                }
+            } );
 
 		});
 
