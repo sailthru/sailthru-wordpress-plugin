@@ -291,15 +291,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function return_response( $response ) {
 
-		if ( ! empty( $_SERVER['HTTP_X_REQUESTED_WITH'] ) && 'xmlhttprequest' === strtolower( $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) {
-			header('Content-Type: application/json');
-			echo  wp_json_encode( $response );
-			exit();
-		} else {
-			echo wp_kses_post( $response['message'] );
-			exit();
-		}
-
+		header('Content-Type: application/json');
+		echo  wp_json_encode( $response );
+		exit();
 	}
 
 	function add_subscriber() {
