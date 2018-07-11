@@ -278,6 +278,15 @@ function sailthru_save_post( $post_id, $post, $post_before ) {
 					if ( ! empty( $post_tags ) ) {
 						$data['tags'] = $post_tags;
 					}
+
+					// Apply any filters to the tags. 
+					$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'] ] ) ; 
+
+					// Check if the filter has returned sailthru.tags and convert to string. 
+					if ( is_array( $data['tags'] ) && isset ( $data['tags']['sailthru.tags'] ) ) {
+						$data['tags'] =  $data['tags']['sailthru.tags']; 
+					}
+
 					$post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
 					if ( ! empty( $post_expiration ) ) {
 						$data['expire_date'] = esc_attr( $post_expiration );
