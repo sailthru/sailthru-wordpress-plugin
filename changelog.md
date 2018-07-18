@@ -1,5 +1,7 @@
 # Changelog
 
+## v3.2.2 (2018-06-18)
+Updated sailthru_horizon_meta_tags filter to apply to Content API calls. 
 
 ## v3.2.1 (2018-04-11)
 Added a filter to allow customers to override API verification in the setup process. The goal of this feature is to mitigate some edge cases where the setup process returns a payload to WordPress VIP creates an error on their platform. Most customers using this plugin are not affected. 
