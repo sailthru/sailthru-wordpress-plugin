@@ -738,6 +738,13 @@ function sailthru_setup_handler( $input ) {
 		}
 	}
 
+	// Content Vars
+	if ( isset( $input['content_vars'] ) ) {
+		$output['content_vars'] = filter_var( $input['content_vars'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['content_vars'] = '';
+	}
+
 	update_option( 'sailthru_setup_complete', true );
 	return $output;
 
