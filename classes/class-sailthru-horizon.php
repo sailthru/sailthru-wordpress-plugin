@@ -33,10 +33,6 @@ class Sailthru_Horizon {
 		// Register the Horizon meta tags
 		add_action( 'wp_head', array( $this, 'sailthru_horizon_meta_tags' ) );
 
-		// Setup the meta box hooks
-		add_action( 'add_meta_boxes', array( $this, 'sailthru_post_metabox' ) );
-		add_action( 'save_post', array( $this, 'save_custom_meta_data' ) );
-
 		// Check for updates and make changes as needed
 		add_action( 'plugins_loaded', array( $this, 'sailthru_update_check' ) );
 
@@ -483,7 +479,6 @@ class Sailthru_Horizon {
 		global $post;
 
 		$post_object = get_post();
-
 		$horizon_tags = array();
 
 		// date
@@ -494,26 +489,9 @@ class Sailthru_Horizon {
 		$post_title                     = get_the_title();
 		$horizon_tags['sailthru.title'] = esc_attr( $post_title );
 
-		// tags in the order of priority
-		// first sailthru tags
-		$post_tags = get_post_meta( $post_object->ID, 'sailthru_meta_tags', true );
-
-		// WordPress tags
-		if ( empty( $post_tags ) ) {
-			$post_tags = get_the_tags();
-			if ( $post_tags ) {
-				$post_tags = esc_attr( implode( ', ', wp_list_pluck( $post_tags, 'name' ) ) );
-			}
-		}
-
-		// WordPress categories
-		if ( empty( $post_tags ) ) {
-			$post_categories = get_the_category( $post_object->ID );
-			foreach ( $post_categories as $post_category ) {
-				$post_tags .= $post_category->name . ', ';
-			}
-			$post_tags = substr( $post_tags, 0, -2 );
-		}
+		// Get the tags. 
+		$content = new Sailthru_Content_Settings;
+		$post_tags = $content->generate_tags( $post->ID);
 
 		if ( ! empty( $post_tags ) ) {
 			$horizon_tags['sailthru.tags'] = $post_tags;
@@ -586,120 +564,5 @@ class Sailthru_Horizon {
 	function reverse_strrchr( $haystack, $needle, $trail ) {
 		return strrpos( $haystack, $needle ) ? substr( $haystack, 0, strrpos( $haystack, $needle ) + $trail ) : false;
 	}
-
-
-	/*--------------------------------------------*
-	 * Hooks
-	 *--------------------------------------------*/
-
-	/**
-	 * Introduces the meta box for expiring content,
-	 * and a meta box for Sailthru tags.
-	 */
-	public function sailthru_post_metabox() {
-
-		add_meta_box(
-			'sailthru-post-data',
-			__( 'Sailthru Post Data', 'sailthru' ),
-			array( $this, 'post_metabox_display' ),
-			['post', 'page'],
-			'side',
-			'high'
-		);
-
-	} // sailthru_post_metabox
-
-	/**
-	 * Adds the input box for the post meta data.
-	 *
-	 * @param object  $post The post to which this information is going to be saved.
-	 */
-	public function post_metabox_display( $post ) {
-
-		$sailthru_post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
-		$sailthru_meta_tags       = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
-
-		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
-
-		// post expiration
-		echo '<p><strong>Sailthru Post Expiration</strong></p>';
-		echo  '<input id="sailthru_post_expiration" type="text" placeholder="YYYY-MM-DD" name="sailthru_post_expiration" value="' . esc_attr( $sailthru_post_expiration ) . '" size="25" class="datepicker" />';
-		echo  '<p class="description">';
-		echo  'Flash sales, events and some news stories should not be recommended after a certain date and time. Use this Sailthru-specific meta tag to prevent Horizon from suggesting the content at the given point in time. <a href="http://docs.sailthru.com/documentation/products/horizon-data-collection/horizon-meta-tags" target="_blank">More information can be found here</a>.';
-		echo  '</p><!-- /.description -->';
-
-		// post meta tags
-		echo  '<p>&nbsp;</p>';
-		echo  '<p><strong>Sailthru Meta Tags</strong></p>';
-		echo  '<input id="sailthru_meta_tags" type="text" name="sailthru_meta_tags" value="' . esc_attr( $sailthru_meta_tags ) . '" size="25"  />';
-		echo  '<p class="description">';
-		echo  'Tags are used to measure user interests and later to send them content customized to their tastes.';
-		echo  '</p><!-- /.description -->';
-		echo  '<p class="howto">Separate tags with commas</p>';
-
-	} // end post_media
-
-	/**
-	 * Determines whether or not the current user has the ability to save meta data associated with this post.
-	 *
-	 * @param int     $post_id The ID of the post being save
-	 * @param bool    Whether or not the user has the ability to save this post.
-	 */
-	public function save_custom_meta_data( $post_id ) {
-
-		// First, make sure the user can save the post
-		if ( $this->user_can_save( $post_id, $this->nonce ) ) {
-
-			// Did the user set an expiry date, or are they clearing an old one?
-			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] )
-				|| get_post_meta( $post_id, 'sailthru_post_expiration', true ) ) {
-
-				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
-
-				if ( $expiry_time ) {
-					$expiry_date = date( 'Y-m-d', $expiry_time );
-
-					// Save the date. hehe.
-					update_post_meta( $post_id, 'sailthru_post_expiration', esc_attr( $expiry_date ) );
-				} else {
-					update_post_meta( $post_id, 'sailthru_post_expiration', null );
-				}
-			} // end if
-
-			// Did the user set some meta tags, or are they clearing out old tags?
-			if ( ! empty( $_POST['sailthru_meta_tags'] ) && isset( $_POST['sailthru_meta_tags'] )
-				|| get_post_meta( $post_id, 'sailthru_meta_tags', true ) ) {
-
-				//remove trailing comma
-				$meta_tags = rtrim( sanitize_text_field( $_POST['sailthru_meta_tags'] ), ',' );
-				update_post_meta( $post_id, 'sailthru_meta_tags', esc_attr( $meta_tags ) );
-
-			}
-		} // end if
-
-	} // end save_custom_meta_data
-
-	/*--------------------------------------------*
-	 * Helper Functions
-	 *--------------------------------------------*/
-
-	/**
-	 * FROM: https://github.com/tommcfarlin/WordPress-Upload-Meta-Box
-	 * Determines whether or not the current user has the ability to save meta data associated with this post.
-	 *
-	 * @param int     $post_id The ID of the post being save
-	 * @param bool    Whether or not the user has the ability to save this post.
-	 */
-	function user_can_save( $post_id, $nonce ) {
-
-		$is_autosave    = wp_is_post_autosave( $post_id );
-		$is_revision    = wp_is_post_revision( $post_id );
-		$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], plugin_basename( __FILE__ ) ) );
-
-		// Return true if the user is able to save; otherwise, false.
-		return ! ( $is_autosave || $is_revision ) && $is_valid_nonce;
-
-	} // end user_can_save
-
 
 } // end class

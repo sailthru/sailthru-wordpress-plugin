@@ -19,6 +19,7 @@ $verify_setup = sailthru_verify_setup();
 	<?php endif; ?>
 <?php endif; ?>
 	<div id="sailthru-template-choices">
+			<?php sailthru_admin_tabs('sailthru_configuration_page'); ?>
 			<div class="meta-box-sortables">
 				<div id="sailthru-choose-template" class="postbox">
 					<div class="inside">

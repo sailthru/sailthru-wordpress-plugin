@@ -62,6 +62,7 @@ require_once SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-content.php';
+require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-meta-box.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-mailer.php';
 
@@ -213,137 +214,6 @@ function sailthru_user_login( $user_login, $user ) {
 	}
 }
 
-
-/**
- * Capture the saving of a post and make a Content API call to add
- * the page details and tags to Sailthru's Horizon API for recommendations
- *
- * @param integer $post_id
- */
-
-function sailthru_save_post( $post_id, $post, $post_before ) {
-
-	// Check to see if Content API is disabled
-
-	if ( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
-		return;
-	}
-
-	if ( 'publish' === $post->post_status ) {
-		// Make sure Sailthru is setup
-		if ( get_option( 'sailthru_setup_complete' ) ) {
-			$sailthru   = get_option( 'sailthru_setup_options' );
-			$api_key    = $sailthru['sailthru_api_key'];
-			$api_secret = $sailthru['sailthru_api_secret'];
-			$client     = new WP_Sailthru_Client( $api_key, $api_secret );
-			try {
-				if ( $client ) {
-					$data = array();
-					// Prepare the Content API Params
-					$data['url']               = get_permalink( $post->ID );
-					$data['title']             = $post->post_title;
-					$data['author']            = get_the_author_meta( 'display_name', $post->post_author );
-					$data['date']              = $post->post_date;
-					$data['vars']['post_type'] = $post->post_type;
-					$data['spider']            = 1;
-					if ( ! empty( $post->post_excerpt ) ) {
-						$data['description'] = $post->post_excerpt;
-					} else {
-						$data['description'] = wp_trim_words( $post->post_content, 250, '' );
-					}
-					// image & thumbnail
-					if ( has_post_thumbnail( $post->ID ) ) {
-						$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-						$thumb                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-						$post_image                     = $image[0];
-						$data['images']['full']['url']  = esc_attr( $post_image );
-						$post_thumbnail                 = $thumb[0];
-						$data['images']['thumb']['url'] = $post_thumbnail;
-					}
-					$post_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
-					// WordPress tags.
-					if ( empty( $post_tags ) ) {
-						$post_tags = get_the_tags();
-						if ( $post_tags ) {
-							$post_tags = esc_attr( implode( ', ', wp_list_pluck( $post_tags, 'name' ) ) );
-						}
-					}
-					// WordPress categories.
-					if ( empty( $post_tags ) ) {
-						$post_categories = get_the_category( $post->ID );
-						foreach ( $post_categories as $post_category ) {
-							$post_tags .= $post_category->name . ', ';
-						}
-						$post_tags = substr( $post_tags, 0, -2 );
-					}
-					if ( ! empty( $post_tags ) ) {
-						$data['tags'] = $post_tags;
-					}
-
-					// Apply any filters to the tags. 
-					$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'] ] ) ; 
-
-					// Check if the filter has returned sailthru.tags and convert to string. 
-					if ( is_array( $data['tags'] ) && isset ( $data['tags']['sailthru.tags'] ) ) {
-						$data['tags'] =  $data['tags']['sailthru.tags']; 
-					}
-
-					$post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
-					if ( ! empty( $post_expiration ) ) {
-						$data['expire_date'] = esc_attr( $post_expiration );
-					} else {
-						// set the expiry date in the future as you can't unset the value via the API
-						$data['expire_date'] = date( 'Y-m-d', strtotime( '+5 years' ) );
-					}
-
-					// get all the custom fields and add them to the vars
-					$custom_fields = get_post_custom( $post_id );
-					// exclude  tags
-					$exclude_fields = array( '_edit_lock', '_edit_last', '_encloseme', ' sailthru_meta_tags', 'sailthru_post_expiration' );
-
-					foreach ( $custom_fields as $key => $val ) {
-
-						if ( ! in_array( $key, $exclude_fields, true ) ) {
-
-							if ( is_array( $val ) ) {
-								$data['vars'][ $key ] = implode( ',', $val );
-							} else {
-								$data['vars'][ $key ] = $val;
-							}
-						}
-					}
-
-					// Get the Whitelisted vars from the settings screen. 
-					$whitelist = explode(', ', $sailthru['content_vars']);
-
-					// Apply vars whitelist filtering to only include vars that are white listed. 
-					$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $whitelist);
-					
-					// Remove everything except the whitelisted vars.
-					foreach ( $whitelist as $key ) {
-
-						if ( isset ( $data['vars'][$key]) )  {
-							unset( $data['vars'][$key] );
-						}
-					}
-
-					// If there are no vars left, remove it as a parameter. 
-					if ( empty ($data['vars'] ) ) {
-						unset( $data['vars'] );
-					}
-
-					// Make the API call to Sailthru
-					$api = $client->apiPost( 'content', $data );
-
-				}
-			} catch ( Sailthru_Client_Exception $e ) {
-				write_log($e);
-				return;
-			}
-		}
-	}
-}
-add_action( 'save_post', 'sailthru_save_post', 10, 3 );
 
 if ( ! function_exists( 'write_log' ) ) {
 	function write_log( $log ) {

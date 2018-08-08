@@ -346,3 +346,18 @@ function sailthru_spm_admin_widget( $spm_sections,  $active_section_id, $field_n
 		echo '<p class="small">No sections could be retrieved from your account. Please check your Site Personalization Manager sections in <a href="http://my.sailthru.com/spm">your Sailthru account.';
 	}
 }
+
+function sailthru_admin_tabs($active_tab = '') {
+
+	$css_class = ' nav-tab-active';
+	$config_active = 'sailthru_configuration_page' === $active_tab ? $css_class : '';
+	$list_active = 'custom_fields_configuration_page' === $active_tab ? $css_class : '';
+	$content_active = 'sailthru_content_settings' === $active_tab ? $css_class : '';
+	
+	echo '<h2 class="nav-tab-wrapper">';
+	echo '<a href=" '. admin_url('admin.php?page=sailthru_configuration_page') . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
+	echo '<a href=" '. admin_url('admin.php?page=custom_fields_configuration_page') . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">List Signup Options</a>';
+	echo '<a href=" '. admin_url('admin.php?page=sailthru_content_settings') . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
+	echo '</h2>';
+
+}
