@@ -75,6 +75,14 @@ class Sailthru_Content_Settings {
 			);
 
 			add_settings_field(
+				'sailthru_taxonomy_tag_options',
+				__( 'Include Taxonomies', 'text_domain' ),
+				array( $this, 'render_sailthru_taxonomy_tag_options_field' ),
+				'sailthru_content_settings',
+				'sailthru_content_settings_section'
+			);
+
+			add_settings_field(
 				'sailthru_content_interest_tags',
 				__( 'Global Interest Tag', 'text_domain' ),
 				array( $this, 'render_sailthru_content_interest_tags_field' ),
@@ -190,12 +198,34 @@ class Sailthru_Content_Settings {
 		$options = get_option( 'sailthru_content_settings' );
 
 		// Set default value.
-                $value = isset( $options['sailthru_interest_tag_options'] ) ? $options['sailthru_interest_tag_options'] : array();
+        $value = isset( $options['sailthru_interest_tag_options'] ) ? $options['sailthru_interest_tag_options'] : array();
 
 		// Field output.
 		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_tags' ) . '" ' . ( in_array( 'wordpress_tags', $value )? 'checked="checked"' : '' ) . '> ' . __( 'WordPress Tags', 'text_domain' ) . '<br>';
 		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_categories' ) . '" ' . ( in_array( 'wordpress_categories', $value )? 'checked="checked"' : '' ) . '> ' . __( 'WordPress Categories', 'text_domain' ) . '<br>';
 
+	}
+
+	/**
+	 * Renders the taxonomy tags to use in tags.
+	 */
+	function render_sailthru_taxonomy_tag_options_field() {
+
+		$args = array(
+		  'public'   => true,
+		  '_builtin' => false
+		);
+		$taxonomies = get_taxonomies( $args, 'names' );
+		$options = get_option( 'sailthru_content_settings' );
+
+		// Set default value.
+        $value = isset( $options['sailthru_taxonomy_tag_options'] ) ? $options['sailthru_taxonomy_tag_options'] : array();
+
+		foreach ($taxonomies as $tag) {
+			
+			echo '<input type="checkbox" name="sailthru_content_settings[sailthru_taxonomy_tag_options][]" class="sailthru_taxonomy_tag_options_field" value="' . esc_attr( $tag ) . '" ' . ( in_array( $tag, $value )? 'checked="checked"' : '' ) . '" /> ' . __( $tag, 'text_domain' ) . '<br>';
+		}
+		
 	}
 
 
@@ -247,6 +277,9 @@ class Sailthru_Content_Settings {
 			$data['images']['thumb']['url'] = $post_thumbnail;
 		}
 
+		// Add any galleries from the post to the images. 
+		$data['images']['galleries'] = get_post_galleries_images( $post );
+
 		$data['tags'] = $this->generate_tags( $post->ID);
 
 		// Apply any filters to the tags. 
@@ -265,45 +298,12 @@ class Sailthru_Content_Settings {
 			$data['expire_date'] = date( 'Y-m-d', strtotime( '+5 years' ) );
 		}
 
-		// get all the custom fields and add them to the vars
-		$custom_fields = get_post_custom( $post_id );
-		// exclude  tags
-		$exclude_fields = array( '_edit_lock', '_edit_last', '_encloseme', ' sailthru_meta_tags', 'sailthru_post_expiration' );
+		// Add the vars
+		$data['vars'] = $this->generate_vars( $post->ID, $post );
 
-		foreach ( $custom_fields as $key => $val ) {
-
-			if ( ! in_array( $key, $exclude_fields, true ) ) {
-
-				if ( is_array( $val ) ) {
-					$data['vars'][ $key ] = implode( ',', $val );
-				} else {
-					$data['vars'][ $key ] = $val;
-				}
-			}
-		}
-
-		// Get the Whitelisted vars from the settings screen. 
-		$whitelist = explode(', ', $sailthru['content_vars']);
-
-		// Apply vars whitelist filtering to only include vars that are white listed. 
-		$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $whitelist);
-		
-		// Remove everything except the whitelisted vars.
-		foreach ( $whitelist as $key ) {
-
-			if ( isset ( $data['vars'][$key]) )  {
-				unset( $data['vars'][$key] );
-			}
-		}
-
-		// If there are no vars left, remove it as a parameter. 
-		if ( empty ($data['vars'] ) ) {
-			unset( $data['vars'] );
-		}
-
+	
 		return $data;
 	}
-
 
 	 /**
 	 * Generates the output of the interest tags for both the Content API and the meta tags. 
@@ -314,13 +314,8 @@ class Sailthru_Content_Settings {
 	function generate_tags( $post_id ) {
 		
 		$options = get_option( 'sailthru_content_settings' );
-		$post_tags = get_post_meta( $post->ID, 'sailthru_meta_tags', true );
-		$post_tag_options = get_post_meta( $post->ID, 'sailthru_sailthru_tags_extra_data', true );
-
-		// Get the Sailthru Tags and configuration options. 
 		$post_tags = get_post_meta( $post_id, 'sailthru_meta_tags', true );
-		$post_tag_options = get_post_meta( $post_id, 'sailthru_sailthru_tags_extra_data', true );
-		
+
 		// Add WordPress tags if option set. 
 		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_tags',$options['sailthru_interest_tag_options'] ) ) {
 			
@@ -331,15 +326,97 @@ class Sailthru_Content_Settings {
 		}
 
 		// Add WordPress categories if option set. 
-		if ( in_array( 'wordpress_category', $post_tag_options ) ) {
+		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'] ) ) {
 			$post_categories = get_the_category( $post->ID );
 			foreach ( $post_categories as $post_category ) {
 				$post_tags .= ','. $post_category->name;
 			}
 		}
 
+		// Add WordPress taxonomies if option set. 
+		if ( !empty( $options['sailthru_taxonomy_tag_options'] ) ) {
+			$terms = wp_get_post_terms( $post_id, $options['sailthru_taxonomy_tag_options'] );
+			$post_tags .= ',' .esc_attr( implode( ',', wp_list_pluck( $terms, 'name' ) ) );
+		}
+
+
+		// check if there's any global tags needing added. 
+		if ( ! empty($options['sailthru_content_interest_tags'] ) ) {
+			$post_tags .= ',' . $options['sailthru_content_interest_tags'];
+		}
+
 		return $post_tags;
 	}
+
+	/**
+	 * Generates the output of the interest tags for both the Content API and the meta tags. 
+	 *
+	 * @param integer $post_id
+	 */
+
+	function generate_vars( $post_id, $post ) {
+		
+		$vars = [
+					'post_type' => $post->post_type,
+					'id' => $post->ID,
+					'author' => $post->post_author,
+				];
+
+		// get all the custom fields and add them to the vars
+		$custom_fields = get_post_custom( $post_id );
+		$field_names = array_keys( array_merge( $custom_fields, $vars ) );
+
+		// always exclude these vars
+		$exclude_fields = array( '_edit_lock', 
+								 '_edit_last', 
+								 '_encloseme', 
+								 '_pingme', 
+								 'sailthru_meta_tags', 
+								 'sailthru_post_expiration', 
+								 'sailthru_sailthru_tags_extra_data' 
+							);
+
+		// Set vars from the custom fields. 
+		foreach ( $custom_fields as $key => $val ) {
+
+			if ( ! in_array( $key, $exclude_fields, true ) ) {
+				$vars[ $key ] = is_array( $val ) ? $vars[ $key ] = implode( ',', $val ) : $val;
+			}
+		}
+
+		$vars = $this->whitelist_vars( $vars );
+
+		return $vars;
+
+	}
+
+	/**
+	 * Generates vars from the whitelisted vars and filters 
+	 *
+	 * @param array $vars
+	 */
+	function whitelist_vars( $vars ) {
+
+		$options = get_option( 'sailthru_content_settings' );
+
+		if (! empty($options['sailthru_content_vars'] ) ) {
+			
+			// Get the Whitelisted vars from the settings screen. 
+			$whitelist = explode(', ', $options['sailthru_content_vars']);
+			$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $whitelist);
+
+			foreach ($vars as $key => $val) {
+				
+				if ( !in_array($key, $whitelist) ) {
+					unset( $vars[$key] );
+				}
+			}
+		}
+
+		return $vars;
+
+	}
+
 
 	/* TODO - remember to set the defaults on plugin activation */
 
@@ -367,7 +444,6 @@ class Sailthru_Content_Settings {
 
 
 		if (in_array ( $post->post_type, $options['sailthru_content_post_types'] ) ) {
-
 
 			if ( 'publish' === $post->post_status ) {
 				// Make sure Sailthru is setup
