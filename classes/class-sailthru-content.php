@@ -8,6 +8,7 @@ class Sailthru_Content_Settings {
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ), 11 );
 		add_action( 'admin_init', array( $this, 'init_settings'  ), 11 );
 		add_action( 'save_post', array( $this, 'sailthru_save_post' ), 11, 3 );
+		add_action( 'wp_head', array( $this, 'generate_meta_tags' ) );
 
 	}
 
@@ -303,6 +304,110 @@ class Sailthru_Content_Settings {
 
 	
 		return $data;
+	}
+
+
+	/*-------------------------------------------
+	 * Utility Functions
+	 *------------------------------------------*/
+
+	/*
+	 * Returns the portion of haystack which goes until the last occurrence of needle
+	 * Credit: http://www.wprecipes.com/wordpress-improved-the_excerpt-function
+	 */
+	function reverse_strrchr( $haystack, $needle, $trail ) {
+		return strrpos( $haystack, $needle ) ? substr( $haystack, 0, strrpos( $haystack, $needle ) + $trail ) : false;
+	}
+
+	 /**
+	 * Generates the output of the meta tags for the html source.
+	 */
+
+	function generate_meta_tags() {
+
+		// only do this on pages and posts
+		if ( ! is_single() ) {
+			return;
+		}
+
+		// filter to disable all output
+		if ( false === apply_filters( 'sailthru_horizon_meta_tags_enable', true ) ) {
+			return;
+		}
+
+		global $post;
+
+		$post_object = get_post();
+		$horizon_tags = array();
+
+		// date
+		$post_date                     = get_the_date( 'Y-m-d H:i:s' );
+		$horizon_tags['sailthru.date'] = esc_attr( $post_date );
+
+		// title
+		$post_title                     = get_the_title();
+		$horizon_tags['sailthru.title'] = esc_attr( $post_title );
+
+		// Get the tags. 
+		$content = new Sailthru_Content_Settings;
+		$post_tags = $content->generate_tags( $post->ID);
+
+		if ( ! empty( $post_tags ) ) {
+			$horizon_tags['sailthru.tags'] = $post_tags;
+		}
+
+		// author << works on display name. best option?
+		$post_author = get_the_author();
+		if ( ! empty( $post_author ) ) {
+			$horizon_tags['sailthru.author'] = $post_author;
+		}
+
+		// description
+		$post_description = get_the_excerpt();
+		if ( empty( $post_description ) ) {
+			$excerpt_length = 250;
+			// get the entire post and then strip it down to just sentences.
+			$text             = $post_object->post_content;
+			$text             = apply_filters( 'the_content', $text );
+			$text             = str_replace( ']]>', ']]>', $text );
+			$text             = strip_shortcodes( $text );
+			$text             = wp_strip_all_tags( $text );
+			$text             = substr( $text, 0, $excerpt_length );
+			$post_description = $this->reverse_strrchr( $text, '.', 1 );
+		}
+		$horizon_tags['sailthru.description'] = esc_html( $post_description );
+
+		// image & thumbnail
+		if ( has_post_thumbnail( $post_object->ID ) ) {
+			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+			$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
+
+			$post_image                           = $image[0];
+			$horizon_tags['sailthru.image.full']  = esc_attr( $post_image );
+			$post_thumbnail                       = $thumb[0];
+			$horizon_tags['sailthru.image.thumb'] = $post_thumbnail;
+		}
+
+		// expiration date
+		$post_expiration = get_post_meta( $post_object->ID, 'sailthru_post_expiration', true );
+
+		if ( ! empty( $post_expiration ) ) {
+			$horizon_tags['sailthru.expire_date'] = esc_attr( $post_expiration );
+		}
+
+		$horizon_tags = apply_filters( 'sailthru_horizon_meta_tags', $horizon_tags, $post_object );
+
+		echo "\n\n<!-- BEGIN Sailthru Horizon Meta Information -->\n";
+		foreach ( (array) $horizon_tags as $tag_name => $tag_content ) {
+			if ( empty( $tag_content ) ) {
+				continue; // Don't ever output empty tags
+			}
+			$meta_tag    = sprintf( '<meta name="%s" content="%s" />', esc_attr( $tag_name ), esc_attr( $tag_content ) );
+			echo wp_kses( apply_filters( 'sailthru_horizon_meta_tags_output', $meta_tag ), array( 'meta' => array( 'name' => array(), 'content' => array() ) ) );
+			echo  "\n";
+		}
+		echo "<!-- END Sailthru Horizon Meta Information -->\n\n";
+
 	}
 
 	 /**
