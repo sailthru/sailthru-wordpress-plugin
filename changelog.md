@@ -1,5 +1,15 @@
 # Changelog
 
+## v3.2.3-beta (2018-06-18)
+Added content settings section to the setup and migrated some horizon code to a common content class. 
+
+* Add abilility to combine WordPress tags with Sailthru interest tags via a UI setting
+* Added abilility to combine categories with Sailthru interest tags via a UI setting
+* Added ability to add any available taxonomy to Sailthru tags via the UI
+* Added a global whitelist of vars to be included in content api posts
+* Added a global tag option so a tag can be added to every post. 
+* Added ability to turn on/off Content API syncing via the UI. 
+
 ## v3.2.2 (2018-06-18)
 Updated sailthru_horizon_meta_tags filter to apply to Content API calls. 
 
