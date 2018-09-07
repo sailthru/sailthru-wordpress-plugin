@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.2.3-beta (2018-06-18)
+## v3.3-beta (2018-06-18)
 Added content settings section to the setup and migrated some horizon code to a common content class. 
 
 * Add abilility to combine WordPress tags with Sailthru interest tags via a UI setting
