@@ -355,10 +355,10 @@ function sailthru_admin_tabs($active_tab = '') {
 	$content_active = 'sailthru_content_settings' === $active_tab ? $css_class : '';
 	
 	echo '<h2 class="nav-tab-wrapper">';
-	echo '<a href=" '. admin_url('admin.php?page=sailthru_configuration_page') . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
+	echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_configuration_page') ) . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
 	if ( sailthru_verify_setup() ) { 
-		echo '<a href=" '. admin_url('admin.php?page=custom_fields_configuration_page') . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">List Signup Options</a>';
-		echo '<a href=" '. admin_url('admin.php?page=sailthru_content_settings') . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
+		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=custom_fields_configuration_page' ) ) . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">List Signup Options</a>';
+		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_content_settings' ) ) . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
 	}
 	echo '</h2>';
 

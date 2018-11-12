@@ -167,7 +167,7 @@ class Sailthru_Content_Settings {
 
         	$selected_types = isset($options['sailthru_content_post_types']) ? $options['sailthru_content_post_types'] : [];
         	foreach ( $post_types as $type ) {
-        		$selected = in_array( $type , $type_opts, true ) ? 'checked="checked"' : '';
+        		$selected = in_array( $type , $selected_types, true ) ? 'checked="checked"' : '';
         		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' . esc_attr( $type ) . '" ' . $selected . '> ' . esc_attr__( ucwords ( $type ) , 'text_domain' ) . '<br>';
         	}
 
@@ -550,7 +550,7 @@ class Sailthru_Content_Settings {
 		}
 
 
-		if (in_array ( $post->post_type, $options['sailthru_content_post_types'] ) ) {
+		if ( in_array( $post->post_type, $options['sailthru_content_post_types'], true ) ) {
 
 			if ( 'publish' === $post->post_status ) {
 				// Make sure Sailthru is setup
