@@ -1,4 +1,6 @@
 # Changelog
+## v3.3.0 (2018-11-12)
+Address codestyle issues for VIP
 
 ## v3.3-beta (2018-06-18)
 Added content settings section to the setup and migrated some horizon code to a common content class. 
