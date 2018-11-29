@@ -45,7 +45,7 @@ class Sailthru_Meta_Box {
 		if ( isset( $options['sailthru_content_post_types'] )  && !empty( $options['sailthru_content_post_types'] ) ) {
 			
 			if ( ! in_array($post->post_type, $options['sailthru_content_post_types'] ) ) {
-				echo '<p>This content type is not enabled for Sailthru recommendations.</p><p><a href=" ' . admin_url( esc_url( 'admin.php?page=sailthru_content_settings') ) .' ">Enable this content type</a>.</p>';
+				echo '<p>This content type is not enabled for Sailthru recommendations.</p><p><a href=" ' . esc_url( admin_url( 'admin.php?page=sailthru_content_settings') ) .' ">Enable this content type</a>.</p>';
 				return;
 			}
 		}
