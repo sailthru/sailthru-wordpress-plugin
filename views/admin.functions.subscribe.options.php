@@ -7,6 +7,11 @@
 function sailthru_initialize_forms_options() {
 
 	function welcome_template_callback( $args ) {
+
+		sailthru_admin_tabs('custom_fields_configuration_page');
+		echo '<div class="postbox">';
+		echo '<div class="inside">';
+
 		echo '<h3>Welcome Template</h3>';
 		echo '<p>Choose a template to send after a user signs up using the Sailthru Subscribe Widget or shortcode.';
 	}
@@ -183,19 +188,13 @@ function sailthru_initialize_forms_options() {
 			$message = $customfields['sailthru_customfield_success'];
 		}
 
-		echo '<div  id="postbox-container-1" class="postbox-container">';
-		echo '<div id="normal-sortables" class="meta-box-sortables ui-sortable">';
-		echo '<div id="dashboard_right_now" class="postbox ">';
-		echo '<h3 class="hndle"><span>Custom Thank You Message</span></h3>';
-		echo '<div class="inside">';
-		echo '<div class="main">';
-		echo '<p>Use the field below to update the message that the user sees after subscribing</p>';
 		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="80">' . esc_textarea( $message ) . '</textarea></p>';
-		echo '<div style="text-align:left;"><input type="submit" name="submit" id="submit" class="button button-primary" value="Update Thank You Message"></div>';
+		echo '<p>Use the field above to update the message that the user sees after subscribing</p>';
+
+		/* ends the wrapper */ 
 		echo '</div>';
 		echo '</div>';
-		echo '</div>';
-		echo '</div>';
+
 
 	}
 

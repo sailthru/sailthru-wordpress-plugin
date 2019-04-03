@@ -305,6 +305,9 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
  */
 
 function sailthru_setup_callback() {
+	
+	// render the admin tabs
+	// sailthru_admin_tabs('sailthru_configuration_page');
 	echo '<div id="icon-options-general"><h3>API Keys</h3></div>';
 	echo '<p>Add your Sailthru API key & Secret, you can find this on the <a href="https://my.sailthru.com/settings_api">settings page</a> of the Sailthru dashboard.</p><p>Not sure what these are? Contact <a href="mailto:support@sailthru.com">support@sailthru.com</a> ';
 } // end sailthru_setup_callback
@@ -736,6 +739,13 @@ function sailthru_setup_handler( $input ) {
 		} else {
 			$output['sailthru_setup_new_user_override_template'] = false;
 		}
+	}
+
+	// Content Vars
+	if ( isset( $input['content_vars'] ) ) {
+		$output['content_vars'] = filter_var( $input['content_vars'], FILTER_SANITIZE_STRING );
+	} else {
+		$output['content_vars'] = '';
 	}
 
 	update_option( 'sailthru_setup_complete', true );
