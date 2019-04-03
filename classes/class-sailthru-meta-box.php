@@ -37,15 +37,15 @@ class Sailthru_Meta_Box {
 		$options = get_option( 'sailthru_content_settings' );
 
 		if ( isset( $options['sailthru_interest_tag_options'] )  && !empty( $options['sailthru_interest_tag_options'] ) ) {
-			$tags_checked = in_array( 'wordpress_tags', $options['sailthru_interest_tag_options'] ) ? true : false;
-			$cat_checked = in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'] ) ? true : false;
+			$tags_checked = in_array( 'wordpress_tags', $options['sailthru_interest_tag_options'], true ) ? true : false;
+			$cat_checked = in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'], true ) ? true : false;
 		}	
 
 		// Do we send this content type? Warn the user if not. 
 		if ( isset( $options['sailthru_content_post_types'] )  && !empty( $options['sailthru_content_post_types'] ) ) {
 			
 			if ( ! in_array($post->post_type, $options['sailthru_content_post_types'] ) ) {
-				echo '<p>This content type is not enabled for Sailthru recommendations.</p><p><a href=" ' . admin_url('admin.php?page=sailthru_content_settings') .' ">Enable this content type</a>.</p>';
+				echo '<p>This content type is not enabled for Sailthru recommendations.</p><p><a href=" ' . esc_url( admin_url( 'admin.php?page=sailthru_content_settings') ) .' ">Enable this content type</a>.</p>';
 				return;
 			}
 		}
@@ -63,21 +63,21 @@ class Sailthru_Meta_Box {
 
 		echo '<tr>';
 		echo '<td>';
-		echo '<label for="sailthru_meta_tags" class="sailthru_meta_tags_label" style="padding-bottom:8px; display:block; font-weight:bold">' . __( 'Interest Tags', 'text_domain' ) . '</label>';
+		echo '<label for="sailthru_meta_tags" class="sailthru_meta_tags_label" style="padding-bottom:8px; display:block; font-weight:bold">' . esc_attr__( 'Interest Tags', 'text_domain' ) . '</label>';
 		echo '<input type="text" id="sailthru_meta_tags" name="sailthru_meta_tags" class="sailthru_meta_tags_field widefat" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $sailthru_meta_tags ) . '">';
-		echo '<p class="description">' . __( 'Comma separated list of tags', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'Comma separated list of tags', 'text_domain' ) . '</p>';
 		echo '</td>';
 		echo '</tr>';		
 
 		if ($tags_checked || $cat_checked) {
 			echo '<tr>';
 			echo '<td>';
-			echo '<small>' . __( 'Your settings include', 'text_domain' ) . '';
+			echo '<small>' . esc_attr__( 'Your settings include', 'text_domain' ) . '';
 
 			if ($cat_checked) {
 				
 				if (true === $cat_checked) {
-					echo  __( 'WordPress categories', 'text_domain' ) ;
+					echo  esc_attr__( 'WordPress categories', 'text_domain' ) ;
 				}
 
 				if ($cat_checked && $tags_checked) {
@@ -85,7 +85,7 @@ class Sailthru_Meta_Box {
 				}
 
 				if (true === $tags_checked) {
-					echo  __( 'WordPress tags', 'text_domain' ) ;
+					echo  esc_attr__( 'WordPress tags', 'text_domain' ) ;
 				}
 
 				echo 'in Sailthru interest tags.</small>';
@@ -97,9 +97,9 @@ class Sailthru_Meta_Box {
 		/* post expiration */ 
 		echo '<tr class="line">';
 		echo '<td>';
-		echo '<label for="sailthru_post_expiration" class="sailthru_post_expiration_label" style="padding-bottom:8px; display:block; font-weight:bold">' . __( 'Content Expires', 'text_domain' ) . '</label>';
+		echo '<label for="sailthru_post_expiration" class="sailthru_post_expiration_label" style="padding-bottom:8px; display:block; font-weight:bold">' . esc_attr__( 'Content Expires', 'text_domain' ) . '</label>';
 		echo '<input type="date" id="sailthru_post_expiration" name="sailthru_post_expiration" class="sailthru_post_expiration_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $sailthru_post_expiration ) . '">';
-		echo '<p class="description">' . __( 'Do not recommend this content after above date', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'Do not recommend this content after above date', 'text_domain' ) . '</p>';
 		echo '</td>';
 		echo '</tr>';
 

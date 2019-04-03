@@ -139,10 +139,10 @@ class Sailthru_Content_Settings {
 
 		// Field output.
 		echo '<select name="sailthru_content_settings[sailthru_content_api_status]" class="sailthru_content_api_status_field">';
-		echo '	<option value="true" ' . selected( $value, 'true', false ) . '> ' . __( 'Enabled', 'text_domain' ) . '</option>';
-		echo '	<option value="false" ' . selected( $value, 'false', false ) . '> ' . __( 'Disabled', 'text_domain' ) . '</option>';
+		echo '	<option value="true" ' . selected( $value, 'true', false ) . '> ' . esc_attr__( 'Enabled', 'text_domain' ) . '</option>';
+		echo '	<option value="false" ' . selected( $value, 'false', false ) . '> ' . esc_attr__( 'Disabled', 'text_domain' ) . '</option>';
 		echo '</select>';
-		echo '<p class="description">' . __( 'When Content API syncing is disabled Sailthru will crawl your web site to retrieve content for the Content Library.', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'When Content API syncing is disabled Sailthru will crawl your web site to retrieve content for the Content Library.', 'text_domain' ) . '</p>';
 
 	}
 
@@ -163,10 +163,12 @@ class Sailthru_Content_Settings {
         	// Always remove the attachment post type, we never need this. 
         	unset ($post_types['attachment']);
 
-        	echo '<p class="description">' . __( 'Choose which type of post types should be synced to Sailthru', 'text_domain' ) . '</p>';
+        	echo '<p class="description">' . esc_attr__( 'Choose which type of post types should be synced to Sailthru', 'text_domain' ) . '</p>';
 
+        	$selected_types = isset($options['sailthru_content_post_types']) ? $options['sailthru_content_post_types'] : [];
         	foreach ( $post_types as $type ) {
-        		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' . esc_attr( $type ) . '" ' . ( in_array( $type , isset( $options['sailthru_content_post_types'] ) ? $options['sailthru_content_post_types'] : [] )? 'checked="checked"' : '' ) . '> ' . __( ucwords ( $type ) , 'text_domain' ) . '<br>';
+        		$selected = in_array( $type , $selected_types, true ) ? 'checked="checked"' : '';
+        		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' . esc_attr( $type ) . '" ' . $selected . '> ' . esc_attr__( ucwords ( $type ) , 'text_domain' ) . '<br>';
         	}
 
 		}        
@@ -199,11 +201,11 @@ class Sailthru_Content_Settings {
 		$options = get_option( 'sailthru_content_settings' );
 
 		// Set default value.
-        $value = isset( $options['sailthru_interest_tag_options'] ) ? $options['sailthru_interest_tag_options'] : array();
+        $value = isset( $options['sailthru_interest_tag_options'] ) ? $options['sailthru_interest_tag_options'] : [];
 
 		// Field output.
-		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_tags' ) . '" ' . ( in_array( 'wordpress_tags', $value )? 'checked="checked"' : '' ) . '> ' . __( 'WordPress Tags', 'text_domain' ) . '<br>';
-		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_categories' ) . '" ' . ( in_array( 'wordpress_categories', $value )? 'checked="checked"' : '' ) . '> ' . __( 'WordPress Categories', 'text_domain' ) . '<br>';
+		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_tags' ) . '" ' . ( in_array( 'wordpress_tags', $value, true )? 'checked="checked"' : '' ) . '> ' . esc_attr__( 'WordPress Tags', 'text_domain' ) . '<br>';
+		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_categories' ) . '" ' . ( in_array( 'wordpress_categories', $value, true )? 'checked="checked"' : '' ) . '> ' . esc_attr__( 'WordPress Categories', 'text_domain' ) . '<br>';
 
 	}
 
@@ -224,7 +226,7 @@ class Sailthru_Content_Settings {
 
 		foreach ($taxonomies as $tag) {
 			
-			echo '<input type="checkbox" name="sailthru_content_settings[sailthru_taxonomy_tag_options][]" class="sailthru_taxonomy_tag_options_field" value="' . esc_attr( $tag ) . '" ' . ( in_array( $tag, $value )? 'checked="checked"' : '' ) . '" /> ' . __( $tag, 'text_domain' ) . '<br>';
+			echo '<input type="checkbox" name="sailthru_content_settings[sailthru_taxonomy_tag_options][]" class="sailthru_taxonomy_tag_options_field" value="' . esc_attr( $tag ) . '" ' . ( in_array( $tag, $value, true ) ? 'checked="checked"' : '' ) . '" /> ' . esc_attr__( $tag, 'text_domain' ) . '<br>';
 		}
 		
 	}
@@ -548,7 +550,7 @@ class Sailthru_Content_Settings {
 		}
 
 
-		if (in_array ( $post->post_type, $options['sailthru_content_post_types'] ) ) {
+		if ( in_array( $post->post_type, $options['sailthru_content_post_types'], true ) ) {
 
 			if ( 'publish' === $post->post_status ) {
 				// Make sure Sailthru is setup
