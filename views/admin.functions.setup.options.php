@@ -145,6 +145,41 @@ function sailthru_initialize_setup_options() {
 		}
 
 		add_settings_section(
+			'recaptcha_setup_section',   // ID used to identify this section and with which to register options
+			__( '', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
+			'recaptcha_setup_callback',   // Callback used to render the description of the section
+			'sailthru_setup_options'   // Page on which to add this section of options
+		);
+	
+		add_settings_field(
+			'google_recaptcha_site_key',
+			__( 'reCaptcha Site Key', 'sailthru-for-wordpress' ),
+			'sailthru_html_text_input_callback',
+			'sailthru_setup_options',
+			'recaptcha_setup_section',
+			array(
+				'sailthru_setup_options',
+				'google_recaptcha_site_key',
+				'',
+				'google_recaptcha_site_key',
+			)
+		);
+	
+		add_settings_field(
+			'google_recaptcha_secret',
+			__( 'reCaptcha Secret Key', 'sailthru-for-wordpress' ),
+			'sailthru_html_text_input_callback',
+			'sailthru_setup_options',
+			'recaptcha_setup_section',
+			array(
+				'sailthru_setup_options',
+				'google_recaptcha_secret',
+				'',
+				'google_recaptcha_secret',
+			)
+		);
+
+		add_settings_section(
 			'sailthru_js_setup_section',   // ID used to identify this section and with which to register options
 			__( '', 'sailthru-for-wordpress' ),    // Title to be displayed on the administration page
 			'sailthru_js_setup_section_callback',   // Callback used to render the description of the section
@@ -311,6 +346,11 @@ function sailthru_setup_callback() {
 	echo '<div id="icon-options-general"><h3>API Keys</h3></div>';
 	echo '<p>Add your Sailthru API key & Secret, you can find this on the <a href="https://my.sailthru.com/settings_api">settings page</a> of the Sailthru dashboard.</p><p>Not sure what these are? Contact <a href="mailto:support@sailthru.com">support@sailthru.com</a> ';
 } // end sailthru_setup_callback
+
+function recaptcha_setup_callback() {
+	echo '<h3 class="sailthru-sub-section">reCaptcha Site Key and Secret</h3>';
+	echo '<p>(Optional) Add reCaptcha to your page to detect potential spamming and bots. <a href="https://www.google.com/recaptcha/intro/v3.html">Visit the reCaptcha homepage</a> to set up a site key and secret.</p>';
+}
 
 
 /* ------------------------------------------------------------------------ *
@@ -650,6 +690,9 @@ function sailthru_setup_handler( $input ) {
 		}
 	}
 
+	// recaptcha settings
+	$output['google_recaptcha_site_key'] = isset( $input['google_recaptcha_site_key'] ) ? filter_var( $input['google_recaptcha_site_key'], FILTER_SANITIZE_STRING ) : null;
+	$output['google_recaptcha_secret'] = isset( $input['google_recaptcha_secret'] ) ? filter_var( $input['google_recaptcha_secret'], FILTER_SANITIZE_STRING ) : null;
 
 	// javascript type
 	if ( isset( $input['sailthru_js_type'] ) ) {

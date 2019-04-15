@@ -50,6 +50,12 @@
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'source' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'source' ) ); ?>" type="text" value="<?php echo esc_attr( $source ); ?>" />
 				</label>
 			</p>
+			<p>
+				<span>
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'reset_optout_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'reset_optout_status' ] ) ? 'checked' : '' ?> />
+					Reset user optout status on form submission
+				</span>
+			</p>
 			  <p>
 				<label for="<?php echo esc_attr( $this->get_field_id( 'event_name' ) ); ?>">
 					<?php esc_html_e( 'Lifecycle Optimizer Event Name' ); ?>

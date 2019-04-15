@@ -9,6 +9,7 @@
 	$title         = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', esc_attr( $instance['title'] ) );
 	$source        = empty( $instance['source'] ) ? get_bloginfo( 'url' ) : esc_attr( $instance['source'] );
 	$lo_event_name = empty( $instance['lo_event_name'] ) ? '' : esc_attr( $instance['lo_event_name'] );
+	$reset_optout_status = empty( $instance['reset_optout_status'] ) ? '' : esc_attr( $instance['reset_optout_status'] );
 
 if ( ! empty( $instance['sailthru_list'] ) ) {
 	if ( is_array( $instance['sailthru_list'] ) ) {
@@ -355,6 +356,8 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				<input type="hidden" name="action" value="add_subscriber" />
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
+				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
+				<input type="hidden" name="captcha_token" value="" id="token" />
 
 				<span class="input-group-btn">
 					<button class="btn btn-reverse" type="submit">
@@ -363,4 +366,13 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				</span>
 		</form>
 	</div>
+	<script src="https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>"></script>
+				<script>
+					grecaptcha.ready(function() {
+						grecaptcha.execute("<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>", {action: 'homepage'}).then(function(token) {
+							var captchaToken = document.getElementById("token");
+							captchaToken.value = token;
+						});
+					});
+				</script>
 </div>
