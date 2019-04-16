@@ -1,5 +1,4 @@
 <div id="icon-sailthru" class="icon32"></div>
-	<h2><?php esc_html_e( 'Sailthru Subscribe', 'sailthru-for-wordpress' ); ?></h2>
 
 	<?php
 
@@ -53,7 +52,7 @@
 			<p>
 				<span>
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'reset_optout_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'reset_optout_status' ] ) ? 'checked' : '' ?> />
-					Reset user optout status on form submission
+					Set previously opted-out customers to valid
 				</span>
 			</p>
 			  <p>
@@ -62,6 +61,9 @@
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'lo_event_name' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'lo_event_name' ) ); ?>" type="text" value="<?php echo esc_attr( $lo_event_name ); ?>" />
 					<small>use event name to start a Lifecycle Optimizer flow</small>
 				</label>
+			</p>
+			<p>
+				<h4>Fields</h4>
 			</p>
 			<p>
 			<?php
@@ -237,6 +239,10 @@
 					?>
 
 					</p>
+			
+			<p>
+				<h4>Lists</h4>
+			</p>
 
 			<?php
 
