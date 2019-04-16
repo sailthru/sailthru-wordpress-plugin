@@ -414,6 +414,17 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
+			if ( isset ( $_POST['captcha_token'] ) && ! empty( $_POST['captcha_token'] ) ) {
+				try {
+					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=6LcV750UAAAAAMovExQ83JGQY5Z2v5uYQGN_fRI0&response=' . $_POST['captcha_token'] );
+					if ( false == $response['body']['success'] ) {
+						throw new Exception( 'User failed reCaptcha test' );
+					}
+				} catch (Exception $e) {
+					write_log( $e->getMessage() );
+				}
+			}
+
 			if ( isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ) {
 				$reset_optout_status = 'none';
 			} else {
@@ -429,17 +440,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			);
 
 			if ( ! empty( $profile ) ) {
-
-				if ( isset ( $_POST['captcha_token'] ) && ! empty( $_POST['captcha_token'] ) ) {
-					try {
-						$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=6LcV750UAAAAAMovExQ83JGQY5Z2v5uYQGN_fRI0&response=' . $_POST['captcha_token'] );
-						if ( false == $response['body']['success'] ) {
-							throw new Exception( 'User failed reCaptcha test' );
-						}
-					} catch (Exception $e) {
-						write_log( $e->getMessage() );
-					}
-				}
 
 				if ( isset( $profile['lists'] ) && count( $profile['lists'] ) > 0 ) {
 
