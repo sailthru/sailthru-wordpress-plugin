@@ -414,7 +414,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
-			if ( isset( $sailthru['google_recaptcha_site_key'], $sailthru['google_recaptcha_secret'] ) && isset ( $_POST['captcha_token'] ) && ! empty( $_POST['captcha_token'] ) ) {
+			if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty( $sailthru['google_recaptcha_secret'] ) && isset ( $_POST['captcha_token'] ) && ! empty( $_POST['captcha_token'] ) ) {
 				write_log( "reCaptcha enabled, verifying" );
 				try {
 					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $_POST['captcha_token'] );

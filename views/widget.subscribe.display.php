@@ -366,13 +366,17 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				</span>
 		</form>
 	</div>
-	<script src="https://www.google.com/recaptcha/api.js?render=<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>"></script>
-				<script>
-					grecaptcha.ready(function() {
-						grecaptcha.execute("<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>", {action: 'homepage'}).then(function(token) {
-							var captchaToken = document.getElementById("token");
-							captchaToken.value = token;
-						});
-					});
-				</script>
+	<?php
+		if ( isset( $sailthru['google_recaptcha_site_key'] ) && ! empty( $sailthru['google_recaptcha_site_key'] ) ) {
+			echo '<script src="https://www.google.com/recaptcha/api.js?render=' . esc_attr( $sailthru['google_recaptcha_site_key'] ) . '"></script>';
+			echo '<script>';
+			echo 'grecaptcha.ready(function() {';
+			echo 'grecaptcha.execute(' . '"' . $sailthru['google_recaptcha_site_key'] . '"' . ', {action: "homepage"}).then(function(token) {';
+			echo 'var recaptcha = document.getElementById("token");';
+			echo 'recaptcha.value = token;';
+			echo '});';
+			echo '});';
+			echo '</script>';
+		}
+	?>
 </div>

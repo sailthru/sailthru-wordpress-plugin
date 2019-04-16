@@ -691,8 +691,8 @@ function sailthru_setup_handler( $input ) {
 	}
 
 	// recaptcha settings
-	$output['google_recaptcha_site_key'] = isset( $input['google_recaptcha_site_key'] ) ? filter_var( $input['google_recaptcha_site_key'], FILTER_SANITIZE_STRING ) : null;
-	$output['google_recaptcha_secret'] = isset( $input['google_recaptcha_secret'] ) ? filter_var( $input['google_recaptcha_secret'], FILTER_SANITIZE_STRING ) : null;
+	$output['google_recaptcha_site_key'] = isset( $input['google_recaptcha_site_key'] ) ? filter_var( $input['google_recaptcha_site_key'], FILTER_SANITIZE_STRING ) : '';
+	$output['google_recaptcha_secret'] = isset( $input['google_recaptcha_secret'] ) ? filter_var( $input['google_recaptcha_secret'], FILTER_SANITIZE_STRING ) : '';
 
 	// javascript type
 	if ( isset( $input['sailthru_js_type'] ) ) {
