@@ -3,7 +3,7 @@
 ## v.3.4.0
 Added the option to reset user optout status on newsletter subscription. Appears as a checkbox in the footer widget and as the following option in the shortcode:
 ```
-[sailthru_widget ... reset_optout_status="on"]
+[sailthru_widget ... reset_optout_status="true"]
 ```
 
 Enabling this option will change the user's optout status to "valid" in Sailthru by passing the `optout_email=none` option in the API.
