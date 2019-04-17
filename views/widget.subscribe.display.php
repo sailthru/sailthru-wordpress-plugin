@@ -367,7 +367,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 		</form>
 	</div>
 	<?php
-		if ( isset( $sailthru['google_recaptcha_site_key'] ) && ! empty( $sailthru['google_recaptcha_site_key'] ) ) {
+		if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
 			echo '<script src="https://www.google.com/recaptcha/api.js?render=' . esc_attr( $sailthru['google_recaptcha_site_key'] ) . '"></script>';
 			echo '<script>';
 			echo 'grecaptcha.ready(function() {';

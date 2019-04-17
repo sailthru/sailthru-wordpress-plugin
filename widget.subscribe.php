@@ -61,22 +61,23 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			)
 		);
 
-		// Only register widget scripts, styles, and ajax when widget is active
+		if ( is_active_widget( false, false, $this->id_base, true ) || shortcode_exists( 'sailthru_widget' ) ) {
+			// Only register widget scripts, styles, and ajax when widget is active
 			// Register admin styles and scripts
 			// According to documentation: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
-		add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 
 			// Register site styles and scripts
 
 			// Include the Ajax library on the front end
 
 			// Method to subscribe a user
-		add_action( 'wp_ajax_nopriv_add_subscriber', array( $this, 'add_subscriber' ) );
-		add_action( 'wp_ajax_add_subscriber', array( $this, 'add_subscriber' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
-		add_action( 'wp_head', array( $this, 'add_ajax_library' ) );
-
+			add_action( 'wp_ajax_nopriv_add_subscriber', array( $this, 'add_subscriber' ) );
+			add_action( 'wp_ajax_add_subscriber', array( $this, 'add_subscriber' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
+			add_action( 'wp_head', array( $this, 'add_ajax_library' ) );
+		}
 	} // end constructor
 
 	/*--------------------------------------------------*/
@@ -418,19 +419,23 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				write_log( "reCaptcha enabled, verifying" );
 				try {
 					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $_POST['captcha_token'] );
-					if ( false == $response['body']['success'] ) {
-						throw new Exception( 'User failed reCaptcha test' );
+					$body = wp_remote_retrieve_body( $response );
+					$data = json_decode( $body, true );
+					if ( false == $data['success'] ) {
+						// failed, send an error message here, but keep it vague
+						$this->return_response(
+							array(
+								'success' => false,
+								'message' => 'Sorry, something went wrong and we could not subscribe you.'
+							)
+						);
 					}
-				} catch (Exception $e) {
+				} catch ( Exception $e ) {
 					write_log( $e->getMessage() );
 				}
 			}
 
-			if ( isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ) {
-				$reset_optout_status = 'none';
-			} else {
-				$reset_optout_status = '';
-			}
+			$reset_optout_status = isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ? 'none': '';
 
 			$profile_data = array(
 				'id'    => $email,

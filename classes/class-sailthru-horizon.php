@@ -311,8 +311,8 @@ class Sailthru_Horizon {
 
 			$scout_menu                       = add_submenu_page(
 				'sailthru_configuration_page',
-				__( 'List Signup Options', 'sailthru-for-wordpress' ),
-				__( 'List Signup Options', 'sailthru-for-wordpress' ),
+				__( 'Customer Signup Options', 'sailthru-for-wordpress' ),
+				__( 'Customer Signup Options', 'sailthru-for-wordpress' ),
 				'manage_options',
 				'custom_fields_configuration_page',
 				array( $this, 'load_sailthru_admin_display' )
