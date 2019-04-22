@@ -83,3 +83,12 @@
   -moz-box-shadow: 3px 3px 3px 3px #ebebeb;
   -webkit-box-shadow: 3px 3px 3px 3px #ebebeb;
   box-shadow: 3px 3px 3px 3px #ebebeb; }
+
+  .grecaptcha-badge {
+    visibility: hidden;
+  }
+
+  .captcha-disclaimer {
+    font-size: 14px;
+    opacity: 0.7;
+  }

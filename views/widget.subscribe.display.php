@@ -351,6 +351,16 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 					} // end for
 				} // end if there are fields
 				?>
+
+
+				<?php
+					if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
+						echo '<p class="captcha-disclaimer">
+						This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+						<a href="https://policies.google.com/terms">Terms of Service</a> apply.
+						</p>';
+					}
+				?>
 				<input type="hidden" name="sailthru_nonce" value="<?php echo esc_attr( $nonce) ; ?>" />
 				<input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
 				<input type="hidden" name="action" value="add_subscriber" />
