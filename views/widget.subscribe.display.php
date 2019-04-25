@@ -367,6 +367,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
 				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
+				<input type="hidden" name="site_key" value="<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>" id="siteKey" />
 				<input type="hidden" name="captcha_token" value="" id="token" />
 
 				<span class="input-group-btn">
@@ -379,14 +380,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 	<?php
 		if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
 			echo '<script src="https://www.google.com/recaptcha/api.js?render=' . esc_attr( $sailthru['google_recaptcha_site_key'] ) . '"></script>';
-			echo '<script>';
-			echo 'grecaptcha.ready(function() {';
-			echo 'grecaptcha.execute(' . '"' . $sailthru['google_recaptcha_site_key'] . '"' . ', {action: "homepage"}).then(function(token) {';
-			echo 'var recaptcha = document.getElementById("token");';
-			echo 'recaptcha.value = token;';
-			echo '});';
-			echo '});';
-			echo '</script>';
 		}
 	?>
 </div>

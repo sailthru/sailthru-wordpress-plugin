@@ -20,9 +20,15 @@
 		}) ;
 
 		// when a user clicks subscribe
-		$(".sailthru-add-subscriber-form").submit( function( e ){
+		$(".sailthru-add-subscriber-form").submit( async function( e ){
 
 			e.preventDefault();
+			// add the captcha token since the expiry is only 2 minutes
+			var recaptcha = $("#token");
+			var siteKey = $("#siteKey").val();
+			var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
+			recaptcha.val(token);
+		  
 			var user_input = $(this).serialize();
 			var form = $(this);
 			$.ajax({
