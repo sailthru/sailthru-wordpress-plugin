@@ -252,7 +252,7 @@ function sailthru_initialize_setup_options() {
 		add_settings_field(
 			'google_recaptcha_site_key',
 			__( 'reCaptcha Site Key', 'sailthru-for-wordpress' ),
-			'sailthru_html_text_input_callback',
+			'sailthru_html_hidden_text_input_callback',
 			'sailthru_setup_options',
 			'recaptcha_setup_section',
 			array(
@@ -266,7 +266,7 @@ function sailthru_initialize_setup_options() {
 		add_settings_field(
 			'google_recaptcha_secret',
 			__( 'reCaptcha Secret Key', 'sailthru-for-wordpress' ),
-			'sailthru_html_text_input_callback',
+			'sailthru_html_hidden_text_input_callback',
 			'sailthru_setup_options',
 			'recaptcha_setup_section',
 			array(

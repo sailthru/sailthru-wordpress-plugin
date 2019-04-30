@@ -49,6 +49,26 @@ function sailthru_html_text_input_callback( $args ) {
 
 } // end sailthru_html_text_input_callback.
 
+function sailthru_html_hidden_text_input_callback( $args ) {
+
+	$collection    = $args[0];
+	$option_name   = $args[1];
+	$default_value = $args[2];
+	$html_id       = $args[3];
+
+	$options = get_option( $collection );
+
+	// Make sure the element is defined in the options. If not, we'll use the preferred default.
+	$value = '';
+	if ( isset( $options[ $option_name ] ) ) {
+		$value = $options[ $option_name ];
+	} else {
+		$value = $default_value;
+	}
+	echo '<input type="password" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
+
+} // end sailthru_html_hidden_text_input_callback
+
 
 /**
  * This function renders the interface elements for toggling a feature on or off.
