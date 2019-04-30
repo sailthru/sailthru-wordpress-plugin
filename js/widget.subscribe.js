@@ -23,12 +23,13 @@
 		$(".sailthru-add-subscriber-form").submit( async function( e ){
 
 			e.preventDefault();
-			// add the captcha token since the expiry is only 2 minutes
-			var recaptcha = $("#token");
+			var recaptcha = $("#sailthruToken");
 			var siteKey = $("#siteKey").val();
-			var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
-			recaptcha.val(token);
-		  
+            if (recaptcha.val()) {
+                var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
+                recaptcha.val(token);
+            }
+
 			var user_input = $(this).serialize();
 			var form = $(this);
 			$.ajax({

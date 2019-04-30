@@ -368,7 +368,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
 				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
 				<input type="hidden" name="site_key" value="<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>" id="siteKey" />
-				<input type="hidden" name="captcha_token" value="" id="token" />
+				<input type="hidden" name="captcha_token" value="" id="sailthruToken" />
 
 				<span class="input-group-btn">
 					<button class="btn btn-reverse" type="submit">
