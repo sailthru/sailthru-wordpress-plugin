@@ -252,7 +252,7 @@ function sailthru_initialize_setup_options() {
 		add_settings_field(
 			'google_recaptcha_site_key',
 			__( 'reCaptcha Site Key', 'sailthru-for-wordpress' ),
-			'sailthru_html_hidden_text_input_callback',
+			'sailthru_html_text_input_callback',
 			'sailthru_setup_options',
 			'recaptcha_setup_section',
 			array(
@@ -349,7 +349,7 @@ function sailthru_setup_callback() {
 
 function recaptcha_setup_callback() {
 	echo '<h3 class="sailthru-sub-section">reCaptcha Site Key and Secret</h3>';
-	echo '<p>(Optional) Add reCaptcha to your signup forms to detect potential spamming and bots. <a href="https://www.google.com/recaptcha/intro/v3.html">Visit the reCaptcha homepage</a> to set up a site key and secret.</p>';
+	echo '<p>(Optional) Add reCaptcha to your signup forms to detect potential spamming and bots. <a href="https://www.google.com/recaptcha/intro/v3.html" target="_blank">Visit the reCaptcha homepage</a> to set up a site key and secret.</p>';
 }
 
 
