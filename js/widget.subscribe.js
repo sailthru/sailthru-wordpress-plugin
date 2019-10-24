@@ -20,7 +20,7 @@
 		}) ;
 
 		// when a user clicks subscribe
-		$(".sailthru-add-subscriber-form").submit( async function( e ){
+		$(".sailthru-add-subscriber-form").submit(async function(e){
 
 			e.preventDefault();
 			var recaptcha = $("#sailthruToken");

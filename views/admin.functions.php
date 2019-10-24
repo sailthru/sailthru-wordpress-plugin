@@ -59,12 +59,10 @@ function sailthru_html_hidden_text_input_callback( $args ) {
 	$options = get_option( $collection );
 
 	// Make sure the element is defined in the options. If not, we'll use the preferred default.
-	$value = '';
-	if ( isset( $options[ $option_name ] ) ) {
-		$value = $options[ $option_name ];
-	} else {
-		$value = $default_value;
-	}
+    $value = $default_value;
+    if ( isset( $options[ $option_name ] ) ) {
+        $value = $options[ $option_name ];
+    }
 	echo '<input type="password" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
 
 } // end sailthru_html_hidden_text_input_callback
