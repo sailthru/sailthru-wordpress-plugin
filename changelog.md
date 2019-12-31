@@ -8,6 +8,9 @@ Added the option to reset user optout status on newsletter subscription. Appears
 
 Enabling this option will change the user's optout status to "valid" in Sailthru by passing the `optout_email=none` option in the API.
 
+## v3.3.1 (2019-11-18)
+VIP: Clear cache because of 5.3 changes handling for user_activation_key
+
 ## v3.3.0 (2018-11-12)
 Address codestyle issues for VIP
 
