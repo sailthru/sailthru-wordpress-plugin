@@ -3,7 +3,7 @@
 function sailthru_attributes( $attribute_list ) {
 	if ( ! empty( $attribute_list ) ) {
 		$attributes = explode( ',', $attribute_list );
-		$list = '';
+		$list       = '';
 		foreach ( $attributes as $attribute ) {
 			$split = explode( ':', esc_attr( $attribute ) );
 			$list .= $split[0] . '="' . $split[1] . '" ';
@@ -112,24 +112,25 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array(
-			'title' => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
-			'source' => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
-			'lo_event_name' => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
+			'title'               => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
+			'source'              => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
+			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
 			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING )
 		);
 
 		$customfields = get_option( 'sailthru_forms_options' );
-		$key = get_option( 'sailthru_forms_key' );
+		$key          = get_option( 'sailthru_forms_key' );
 
 		for ( $i = 0; $i < $key; $i++ ) {
-			$field_key = $i + 1;
+			$field_key     = $i + 1;
 			$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+
 			//setup instance variables
-			$instance[ 'show_' . $name_stripped . '_name' ] = (bool) $new_instance[ 'show_' . $name_stripped . '_name' ];
+			$instance[ 'show_' . $name_stripped . '_name' ]     = (bool) $new_instance[ 'show_' . $name_stripped . '_name' ];
 			$instance[ 'show_' . $name_stripped . '_required' ] = (bool) $new_instance[ 'show_' . $name_stripped . '_required' ];
-			$instance[ 'show_' . $name_stripped . '_type' ] = $new_instance[ 'show_' . $name_stripped . '_type' ];
-			$instance['field_order'] = $new_instance['field_order'];
-			//$instance['sailthru_customfields_order_widget'] = sanitize_text_field($new_instance['field_order']);
+			$instance[ 'show_' . $name_stripped . '_type' ]     = $new_instance[ 'show_' . $name_stripped . '_type' ];
+			$instance['field_order']                            = $new_instance['field_order'];
+			// $instance['sailthru_customfields_order_widget']     = sanitize_text_field($new_instance['field_order']);
 
 		}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
@@ -151,22 +152,22 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		// Default values for a widget instance
 		$instance = wp_parse_args(
 			(array) $instance, array(
-				'title' => '',
-				'source' => '',
-				'lo_event_name' => '',
+				'title'               => '',
+				'source'              => '',
+				'lo_event_name'       => '',
 				'reset_optout_status' => '',
-				'sailthru_list' => array( '' ),
-				'field_order' => '',
+				'sailthru_list'       => array( '' ),
+				'field_order'         => '',
 			)
 		);
 
-		$title = $instance['title'];
-		$source = $instance['source'];
-		$lo_event_name = $instance['lo_event_name'];
+		$title               = $instance['title'];
+		$source              = $instance['source'];
+		$lo_event_name       = $instance['lo_event_name'];
 		$reset_optout_status = $instance['reset_optout_status'];
-		$sailthru_list = $instance['sailthru_list'];
-		$order = $field_order = $instance['field_order'];
-		$widget_id = $this->id;
+		$sailthru_list       = $instance['sailthru_list'];
+		$order               = $field_order = $instance['field_order'];
+		$widget_id           = $this->id;
 
 		// Display the admin form
 		include SAILTHRU_PLUGIN_PATH . 'views/widget.subscribe.admin.php';
@@ -214,11 +215,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		if ( false === email_exists( $email ) ) {
 			$random_password = wp_generate_password( $length = 12, $include_standard_special_chars = false );
-			$user = wp_create_user( $email, $random_password, $email );
+			$user            = wp_create_user( $email, $random_password, $email );
 			wp_new_user_notification( $user, null, 'user', $params );
 
-			$user_vars  = $options['vars'];
-			$user_vars['ID'] = $user;
+			$user_vars             = $options['vars'];
+			$user_vars['ID']       = $user;
 			$user_vars['nickname'] = $first_name . ' ' . $last_name;
 			unset( $user_vars['wp_widget_lists'] );
 			wp_update_user( $user_vars );
@@ -315,8 +316,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 
 		// check if email address exists in Sailthru.
-		$sailthru = get_option( 'sailthru_setup_options' );
-		$api_key = $sailthru['sailthru_api_key'];
+		$sailthru   = get_option( 'sailthru_setup_options' );
+		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
 
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
@@ -333,9 +334,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			// initialize vars with source.
-			$vars = array( 'source' => $source );
+			$vars         = array( 'source' => $source );
 			$customfields = get_option( 'sailthru_forms_options' );
-			$key = get_option( 'sailthru_forms_key' );
+			$key          = get_option( 'sailthru_forms_key' );
 
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;
@@ -348,11 +349,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 						if ( is_array( $_POST[ 'custom_' . $name_stripped ] ) ) {
 
 							foreach ( $_POST[ 'custom_' . $name_stripped ] as $val ) {
-								$var_name = str_replace( 'custom_', '', $name_stripped );
+								$var_name             = str_replace( 'custom_', '', $name_stripped );
 								$vars[ $var_name ] [] = sanitize_text_field( $val );
 							}
 						} else {
-							$var_name = str_replace( 'custom_', '', $name_stripped );
+							$var_name          = str_replace( 'custom_', '', $name_stripped );
 							$vars[ $var_name ] = sanitize_text_field( $_POST[ 'custom_' . $name_stripped ] );
 						}
 					}
@@ -393,7 +394,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$options['vars'] = $vars;
 
 			$data = array(
-				'id' => $email,
+				'id'     => $email,
 				'fields' => array(
 					'lists' => 1,
 					'keys'  => 1,
@@ -417,8 +418,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				write_log( "reCaptcha enabled, verifying" );
 				try {
 					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $recaptcha_token );
-					$body = wp_remote_retrieve_body( $response );
-					$data = json_decode( $body, true );
+					$body     = wp_remote_retrieve_body( $response );
+					$data     = json_decode( $body, true );
 					if ( false == $data['success'] ) {
 						// failed, send an error message here, but keep it vague
 						$this->return_response(
@@ -434,9 +435,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			$profile_data = array(
-				'id' => $email,
-				'key' => 'email',
-				'vars' => $options['vars'],
+				'id'    => $email,
+				'key'   => 'email',
+				'vars'  => $options['vars'],
 				'lists' => $options['lists'],
 			);
 
@@ -505,9 +506,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			if ( $event ) {
 
 				$event_data = array(
-					'id' => $email,
+					'id'    => $email,
 					'event' => $event,
-					'vars' => $options['vars'],
+					'vars'  => $options['vars'],
 				);
 
 				try {
@@ -518,7 +519,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			if ( has_filter( 'sailthru_user_registration_enable' ) ) {
-				$setup = get_option( 'sailthru_setup_options' );
+				$setup    = get_option( 'sailthru_setup_options' );
 				$template = '';
 				if ( isset( $setup['sailthru_setup_new_user_override_template'] ) && ! empty( $setup['sailthru_setup_new_user_override_template'] ) ) {
 					$template = $setup['sailthru_setup_new_user_override_template'];
@@ -566,11 +567,11 @@ function sailthru_widget_shortcode( $atts ) {
 	extract(
 		shortcode_atts(
 			array(
-				'fields' => 'name',
-				'modal' => 'false',
-				'text' => 'Subscribe',
-				'sailthru_list' => array(),
-				'field_order' => '',
+				'fields'          => 'name',
+				'modal'           => 'false',
+				'text'            => 'Subscribe',
+				'sailthru_list'   => array(),
+				'field_order'     => '',
 				'using_shortcode' => true,
 			), $atts
 		)
