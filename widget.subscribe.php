@@ -61,24 +61,19 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			)
 		);
 
-		// Only register widget scripts, styles, and ajax when widget is active
-		if ( is_active_widget( false, false, $this->id_base, true ) ) {
+		if ( is_active_widget( false, false, $this->id_base, true ) || shortcode_exists( 'sailthru_widget' ) ) {
+			// Only register widget scripts, styles, and ajax when widget is active
 			// Register admin styles and scripts
 			// According to documentation: admin_print_styles should not be used to enqueue styles or scripts on the admin pages. Use admin_enqueue_scripts instead.
 			add_action( 'admin_enqueue_scripts', array( $this, 'register_admin_scripts' ) );
 
-			// Register site styles and scripts
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
-			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
-
-			// Include the Ajax library on the front end
-			add_action( 'wp_head', array( $this, 'add_ajax_library' ) );
-
 			// Method to subscribe a user
 			add_action( 'wp_ajax_nopriv_add_subscriber', array( $this, 'add_subscriber' ) );
 			add_action( 'wp_ajax_add_subscriber', array( $this, 'add_subscriber' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_styles' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'register_widget_scripts' ) );
+			add_action( 'wp_head', array( $this, 'add_ajax_library' ) );
 		}
-
 	} // end constructor
 
 	/*--------------------------------------------------*/
@@ -117,9 +112,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = array(
-			'title'         => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
-			'source'        => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
-			'lo_event_name' => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
+			'title'               => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
+			'source'              => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
+			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
+			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING )
 		);
 
 		$customfields = get_option( 'sailthru_forms_options' );
@@ -128,12 +124,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		for ( $i = 0; $i < $key; $i++ ) {
 			$field_key     = $i + 1;
 			$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+
 			//setup instance variables
 			$instance[ 'show_' . $name_stripped . '_name' ]     = (bool) $new_instance[ 'show_' . $name_stripped . '_name' ];
 			$instance[ 'show_' . $name_stripped . '_required' ] = (bool) $new_instance[ 'show_' . $name_stripped . '_required' ];
 			$instance[ 'show_' . $name_stripped . '_type' ]     = $new_instance[ 'show_' . $name_stripped . '_type' ];
 			$instance['field_order']                            = $new_instance['field_order'];
-			//$instance['sailthru_customfields_order_widget'] = sanitize_text_field($new_instance['field_order']);
+			// $instance['sailthru_customfields_order_widget']     = sanitize_text_field($new_instance['field_order']);
 
 		}
 		$instance['sailthru_list'] = is_array( $new_instance['sailthru_list'] ) ? array_map( 'sanitize_text_field', $new_instance['sailthru_list'] ) : '';
@@ -155,20 +152,22 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		// Default values for a widget instance
 		$instance = wp_parse_args(
 			(array) $instance, array(
-				'title'         => '',
-				'source'        => '',
-				'lo_event_name' => '',
-				'sailthru_list' => array( '' ),
-				'field_order'   => '',
+				'title'               => '',
+				'source'              => '',
+				'lo_event_name'       => '',
+				'reset_optout_status' => '',
+				'sailthru_list'       => array( '' ),
+				'field_order'         => '',
 			)
 		);
 
-		$title         = $instance['title'];
-		$source        = $instance['source'];
-		$lo_event_name = $instance['lo_event_name'];
-		$sailthru_list = $instance['sailthru_list'];
-		$order         = $field_order = $instance['field_order'];
-		$widget_id     = $this->id;
+		$title               = $instance['title'];
+		$source              = $instance['source'];
+		$lo_event_name       = $instance['lo_event_name'];
+		$reset_optout_status = $instance['reset_optout_status'];
+		$sailthru_list       = $instance['sailthru_list'];
+		$order               = $field_order = $instance['field_order'];
+		$widget_id           = $this->id;
 
 		// Display the admin form
 		include SAILTHRU_PLUGIN_PATH . 'views/widget.subscribe.admin.php';
@@ -325,7 +324,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		if ( $client ) {
 
-			$options      = array();
+			$options = array();
 
 			// set the source
 			if ( isset( $_POST['source'] ) && ! empty( $_POST['source'] ) ) {
@@ -413,6 +412,40 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
+			$recaptcha_token = sanitize_text_field( $_POST['captcha_token'] );
+
+			if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty( $sailthru['google_recaptcha_secret'] ) && ! empty( $recaptcha_token ) ) {
+				write_log( "reCaptcha enabled, verifying" );
+				try {
+					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $recaptcha_token );
+					$body     = wp_remote_retrieve_body( $response );
+					$data     = json_decode( $body, true );
+					if ( false == $data['success'] ) {
+						// failed, send an error message here, but keep it vague
+						$this->return_response(
+							array(
+								'success' => false,
+								'message' => 'Sorry, something went wrong and we could not subscribe you.'
+							)
+						);
+					}
+				} catch ( Exception $e ) {
+					write_log( $e );
+				}
+			}
+
+			$profile_data = array(
+				'id'    => $email,
+				'key'   => 'email',
+				'vars'  => $options['vars'],
+				'lists' => $options['lists'],
+			);
+
+			$should_update_optout = isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ? 'none': '';
+			if ($should_update_optout) {
+				$profile_data['optout_email'] = 'none';
+			}
+
 			if ( ! empty( $profile ) ) {
 
 				if ( isset( $profile['lists'] ) && count( $profile['lists'] ) > 0 ) {
@@ -430,12 +463,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 
 				try {
-					$profile_data = array(
-						'id'    => $email,
-						'key'   => 'email',
-						'vars'  => $options['vars'],
-						'lists' => $options['lists'],
-					);
 					$client->apiPost( 'user', $profile_data );
 					$new_lists = $options['lists'];
 
@@ -446,12 +473,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			} else {
 
 				try {
-					$profile_data = array(
-						'id'    => $email,
-						'key'   => 'email',
-						'vars'  => $options['vars'],
-						'lists' => $options['lists'],
-					);
 					$client->apiPost( 'user', $profile_data );
 					$new_lists = $options['lists'];
 

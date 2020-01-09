@@ -9,6 +9,7 @@
 	$title         = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', esc_attr( $instance['title'] ) );
 	$source        = empty( $instance['source'] ) ? get_bloginfo( 'url' ) : esc_attr( $instance['source'] );
 	$lo_event_name = empty( $instance['lo_event_name'] ) ? '' : esc_attr( $instance['lo_event_name'] );
+	$reset_optout_status = empty( $instance['reset_optout_status'] ) ? '' : esc_attr( $instance['reset_optout_status'] );
 
 if ( ! empty( $instance['sailthru_list'] ) ) {
 	if ( is_array( $instance['sailthru_list'] ) ) {
@@ -350,11 +351,24 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 					} // end for
 				} // end if there are fields
 				?>
+
+
+				<?php
+					if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
+						echo '<p class="captcha-disclaimer">
+						This site is protected by reCAPTCHA and the Google <a href="https://policies.google.com/privacy">Privacy Policy</a> and
+						<a href="https://policies.google.com/terms">Terms of Service</a> apply.
+						</p>';
+					}
+				?>
 				<input type="hidden" name="sailthru_nonce" value="<?php echo esc_attr( $nonce) ; ?>" />
 				<input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
 				<input type="hidden" name="action" value="add_subscriber" />
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
+				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
+				<input type="hidden" name="site_key" value="<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>" id="siteKey" />
+				<input type="hidden" name="captcha_token" value="" id="sailthruToken" />
 
 				<span class="input-group-btn">
 					<button class="btn btn-reverse" type="submit">
@@ -363,4 +377,9 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				</span>
 		</form>
 	</div>
+	<?php
+		if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
+			echo '<script src="https://www.google.com/recaptcha/api.js?render=' . esc_attr( $sailthru['google_recaptcha_site_key'] ) . '"></script>';
+		}
+	?>
 </div>
