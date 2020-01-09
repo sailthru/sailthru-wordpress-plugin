@@ -25,10 +25,10 @@
 			e.preventDefault();
 			var recaptcha = $("#sailthruToken");
 			var siteKey = $("#siteKey").val();
-		    	if (!recaptcha.val()) {
-			    var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
-			    recaptcha.val(token);
-		    	}
+		  if (!recaptcha.val() && siteKey) {
+			 var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
+			 recaptcha.val(token);
+		  }
 
 			var user_input = $(this).serialize();
 			var form = $(this);
