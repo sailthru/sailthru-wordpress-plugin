@@ -248,12 +248,13 @@ class Sailthru_Content_Settings {
 
 	}
 
-	/**
-	* Generates the output for the Content API call.
-	*
-	* @param integer $post_id
-	* @param object $post
-	*/
+    /**
+     * Generates the output for the Content API call.
+     *
+     * @param integer $post_id
+     * @param object $post
+     * @return array
+     */
 	function generate_payload( $post, $post_id ) {
 
 		$url = get_permalink( $post->ID );
