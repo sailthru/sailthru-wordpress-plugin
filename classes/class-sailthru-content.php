@@ -251,8 +251,9 @@ class Sailthru_Content_Settings {
     /**
      * Generates the output for the Content API call.
      *
-     * @param integer $post_id
-     * @param object $post
+     * @param $post     object
+     * @param $post_id  integer
+     *
      * @return array
      */
 	function generate_payload( $post, $post_id ) {
