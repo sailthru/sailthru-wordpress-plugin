@@ -248,17 +248,19 @@ class Sailthru_Content_Settings {
 
 	}
 
-	 /**
-	 * Generates the output for the Content API call. 
-	 *
-	 * @param integer $post_id
-	 * @param object $post
-	 */
-
+	/**
+	* Generates the output for the Content API call.
+	*
+	* @param integer $post_id
+	* @param object $post
+	*/
 	function generate_payload( $post, $post_id ) {
-		
+
+		$url = get_permalink( $post->ID );
+		$url_with_correct_protocol = set_url_scheme( $url );
+
 		$data = array();
-		$data['url'] = get_permalink( $post->ID );
+		$data['url']               = $url_with_correct_protocol;
 		$data['title']             = $post->post_title;
 		$data['author']            = get_the_author_meta( 'display_name', $post->post_author );
 		$data['date']              = $post->post_date;
