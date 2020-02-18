@@ -1,6 +1,9 @@
 # Changelog
 
-## v.3.4.0
+## v.3.4.1 (2020-01-18)
+Fixed bug where HTTPS urls were sent to the Sailthru Content API as HTTP
+
+## v.3.4.0 (2020-01-09)
 Added the option to reset user optout status on newsletter subscription. Appears as a checkbox in the footer widget and as the following option in the shortcode:
 ```
 [sailthru_widget ... reset_optout_status="true"]
