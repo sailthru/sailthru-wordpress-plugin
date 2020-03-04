@@ -1,7 +1,11 @@
 img/.DS_Store
 .DS_Store
+.idea/
 .svn/*
 *.sublime-project
 *.sublime-workspace
 .vscode/launch.json
 .vscode/settings.json
+composer.json
+composer.lock
+vendor/
