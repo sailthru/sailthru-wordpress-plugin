@@ -22,48 +22,48 @@ require_once SAILTHRU_PLUGIN_PATH . 'views/admin.functions.subscribe.options.php
  */
 function sailthru_html_text_input_callback( $args ) {
 
-	$collection    = $args[0];
-	$option_name   = $args[1];
-	$default_value = $args[2];
-	$html_id       = $args[3];
-	if ( isset( $args[4] ) ) {
-		$hint = $args[4];
-	} else {
-		$hint = '';
-	}
-	$options = get_option( $collection );
+    $collection    = $args[0];
+    $option_name   = $args[1];
+    $default_value = $args[2];
+    $html_id       = $args[3];
+    if ( isset( $args[4] ) ) {
+        $hint = $args[4];
+    } else {
+        $hint = '';
+    }
+    $options = get_option( $collection );
 
-	// Make sure the element is defined in the options. If not, we'll use the preferred default.
-	$value = '';
-	if ( isset( $options[ $option_name ] ) ) {
-		$value = $options[ $option_name ];
-	} else {
-		$value = $default_value;
-	}
+    // Make sure the element is defined in the options. If not, we'll use the preferred default.
+    $value = '';
+    if ( isset( $options[ $option_name ] ) ) {
+        $value = $options[ $option_name ];
+    } else {
+        $value = $default_value;
+    }
 
-	// Render the output
-	echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
-	if ( isset( $hint ) ) {
-		echo '<div class="instructions">' . esc_html( $hint ) . '</div>';
-	}
+    // Render the output
+    echo '<input type="text" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
+    if ( isset( $hint ) ) {
+        echo '<div class="instructions">' . esc_html( $hint ) . '</div>';
+    }
 
 } // end sailthru_html_text_input_callback.
 
 function sailthru_html_hidden_text_input_callback( $args ) {
 
-	$collection    = $args[0];
-	$option_name   = $args[1];
-	$default_value = $args[2];
-	$html_id       = $args[3];
+    $collection    = $args[0];
+    $option_name   = $args[1];
+    $default_value = $args[2];
+    $html_id       = $args[3];
 
-	$options = get_option( $collection );
+    $options = get_option( $collection );
 
-	// Make sure the element is defined in the options. If not, we'll use the preferred default.
-	$value = $default_value;
-	if ( isset( $options[ $option_name ] ) ) {
-		$value = $options[ $option_name ];
-	}
-	echo '<input type="password" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
+    // Make sure the element is defined in the options. If not, we'll use the preferred default.
+    $value = $default_value;
+    if ( isset( $options[ $option_name ] ) ) {
+        $value = $options[ $option_name ];
+    }
+    echo '<input type="password" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
 
 } // end sailthru_html_hidden_text_input_callback
 
@@ -83,31 +83,31 @@ function sailthru_html_hidden_text_input_callback( $args ) {
  */
 function sailthru_toggle_feature_callback( $args ) {
 
-	$collection    = $args[0];
-	$option_name   = $args[1];
-	$default_value = $args[2];
-	$html_id       = $args[3];
-	$label         = $args[4];
+    $collection    = $args[0];
+    $option_name   = $args[1];
+    $default_value = $args[2];
+    $html_id       = $args[3];
+    $label         = $args[4];
 
-	// Read the options collection
-	$options = get_option( $collection );
+    // Read the options collection
+    $options = get_option( $collection );
 
-	if ( empty( $options ) ) {
-		$options = array();
-	}
+    if ( empty( $options ) ) {
+        $options = array();
+    }
 
-	// We don't want errors on first run, and since this is
-	// only a toggle, we can create this option_name if it
-	// doesn't exist.
-	if ( ! isset( $options[ $option_name ] ) ) {
-		$options[ $option_name ] = 0; // evaluates to not checked
-	}
+    // We don't want errors on first run, and since this is
+    // only a toggle, we can create this option_name if it
+    // doesn't exist.
+    if ( ! isset( $options[ $option_name ] ) ) {
+        $options[ $option_name ] = 0; // evaluates to not checked
+    }
 
-	// Fully formed checkbox
-	echo '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1, $options[ $option_name ], false ) . '/>';
+    // Fully formed checkbox
+    echo '<input type="checkbox" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $default_value ) . '" ' . checked( 1, $options[ $option_name ], false ) . '/>';
 
-	// Add a label next to the checkbox
-	echo '<label for="' . esc_attr( $html_id ) . '">&nbsp;' . esc_html( $label ) . '</label>';
+    // Add a label next to the checkbox
+    echo '<label for="' . esc_attr( $html_id ) . '">&nbsp;' . esc_html( $label ) . '</label>';
 } // end sailthru_toggle_feature_callback
 
 
@@ -129,23 +129,23 @@ function sailthru_toggle_feature_callback( $args ) {
  */
 function sailthru_sanitize_text_input( $input ) {
 
-	// Define the array for the updated options
-	$output = array();
+    // Define the array for the updated options
+    $output = array();
 
-	if ( is_array( $input ) ) {
+    if ( is_array( $input ) ) {
 
-		// Loop through each of the options sanitizing the data
-		foreach ( $input as $key => $val ) {
-			if ( $key === 'sailthru_scout_renderItem' ) {
-				$output[ $key ] = esc_js( $input[ $key ] );
-			} elseif ( isset( $input[ $key ] ) ) {
-					$output[ $key ] = sanitize_text_field( stripslashes( $input[ $key ] ) );
-			} // end if
-		} // end foreach
-	} // end if
+        // Loop through each of the options sanitizing the data
+        foreach ( $input as $key => $val ) {
+            if ( $key === 'sailthru_scout_renderItem' ) {
+                $output[ $key ] = esc_js( $input[ $key ] );
+            } elseif ( isset( $input[ $key ] ) ) {
+                    $output[ $key ] = sanitize_text_field( stripslashes( $input[ $key ] ) );
+            } // end if
+        } // end foreach
+    } // end if
 
-	// Return the new collection
-	return apply_filters( 'sailthru_sanitize_text_input', $output, $input );
+    // Return the new collection
+    return apply_filters( 'sailthru_sanitize_text_input', $output, $input );
 
 } // end sailthru_sanitize_text_input
 
@@ -177,42 +177,42 @@ function sailthru_sanitize_text_input( $input ) {
  */
 function sailthru_create_dropdown( $args, $values ) {
 
-	$collection  = $args[0];
-	$option_name = $args[1];
-	$default     = $args[2]; // we're not using this yet
-	$html_id     = $args[3];
-	if ( isset( $args[4] ) ) {
-		$instructions = $args[4];
-	} else {
-		$instructions = false;
-	}
-	$current = get_option( $collection );
+    $collection  = $args[0];
+    $option_name = $args[1];
+    $default     = $args[2]; // we're not using this yet
+    $html_id     = $args[3];
+    if ( isset( $args[4] ) ) {
+        $instructions = $args[4];
+    } else {
+        $instructions = false;
+    }
+    $current = get_option( $collection );
 
-	if ( isset( $current[ $option_name ] ) ) {
-		$saved_value = $current[ $option_name ];
-	} else {
-		$saved_value = '';
-	}
+    if ( isset( $current[ $option_name ] ) ) {
+        $saved_value = $current[ $option_name ];
+    } else {
+        $saved_value = '';
+    }
 
-	$html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
+    $html = '<select name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" id="' . esc_attr( $html_id ) . '">';
 
-	$html .= '<option value=""> - Select - </option>';
+    $html .= '<option value=""> - Select - </option>';
 
-	if ( is_array( $values ) ) {
-		foreach ( $values as $key => $value ) {
+    if ( is_array( $values ) ) {
+        foreach ( $values as $key => $value ) {
 
-			$html .= '<option value="' . esc_attr( $value['name'] ) . '" ' . selected( $saved_value, $value['name'], false ) . '>' . esc_attr( $value['name'] ) . '</option>';
+            $html .= '<option value="' . esc_attr( $value['name'] ) . '" ' . selected( $saved_value, $value['name'], false ) . '>' . esc_attr( $value['name'] ) . '</option>';
 
-		}
-	}
+        }
+    }
 
-	$html .= '</select>';
+    $html .= '</select>';
 
-	if ( ! empty( $instructions ) ) {
-		$html .= '<p class="description">' . $instructions . '</p>';
-	}
+    if ( ! empty( $instructions ) ) {
+        $html .= '<p class="description">' . $instructions . '</p>';
+    }
 
-	return $html;
+    return $html;
 
 }
 
@@ -223,19 +223,19 @@ function sailthru_create_dropdown( $args, $values ) {
  */
 function sailthru_account_settings() {
 
-	$settings = get_option( 'sailthru_setup_options' );
+    $settings = get_option( 'sailthru_setup_options' );
 
-	if ( ! empty( $settings['sailthru_api_key'] ) && ! empty( $settings['sailthru_api_secret'] ) ) {
+    if ( ! empty( $settings['sailthru_api_key'] ) && ! empty( $settings['sailthru_api_secret'] ) ) {
 
-		$client = new WP_Sailthru_Client( $settings['sailthru_api_key'], $settings['sailthru_api_secret'] );
+        $client = new WP_Sailthru_Client( $settings['sailthru_api_key'], $settings['sailthru_api_secret'] );
 
-		try {
-			return $client->apiGet( 'settings' );
-		} catch ( Exception $e ) {
-			write_log( $e );
-			return false;
-		}
-	}
+        try {
+            return $client->apiGet( 'settings' );
+        } catch ( Exception $e ) {
+            write_log( $e );
+            return false;
+        }
+    }
 
 }
 
@@ -246,32 +246,32 @@ function sailthru_account_settings() {
  */
 function sailthru_status() {
 
-	// default to false
-	$status = array(
-		'setup' => false,
-		'api'   => false,
-	);
+    // default to false
+    $status = array(
+        'setup' => false,
+        'api'   => false,
+    );
 
-	$api = get_option( 'sailthru_api_validated' );
+    $api = get_option( 'sailthru_api_validated' );
 
-	if ( '0' !== $api || false !== $api ) {
-		$status['api'] = true;
-	} else {
-		// invalidate the setup if the API is invalid
-		update_option( 'sailthru_setup_complete', false );
-	}
+    if ( '0' !== $api || false !== $api ) {
+        $status['api'] = true;
+    } else {
+        // invalidate the setup if the API is invalid
+        update_option( 'sailthru_setup_complete', false );
+    }
 
-	$setup = get_option( 'sailthru_setup_complete' );
-	if ( '0' !== $setup || false !== $setup ) {
-		$status['setup'] = true;
-	}
+    $setup = get_option( 'sailthru_setup_complete' );
+    if ( '0' !== $setup || false !== $setup ) {
+        $status['setup'] = true;
+    }
 
-	return $status;
+    return $status;
 }
 
 function sailthru_invalidate( $api, $setup ) {
-	update_option( 'sailthru_setup_complete', $setup );
-	update_option( 'sailthru_api_validated', $api );
+    update_option( 'sailthru_setup_complete', $setup );
+    update_option( 'sailthru_api_validated', $api );
 }
 
 /**
@@ -280,7 +280,7 @@ function sailthru_invalidate( $api, $setup ) {
  */
 function sailthru_verify_setup() {
 
-	return get_option( 'sailthru_api_validated' );
+    return get_option( 'sailthru_api_validated' );
 }
 
 // end sailthru_verify_setup.
@@ -288,39 +288,39 @@ function sailthru_verify_setup() {
 // Check Feature is enabled
 function sailthru_check_feature( $feature ) {
 
-	$settings = get_option( 'sailthru_settings' );
+    $settings = get_option( 'sailthru_settings' );
 
-	if ( isset( $settings['features'] ) ) {
-		if ( in_array( $feature, $settings['features'], true ) ) {
-			return true;
-		}
-	}
-	return false;
+    if ( isset( $settings['features'] ) ) {
+        if ( in_array( $feature, $settings['features'], true ) ) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function sailthru_spm_ready() {
 
-	$features = get_option( 'sailthru_settings' );
-	$sailthru = get_option( 'sailthru_setup_options' );
+    $features = get_option( 'sailthru_settings' );
+    $sailthru = get_option( 'sailthru_setup_options' );
 
-	$spm_enabled = false;
-	$js_ready    = false;
+    $spm_enabled = false;
+    $js_ready    = false;
 
-	if ( isset( $features['features']['spm_enabled'] ) ) {
-			$spm_enabled = $features['features']['spm_enabled'] ? true : false;
-	}
+    if ( isset( $features['features']['spm_enabled'] ) ) {
+            $spm_enabled = $features['features']['spm_enabled'] ? true : false;
+    }
 
-	if ( isset( $sailthru['sailthru_js_type'] ) ) {
-		if ( 'personalize_js' === $sailthru['sailthru_js_type'] || 'personalize_js_custom' === $sailthru['sailthru_js_type'] ) {
-			$js_ready = true;
-		}
-	}
+    if ( isset( $sailthru['sailthru_js_type'] ) ) {
+        if ( 'personalize_js' === $sailthru['sailthru_js_type'] || 'personalize_js_custom' === $sailthru['sailthru_js_type'] ) {
+            $js_ready = true;
+        }
+    }
 
-	if ( $spm_enabled && $js_ready ) {
-		return true;
-	} else {
-		return false;
-	}
+    if ( $spm_enabled && $js_ready ) {
+        return true;
+    } else {
+        return false;
+    }
 
 }
 
@@ -330,54 +330,54 @@ function sailthru_spm_ready() {
  */
 function sailthru_verify_template( $tpl ) {
 
-	$errors = array();
+    $errors = array();
 
-	if ( '{subject}' !== $tpl['subject'] ) {
-		$errors = 'Your template needs to have {subject} as the subject line.';
-	}
+    if ( '{subject}' !== $tpl['subject'] ) {
+        $errors = 'Your template needs to have {subject} as the subject line.';
+    }
 
-	if ( ! strstr( $tpl['content_html'], '{body}' ) ) {
-		$errors = 'Your template needs to have {body} variable.';
-	}
+    if ( ! strstr( $tpl['content_html'], '{body}' ) ) {
+        $errors = 'Your template needs to have {body} variable.';
+    }
 
-	return $errors;
+    return $errors;
 }
 
 // Generate the dropdown for SPM sections. 
 function sailthru_spm_admin_widget( $spm_sections,  $active_section_id, $field_name ) {
 
-	// check to see if we have any sections
-	if ( isset( $spm_sections['sections'] ) &&  count( $spm_sections['sections'] ) > 0 ) {
-		echo '<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>';
-		echo '<input type="hidden" value="personalize_js" name="sailthru_widget_type" />';
-		echo '<select name="' . esc_attr( $field_name ) . '">';
-		echo '<option value="">-- Select --</option>';
+    // check to see if we have any sections
+    if ( isset( $spm_sections['sections'] ) &&  count( $spm_sections['sections'] ) > 0 ) {
+        echo '<p>Choose the personalization section to display on your site by selecting the section from the drop down menu below. </p>';
+        echo '<input type="hidden" value="personalize_js" name="sailthru_widget_type" />';
+        echo '<select name="' . esc_attr( $field_name ) . '">';
+        echo '<option value="">-- Select --</option>';
 
-		foreach ( $spm_sections['sections'] as $section ) {
+        foreach ( $spm_sections['sections'] as $section ) {
 
-			echo  '<option value="' . esc_attr( $section['section_id'] ) . '"' . selected( $section['section_id'] , $active_section_id ) . '>' . esc_html( $section['name'] ) . '</option>';
+            echo  '<option value="' . esc_attr( $section['section_id'] ) . '"' . selected( $section['section_id'] , $active_section_id ) . '>' . esc_html( $section['name'] ) . '</option>';
 
-		}
-		echo  '</select>';
-		echo '<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>';
-	} else {
-		echo '<p class="small">No sections could be retrieved from your account. Please check your Site Personalization Manager sections in <a href="http://my.sailthru.com/spm">your Sailthru account.';
-	}
+        }
+        echo  '</select>';
+        echo '<p class="small">Manage Site this personalization block in <a href="https://my.sailthru.com/spm">Sailthru</a></p>';
+    } else {
+        echo '<p class="small">No sections could be retrieved from your account. Please check your Site Personalization Manager sections in <a href="http://my.sailthru.com/spm">your Sailthru account.';
+    }
 }
 
 function sailthru_admin_tabs($active_tab = '') {
 
-	$css_class = ' nav-tab-active';
-	$config_active = 'sailthru_configuration_page' === $active_tab ? $css_class : '';
-	$list_active = 'custom_fields_configuration_page' === $active_tab ? $css_class : '';
-	$content_active = 'sailthru_content_settings' === $active_tab ? $css_class : '';
-	
-	echo '<h2 class="nav-tab-wrapper">';
-	echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_configuration_page') ) . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
-	if ( sailthru_verify_setup() ) { 
-		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=custom_fields_configuration_page' ) ) . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">Customer Signup Options</a>';
-		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_content_settings' ) ) . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
-	}
-	echo '</h2>';
+    $css_class = ' nav-tab-active';
+    $config_active = 'sailthru_configuration_page' === $active_tab ? $css_class : '';
+    $list_active = 'custom_fields_configuration_page' === $active_tab ? $css_class : '';
+    $content_active = 'sailthru_content_settings' === $active_tab ? $css_class : '';
+    
+    echo '<h2 class="nav-tab-wrapper">';
+    echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_configuration_page') ) . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
+    if ( sailthru_verify_setup() ) { 
+        echo '<a href=" '. admin_url( esc_url( 'admin.php?page=custom_fields_configuration_page' ) ) . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">Customer Signup Options</a>';
+        echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_content_settings' ) ) . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
+    }
+    echo '</h2>';
 
 }
