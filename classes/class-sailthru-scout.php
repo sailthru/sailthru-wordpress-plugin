@@ -231,10 +231,9 @@ class Sailthru_Scout_Widget extends WP_Widget {
      * @param array instance The current instance of the widget.
      */
     function widget($args, $instance) {
-        extract( $args, EXTR_SKIP );
-        echo wp_kses_post( $before_widget );
+        echo wp_kses_post( $args['before_widget'] );
         include( SAILTHRU_PLUGIN_PATH . 'views/widget.scout.display.php' );
-        echo wp_kses_post( $after_widget );
+        echo wp_kses_post( $args['after_widget'] );
     }
     /**
      * Processes the widget's options to be saved.
