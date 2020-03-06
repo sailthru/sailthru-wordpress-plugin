@@ -346,8 +346,11 @@
             // Prevent displaying twice
             if ($dp.find("div.ui-timepicker-div").length === 0 && o.showTimepicker) {
                 var noDisplay = ' style="display:none;"',
-                    html = '<div class="ui-timepicker-div'+ (o.isRTL? ' ui-timepicker-rtl' : '') +'"><dl>' + '<dt class="ui_tpicker_time_label"' + ((o.showTime) ? '' : noDisplay) + '>' + o.timeText + '</dt>' +
-                                '<dd class="ui_tpicker_time"' + ((o.showTime) ? '' : noDisplay) + '></dd>';
+                    html =
+                        `<div class="ui-timepicker-div${o.isRTL ? ' ui-timepicker-rtl' : ''}">
+                            <dl>
+                                <dt class="ui_tpicker_time_label"${ o.showTime ? '' : noDisplay}>${o.timeText }</dt>
+                                <dd class="ui_tpicker_time"${ o.showTime ? '' : noDisplay }></dd>`;
 
                 // Create the markup
                 for(i=0,l=this.units.length; i<l; i++){
@@ -359,8 +362,9 @@
                     max[litem] = parseInt((o[litem+'Max'] - ((o[litem+'Max'] - o[litem+'Min']) % o['step'+uitem])), 10);
                     gridSize[litem] = 0;
 
-                    html += '<dt class="ui_tpicker_'+ litem +'_label"' + ((o['show'+uitem]) ? '' : noDisplay) + '>' + o[litem +'Text'] + '</dt>' +
-                                '<dd class="ui_tpicker_'+ litem +'"><div class="ui_tpicker_'+ litem +'_slider"' + ((o['show'+uitem]) ? '' : noDisplay) + '></div>';
+                    html += `<dt class="ui_tpicker_${ litem }_label" ${ o['show' + uitem] ? '' : noDisplay }>${ o[litem + 'Text'] }</dt>
+                            <dd class="ui_tpicker_${ litem }">
+                            <div class="ui_tpicker_${ litem }_slider"${ o['show' + uitem] ? '' : noDisplay }></div>`;
 
                     if (o['show'+uitem] && o[litem+'Grid'] > 0) {
                         html += '<div style="padding-left: 1px"><table class="ui-tpicker-grid-label"><tr>';
@@ -369,13 +373,13 @@
                             for (var h = o[litem+'Min']; h <= max[litem]; h += parseInt(o[litem+'Grid'], 10)) {
                                 gridSize[litem]++;
                                 var tmph = $.datepicker.formatTime(useAmpm(o.pickerTimeFormat || o.timeFormat)? 'hht':'HH', {hour:h}, o);
-                                html += '<td data-for="'+litem+'">' + tmph + '</td>';
+                                html += `<td data-for="${ litem }">${ tmph }</td>`;
                             }
                         }
                         else{
                             for (var m = o[litem+'Min']; m <= max[litem]; m += parseInt(o[litem+'Grid'], 10)) {
                                 gridSize[litem]++;
-                                html += '<td data-for="'+litem+'">' + ((m < 10) ? '0' : '') + m + '</td>';
+                                html += `<td data-for="${ litem }">${ ( m < 10 ? '0' : '' ) + m }</td>`;
                             }
                         }
 
@@ -385,8 +389,8 @@
                 }
 
                 // Timezone
-                html += '<dt class="ui_tpicker_timezone_label"' + ((o.showTimezone) ? '' : noDisplay) + '>' + o.timezoneText + '</dt>';
-                html += '<dd class="ui_tpicker_timezone" ' + ((o.showTimezone) ? '' : noDisplay) + '></dd>';
+                html += `<dt class="ui_tpicker_timezone_label"${ o.showTimezone ? '' : noDisplay }>${ o.timezoneText }</dt>`;
+                html += `<dd class="ui_tpicker_timezone"${ o.showTimezone ? '' : noDisplay }></dd>`;
 
                 // Create the elements from string
                 html += '</dl></div>';
@@ -394,7 +398,10 @@
 
                 // if we only want time picker...
                 if (o.timeOnly === true) {
-                    $tp.prepend('<div class="ui-widget-header ui-helper-clearfix ui-corner-all">' + '<div class="ui-datepicker-title">' + o.timeOnlyTitle + '</div>' + '</div>');
+                    $tp.prepend(
+                        `<div class="ui-widget-header ui-helper-clearfix ui-corner-all">
+                            <div class="ui-datepicker-title">${o.timeOnlyTitle}</div>
+                        </div>`);
                     $dp.find('.ui-datepicker-header, .ui-datepicker-calendar').hide();
                 }
 
@@ -913,11 +920,11 @@
             // select methods
             select: {
                 create: function(tp_inst, obj, unit, val, min, max, step){
-                    var sel = '<select class="ui-timepicker-select" data-unit="'+ unit +'" data-min="'+ min +'" data-max="'+ max +'" data-step="'+ step +'">',
+                    var sel = `<select class="ui-timepicker-select" data-unit="${ unit }" data-min="${ min }" data-max="${ max }" data-step="${ step }">`,
                         format = tp_inst._defaults.pickerTimeFormat || tp_inst._defaults.timeFormat;
 
                     for(var i=min; i<=max; i+=step){
-                        sel += '<option value="'+ i +'"'+ (i==val? ' selected':'') +'>';
+                        sel += `<option value="${ i }"${ i == val ? ' selected' : '' }>`;
                         if(unit == 'hour'){
                             sel += $.datepicker.formatTime($.trim(format.replace(/[^ht ]/ig,'')), {hour:i}, tp_inst._defaults);
                         }
