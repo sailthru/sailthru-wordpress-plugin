@@ -1,8 +1,8 @@
 <?php
 
 /* ------------------------------------------------------------------------ *
-     * Subscribe Widget Fields
-     * ------------------------------------------------------------------------ */
+ * Subscribe Widget Fields
+ * ------------------------------------------------------------------------ */
 
 function sailthru_initialize_forms_options() {
 
@@ -45,11 +45,11 @@ function sailthru_initialize_forms_options() {
 
         if ( isset( $tpl ) ) {
             // escaped in function.
-            echo  sailthru_create_dropdown( $args, $tpl );
+            echo  sailthru_create_dropdown( $args, $tpl ); // phpcs:ignore WordPress.Security.EscapeOutput
         } else {
             // escaped in function.
-            echo  sailthru_create_dropdown( $args, array() );
-            echo 'Sailthru Api Key and Secret must be saved first';
+            echo  sailthru_create_dropdown( $args, array() ); // phpcs:ignore WordPress.Security.EscapeOutput
+            echo 'Sailthru Api Key and Secret must be saved first'; 
         }
     }
 

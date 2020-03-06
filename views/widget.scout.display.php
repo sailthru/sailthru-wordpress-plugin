@@ -48,7 +48,7 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
         if ( ! isset( $after_title ) ) {
             $after_title = '';
         }
-        echo $before_title . wp_kses_post( trim( $title ) ). $after_title;
+        echo wp_kses_post( $before_title . trim( $title ) . $after_title );
     }
     ?>
 

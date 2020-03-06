@@ -589,10 +589,10 @@ function sailthru_setup_email_template_callback( $args ) {
     // Render the Drop Downs
     if ( isset( $tpl ) ) {
         // escaped in function.
-        echo sailthru_create_dropdown( $args, $tpl );
+        echo sailthru_create_dropdown( $args, $tpl ); // phpcs:ignore WordPress.Security.EscapeOutput
     } else {
         // escaped in function.
-        echo sailthru_create_dropdown( $args, array() );
+        echo sailthru_create_dropdown( $args, array() ); // phpcs:ignore WordPress.Security.EscapeOutput
 
         if ( ! empty( $api_error ) ) {
             echo '<p>We could not connect to the Sailthru API</p>';
