@@ -168,10 +168,11 @@ class Sailthru_Content_Settings {
             $selected_types = isset($options['sailthru_content_post_types']) ? $options['sailthru_content_post_types'] : [];
             foreach ( $post_types as $type ) {
                 $selected = in_array( $type , $selected_types, true ) ? 'checked="checked"' : '';
-                echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' . esc_attr( $type ) . '" ' . $selected . '> ' . esc_attr__( ucwords ( $type ) , 'text_domain' ) . '<br>';
+                echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' .
+                esc_attr( $type ) . '" ' . esc_attr( $selected ) . '> ' . esc_attr__( ucwords ( $type ) , 'text_domain' ) . '<br>';
             }
 
-        }        
+        }
 
     }
 
@@ -188,7 +189,7 @@ class Sailthru_Content_Settings {
 
         // Field output.
         echo '<input type="text" name="sailthru_content_settings[sailthru_content_vars]" class="regular-text sailthru_content_vars_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-        echo '<p class="description">' . __( '<p>Provide a comma separated list of vars to include.</p> <p class="small">When left blank all WordPress content type attributes will be synced with Sailthru.</p>', 'text_domain' ) . '</p>';
+        echo '<p class="description">' . esc_attr__( '<p>Provide a comma separated list of vars to include.</p> <p class="small">When left blank all WordPress content type attributes will be synced with Sailthru.</p>', 'text_domain' ) . '</p>';
 
     }
 
