@@ -200,8 +200,7 @@ class Sailthru_Horizon {
 						add_filter( 'script_loader_tag', 'spm_async', 10, 3 ); // force SPM to load async
 						function spm_async( $tag, $handle, $src ) {
 							if ( $handle == 'personalize_js' ) {
-								$onload = 'sailthru_init();';
-								return "<script src='$src' onload='$onload' async></script>";
+								return "<script src='$src' onload='sailthru_init();' async></script>";
 							}
 							return $tag;
 						}
