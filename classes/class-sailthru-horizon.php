@@ -197,6 +197,14 @@ class Sailthru_Horizon {
 						wp_register_script( 'tag', plugin_dir_url( __DIR__ ) . 'js/tag.js', array('jquery') );
 						wp_localize_script( 'tag', 'tag', $params );
 						wp_enqueue_script( 'tag' , '', [], false, $this->js_in_footer());
+						add_filter( 'script_loader_tag', 'spm_async', 10, 3 ); // force SPM to load async
+						function spm_async( $tag, $handle, $src ) {
+							if ( $handle == 'personalize_js' ) {
+								$onload = 'sailthru_init();';
+								return "<script src='$src' onload='$onload' async></script>";
+							}
+							return $tag;
+						}
 					}
 				}
 			} else {
