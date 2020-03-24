@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.4.2 (2020-03-24)
+Fixed bug where fetching Sailthru Personalize JS could prevent pages from loading
+
 ## v.3.4.1 (2020-01-18)
 Fixed bug where HTTPS urls were sent to the Sailthru Content API as HTTP
 
