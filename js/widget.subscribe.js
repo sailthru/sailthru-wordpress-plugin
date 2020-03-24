@@ -20,9 +20,16 @@
 		}) ;
 
 		// when a user clicks subscribe
-		$(".sailthru-add-subscriber-form").submit( function( e ){
+		$(".sailthru-add-subscriber-form").submit(async function(e){
 
 			e.preventDefault();
+			var recaptcha = $("#sailthruToken");
+			var siteKey = $("#siteKey").val();
+		  	if (!recaptcha.val() && siteKey) {
+				var token = await grecaptcha.execute(siteKey, {action: 'homepage'});
+			 	recaptcha.val(token);
+		  	}
+
 			var user_input = $(this).serialize();
 			var form = $(this);
 			$.ajax({

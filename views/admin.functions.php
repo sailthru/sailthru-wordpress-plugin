@@ -49,6 +49,24 @@ function sailthru_html_text_input_callback( $args ) {
 
 } // end sailthru_html_text_input_callback.
 
+function sailthru_html_hidden_text_input_callback( $args ) {
+
+	$collection    = $args[0];
+	$option_name   = $args[1];
+	$default_value = $args[2];
+	$html_id       = $args[3];
+
+	$options = get_option( $collection );
+
+	// Make sure the element is defined in the options. If not, we'll use the preferred default.
+	$value = $default_value;
+	if ( isset( $options[ $option_name ] ) ) {
+		$value = $options[ $option_name ];
+	}
+	echo '<input type="password" id="' . esc_attr( $html_id ) . '" name="' . esc_attr( $collection ) . '[' . esc_attr( $option_name ) . ']" value="' . esc_attr( $value ) . '" class="regular-text" />';
+
+} // end sailthru_html_hidden_text_input_callback
+
 
 /**
  * This function renders the interface elements for toggling a feature on or off.
@@ -357,7 +375,7 @@ function sailthru_admin_tabs($active_tab = '') {
 	echo '<h2 class="nav-tab-wrapper">';
 	echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_configuration_page') ) . ' " class="nav-tab'. esc_attr( $config_active ) . ' ">Configuration</a>';
 	if ( sailthru_verify_setup() ) { 
-		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=custom_fields_configuration_page' ) ) . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">List Signup Options</a>';
+		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=custom_fields_configuration_page' ) ) . ' " class="nav-tab'. esc_attr( $list_active ) . ' ">Customer Signup Options</a>';
 		echo '<a href=" '. admin_url( esc_url( 'admin.php?page=sailthru_content_settings' ) ) . ' " class="nav-tab'. esc_attr( $content_active ) . ' ">Content Settings</a>';
 	}
 	echo '</h2>';

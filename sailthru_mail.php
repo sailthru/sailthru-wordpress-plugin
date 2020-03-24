@@ -113,6 +113,7 @@ if ( get_option( 'sailthru_setup_complete' ) && ! function_exists( 'wp_mail' ) )
 				}
 				$hashed = time() . ':' . $wp_hasher->HashPassword( $key );
 				$wpdb->update( $wpdb->users, array( 'user_activation_key' => $hashed ), array( 'user_login' => $user->user_login ) );
+				clean_user_cache( $user_id );
 
 				$switched_locale = switch_to_locale( get_user_locale( $user ) );
 
