@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.4.2 (2020-03-26)
+Fixed bug where onsite JS taking too long to load would prevent some pages from loading
+
 ## v.3.4.1 (2020-01-18)
 Fixed bug where HTTPS urls were sent to the Sailthru Content API as HTTP
 
