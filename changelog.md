@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.4.3 (2020-04-07)
+Fixed bug where Sailthru onsite JS would sometimes fail to initialize due to asynchronous loading of scripts
+
 ## v3.4.2 (2020-03-26)
 Fixed bug where onsite JS taking too long to load would prevent some pages from loading
 
