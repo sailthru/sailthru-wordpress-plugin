@@ -250,7 +250,7 @@ class Sailthru_Horizon {
 
 	public function spm_async( $tag, $handle, $src ) {
 		if ( $handle == 'personalize_js' ) {
-			return "<script src='" . esc_url( $src ) . "' type='text/javascript' onload='sailthru_init();' async></script>";
+			return "<script src='" . esc_url( $src ) . "' type='text/javascript' async></script>";
 		}
 		return $tag;
 	}
