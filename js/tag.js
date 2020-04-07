@@ -1,4 +1,5 @@
-sailthru_init = function(){
+window.addEventListener("load", function() {
+    console.info("Sailthru onsite JS is loaded. Initializing Sailthru...");
     if (tag.isCustom) {
         jQuery(function($) {
             Sailthru.init({
@@ -14,4 +15,4 @@ sailthru_init = function(){
             customerId: tag.options.customerId
         });
     }
-}
+});
