@@ -12,9 +12,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 		// Register Scout Javascripts.
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_scout_scripts' ) );
 
-		// Attempt to create the page needed for Scout.
-		$post_id = $this->create_scout_page();
-
 		// Load plugin text domain.
 		add_action( 'init', array( $this, 'load_widget_text_domain' ) );
 
@@ -65,7 +62,9 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 			// Check first, otherwise js could throw errors.
 			if ( "1" ===  get_option( 'sailthru_setup_complete' ) ) {
-
+				
+				$post_id = $this->create_scout_page();
+			
 				// If conceirge is on, we want noPageView to be set to true
 				$conceirge = get_option( 'sailthru_concierge_options' );
 				/** This filter is documented in class-sailthru-horizon.php */
@@ -181,11 +180,6 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	 * or the ID of the post if successful.
 	 */
 	private function create_scout_page() {
-
-		// Never run this on public facing pages.
-		if ( ! is_admin() ) {
-			return;
-		}
 
 		// -1 = No action has been taken.
 		$post_id = -1;
