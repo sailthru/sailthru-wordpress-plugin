@@ -413,10 +413,13 @@ function sailthru_js_type_callback() {
 
 	$html_options = array(
 		'none'                  => 'Select',
-		'horizon_js'            => 'Horizon JavaScript',
 		'personalize_js'        => 'Sailthru Script Tag',
 		'personalize_js_custom' => 'Sailthru Script Tag (custom mode)',
 	);
+
+	if ( $js_type == 'horizon_js' ) {
+		$html_options['horizon_js'] = 'Horizon (deprecated)';
+	}
 
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
