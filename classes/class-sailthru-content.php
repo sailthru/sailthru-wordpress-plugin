@@ -53,15 +53,24 @@ class Sailthru_Content_Settings {
 		if ( isset ( $options['sailthru_content_api_status'] ) && 'true' === $options['sailthru_content_api_status'] ) {
 			
 			add_settings_field(
+				'sailthru_spider_status',
+				__( 'Spider', 'text_domain' ),
+				array( $this, 'render_sailthru_spider_status_field' ),
+				'sailthru_content_settings',
+				'sailthru_content_settings_section'
+			);
+
+			add_settings_field(
 				'sailthru_content_post_types',
 				__( 'Included Post Types', 'text_domain' ),
 				array( $this, 'render_sailthru_content_post_types_field' ),
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
+
 			add_settings_field(
 				'sailthru_content_vars',
-				__( 'Global Content Vars', 'text_domain' ),
+				__( 'Custom Fields', 'text_domain' ),
 				array( $this, 'render_sailthru_content_vars_field' ),
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
@@ -146,6 +155,23 @@ class Sailthru_Content_Settings {
 
 	}
 
+	function render_sailthru_spider_status_field() {
+
+		// Retrieve data from the database.
+		$options = get_option( 'sailthru_content_settings' );
+
+		// Set default value.
+		$value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : 'false';
+
+		// Field output.
+		echo '<select name="sailthru_content_settings[sailthru_spider_status]" class="sailthru_spider_status_field">';
+		echo '	<option value="true" ' . selected( $value, 'true', false ) . '> ' . esc_attr__( 'Enabled', 'text_domain' ) . '</option>';
+		echo '	<option value="false" ' . selected( $value, 'false', false ) . '> ' . esc_attr__( 'Disabled', 'text_domain' ) . '</option>';
+		echo '</select>';
+		echo '<p class="description">' . esc_attr__( 'The spider can be used to update Sailthru content based on onsite tags. In most cases, not necessary.', 'text_domain' ) . '</p>';
+
+	}
+
 	/**
 	 * Renders the post types field.
 	 */
@@ -188,7 +214,8 @@ class Sailthru_Content_Settings {
 
 		// Field output.
 		echo '<input type="text" name="sailthru_content_settings[sailthru_content_vars]" class="regular-text sailthru_content_vars_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-		echo '<p class="description">' . __( '<p>Provide a comma separated list of vars to include.</p> <p class="small">When left blank all WordPress content type attributes will be synced with Sailthru.</p>', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . __( '<p>Please provide a comma-separated list of WordPress custom fields to include in the Sailthru Content Library.</p>', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'These fields will be usable within Sailthru messages and content feeds. If blank, all fields will be sent to Sailthru.', 'text_domain' ) . '</p>';
 
 	}
 
@@ -258,6 +285,9 @@ class Sailthru_Content_Settings {
      */
 	function generate_payload( $post, $post_id ) {
 
+		$options = get_option( 'sailthru_content_settings' );
+		$spider_value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : false;
+
 		$url = get_permalink( $post->ID );
 		$url_with_correct_protocol = set_url_scheme( $url );
 
@@ -267,7 +297,9 @@ class Sailthru_Content_Settings {
 		$data['author']            = get_the_author_meta( 'display_name', $post->post_author );
 		$data['date']              = $post->post_date;
 		$data['vars']['post_type'] = $post->post_type;
-		$data['spider']            = 1;
+		$data['spider']            = $spider_value=="true" ? 1 : 0;
+
+		echo "<h1>". $data['spider'] . " " . $options['sailthru_spider_status'] . "</h1>";
 
 		if ( ! empty( $post->post_excerpt ) ) {
 			$data['description'] = $post->post_excerpt;
