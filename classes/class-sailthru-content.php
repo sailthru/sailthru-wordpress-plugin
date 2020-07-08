@@ -299,8 +299,6 @@ class Sailthru_Content_Settings {
 		$data['vars']['post_type'] = $post->post_type;
 		$data['spider']            = $spider_value=="true" ? 1 : 0;
 
-		echo "<h1>". $data['spider'] . " " . $options['sailthru_spider_status'] . "</h1>";
-
 		if ( ! empty( $post->post_excerpt ) ) {
 			$data['description'] = $post->post_excerpt;
 		} else {
