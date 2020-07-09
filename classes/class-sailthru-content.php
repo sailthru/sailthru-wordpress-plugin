@@ -44,7 +44,7 @@ class Sailthru_Content_Settings {
 		add_settings_field(
 			'sailthru_content_api_status',
 			__( 'Content API Syncing', 'text_domain' ),
-			array( $this, 'render_sailthru_content_api_status_field' ),
+			[$this, 'render_sailthru_content_api_status_field' ],
 			'sailthru_content_settings',
 			'sailthru_content_settings_section'
 		);
@@ -55,7 +55,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_spider_status',
 				__( 'Spider', 'text_domain' ),
-				array( $this, 'render_sailthru_spider_status_field' ),
+				[$this, 'render_sailthru_spider_status_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -63,7 +63,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_content_post_types',
 				__( 'Included Post Types', 'text_domain' ),
-				array( $this, 'render_sailthru_content_post_types_field' ),
+				[$this, 'render_sailthru_content_post_types_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -71,7 +71,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_content_vars',
 				__( 'Custom Fields', 'text_domain' ),
-				array( $this, 'render_sailthru_content_vars_field' ),
+				[$this, 'render_sailthru_content_vars_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -79,7 +79,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_interest_tag_options',
 				__( 'Additional Interest Tags', 'text_domain' ),
-				array( $this, 'render_sailthru_interest_tag_options_field' ),
+				[$this, 'render_sailthru_interest_tag_options_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -87,7 +87,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_taxonomy_tag_options',
 				__( 'Include Taxonomies', 'text_domain' ),
-				array( $this, 'render_sailthru_taxonomy_tag_options_field' ),
+				[$this, 'render_sailthru_taxonomy_tag_options_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -95,7 +95,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_content_interest_tags',
 				__( 'Global Interest Tag', 'text_domain' ),
-				array( $this, 'render_sailthru_content_interest_tags_field' ),
+				[$this, 'render_sailthru_content_interest_tags_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -291,19 +291,19 @@ class Sailthru_Content_Settings {
 		$url = get_permalink( $post->ID );
 		$url_with_correct_protocol = set_url_scheme( $url );
 
-		$data = array();
-		$data['url']               = $url_with_correct_protocol;
-		$data['title']             = $post->post_title;
-		$data['author']            = get_the_author_meta( 'display_name', $post->post_author );
-		$data['date']              = $post->post_date;
-		$data['vars']['post_type'] = $post->post_type;
-		$data['spider']            = $spider_value=="true" ? 1 : 0;
-
-		if ( ! empty( $post->post_excerpt ) ) {
-			$data['description'] = $post->post_excerpt;
-		} else {
+		$data = [
+			'url' => $url_with_correct_protocol,
+			'title' => $post->post_title,
+			'author' => get_the_author_meta( 'display_name', $post->post_author ),
+			'date' => $post->post_date,
+			'vars'['post_type'] => $post->post_type,
+			'spider' => $spider_value == "true" ? 1 : 0,
+			'description' => $post->post_excerpt
+		];
+		if ( empty( $post->post_excerpt ) ) {
 			$data['description'] = wp_trim_words( $post->post_content, 250, '' );
 		}
+
 		// image & thumbnail
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
