@@ -161,7 +161,7 @@ class Sailthru_Content_Settings {
 		$options = get_option( 'sailthru_content_settings' );
 
 		// Set default value.
-		$value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : 'false';
+		$value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : 'true';
 
 		// Field output.
 		echo '<select name="sailthru_content_settings[sailthru_spider_status]" class="sailthru_spider_status_field">';
@@ -297,7 +297,7 @@ class Sailthru_Content_Settings {
 			'author' => get_the_author_meta( 'display_name', $post->post_author ),
 			'date' => $post->post_date,
 			'vars'['post_type'] => $post->post_type,
-			'spider' => $spider_value == "true" ? 1 : 0,
+			'spider' => $spider_value == "false" ? 0 : 1,
 			'description' => $post->post_excerpt
 		];
 		if ( empty( $post->post_excerpt ) ) {
