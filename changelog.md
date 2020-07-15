@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.5.0 (2020-07-01)
+## v3.5.0 (2020-07-15)
 Added functionality for users to change Spider value in API calls (defaults to enabled), renamed Global Vars to Custom Fields and changed its wording on Content Settings page. 
 
 ## v3.4.4 (2020-07-01)
