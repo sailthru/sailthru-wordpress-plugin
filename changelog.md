@@ -1,7 +1,8 @@
 # Changelog
 
 ## v3.5.0 (2020-07-15)
-Added functionality for users to change Spider value in API calls (defaults to enabled), renamed Global Vars to Custom Fields and changed its wording on Content Settings page. 
+Added option for users to change Spider value in Content API calls (defaults to enabled)
+Renamed Global Vars to Custom Fields and updated helper text on Content Settings page
 
 ## v3.4.4 (2020-07-01)
 Fixed bug where “Scout from Sailthru” page was created for all sites, rather than just Scout-enabled sites.
