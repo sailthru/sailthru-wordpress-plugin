@@ -168,7 +168,7 @@ class Sailthru_Content_Settings {
 		echo '	<option value="true" ' . selected( $value, 'true', false ) . '> ' . esc_attr__( 'Enabled', 'text_domain' ) . '</option>';
 		echo '	<option value="false" ' . selected( $value, 'false', false ) . '> ' . esc_attr__( 'Disabled', 'text_domain' ) . '</option>';
 		echo '</select>';
-		echo '<p class="description">' . esc_attr__( 'The spider can be used to update Sailthru content based on onsite tags. In most cases, not necessary.', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'Triggers the Sailthru spider to add onsite tags when syncing content. In most cases, this can be disabled.', 'text_domain' ) . '</p>';
 
 	}
 
