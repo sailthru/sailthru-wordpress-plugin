@@ -44,7 +44,7 @@ class Sailthru_Content_Settings {
 		add_settings_field(
 			'sailthru_content_api_status',
 			__( 'Content API Syncing', 'text_domain' ),
-			array( $this, 'render_sailthru_content_api_status_field' ),
+			[$this, 'render_sailthru_content_api_status_field' ],
 			'sailthru_content_settings',
 			'sailthru_content_settings_section'
 		);
@@ -53,16 +53,25 @@ class Sailthru_Content_Settings {
 		if ( isset ( $options['sailthru_content_api_status'] ) && 'true' === $options['sailthru_content_api_status'] ) {
 			
 			add_settings_field(
-				'sailthru_content_post_types',
-				__( 'Included Post Types', 'text_domain' ),
-				array( $this, 'render_sailthru_content_post_types_field' ),
+				'sailthru_spider_status',
+				__( 'Spider', 'text_domain' ),
+				[$this, 'render_sailthru_spider_status_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
+
+			add_settings_field(
+				'sailthru_content_post_types',
+				__( 'Included Post Types', 'text_domain' ),
+				[$this, 'render_sailthru_content_post_types_field' ],
+				'sailthru_content_settings',
+				'sailthru_content_settings_section'
+			);
+
 			add_settings_field(
 				'sailthru_content_vars',
-				__( 'Global Content Vars', 'text_domain' ),
-				array( $this, 'render_sailthru_content_vars_field' ),
+				__( 'Custom Fields', 'text_domain' ),
+				[$this, 'render_sailthru_content_vars_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -70,7 +79,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_interest_tag_options',
 				__( 'Additional Interest Tags', 'text_domain' ),
-				array( $this, 'render_sailthru_interest_tag_options_field' ),
+				[$this, 'render_sailthru_interest_tag_options_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -78,7 +87,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_taxonomy_tag_options',
 				__( 'Include Taxonomies', 'text_domain' ),
-				array( $this, 'render_sailthru_taxonomy_tag_options_field' ),
+				[$this, 'render_sailthru_taxonomy_tag_options_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -86,7 +95,7 @@ class Sailthru_Content_Settings {
 			add_settings_field(
 				'sailthru_content_interest_tags',
 				__( 'Global Interest Tag', 'text_domain' ),
-				array( $this, 'render_sailthru_content_interest_tags_field' ),
+				[$this, 'render_sailthru_content_interest_tags_field' ],
 				'sailthru_content_settings',
 				'sailthru_content_settings_section'
 			);
@@ -146,6 +155,23 @@ class Sailthru_Content_Settings {
 
 	}
 
+	function render_sailthru_spider_status_field() {
+
+		// Retrieve data from the database.
+		$options = get_option( 'sailthru_content_settings' );
+
+		// Set default value.
+		$value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : 'true';
+
+		// Field output.
+		echo '<select name="sailthru_content_settings[sailthru_spider_status]" class="sailthru_spider_status_field">';
+		echo '	<option value="true" ' . selected( $value, 'true', false ) . '> ' . esc_attr__( 'Enabled', 'text_domain' ) . '</option>';
+		echo '	<option value="false" ' . selected( $value, 'false', false ) . '> ' . esc_attr__( 'Disabled', 'text_domain' ) . '</option>';
+		echo '</select>';
+		echo '<p class="description">' . esc_attr__( 'Triggers the Sailthru spider to add onsite tags when syncing content. In most cases, this can be disabled.', 'text_domain' ) . '</p>';
+
+	}
+
 	/**
 	 * Renders the post types field.
 	 */
@@ -188,7 +214,8 @@ class Sailthru_Content_Settings {
 
 		// Field output.
 		echo '<input type="text" name="sailthru_content_settings[sailthru_content_vars]" class="regular-text sailthru_content_vars_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-		echo '<p class="description">' . __( '<p>Provide a comma separated list of vars to include.</p> <p class="small">When left blank all WordPress content type attributes will be synced with Sailthru.</p>', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . __( '<p>Please provide a comma-separated list of WordPress custom fields to include in the Sailthru Content Library.</p>', 'text_domain' ) . '</p>';
+		echo '<p class="description">' . esc_attr__( 'These fields will be usable within Sailthru messages and content feeds. If blank, all fields will be sent to Sailthru.', 'text_domain' ) . '</p>';
 
 	}
 
@@ -258,22 +285,25 @@ class Sailthru_Content_Settings {
      */
 	function generate_payload( $post, $post_id ) {
 
+		$options = get_option( 'sailthru_content_settings' );
+		$spider_value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : false;
+
 		$url = get_permalink( $post->ID );
 		$url_with_correct_protocol = set_url_scheme( $url );
 
-		$data = array();
-		$data['url']               = $url_with_correct_protocol;
-		$data['title']             = $post->post_title;
-		$data['author']            = get_the_author_meta( 'display_name', $post->post_author );
-		$data['date']              = $post->post_date;
-		$data['vars']['post_type'] = $post->post_type;
-		$data['spider']            = 1;
-
-		if ( ! empty( $post->post_excerpt ) ) {
-			$data['description'] = $post->post_excerpt;
-		} else {
+		$data = [
+			'url' => $url_with_correct_protocol,
+			'title' => $post->post_title,
+			'author' => get_the_author_meta( 'display_name', $post->post_author ),
+			'date' => $post->post_date,
+			'vars'['post_type'] => $post->post_type,
+			'spider' => $spider_value == "false" ? 0 : 1,
+			'description' => $post->post_excerpt
+		];
+		if ( empty( $post->post_excerpt ) ) {
 			$data['description'] = wp_trim_words( $post->post_content, 250, '' );
 		}
+
 		// image & thumbnail
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
