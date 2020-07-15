@@ -34,7 +34,7 @@ switch( $_POST['sailthru_action'] )
 {
 
 	case "add_subscriber":
-		$email = trim( $_POST['email'] );
+		$email = trim( sanitize_email( $_POST['email'] ) );
 		if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) || empty( $email ) ) {
 			$return['error']   = true;
 			$return['message'] = 'Please enter a valid email address.';
@@ -43,13 +43,13 @@ switch( $_POST['sailthru_action'] )
 		}
 
 		if ( isset( $_POST['first_name'] ) && !empty( $_POST['first_name'] ) ){
-			$first_name = filter_var(trim($_POST['first_name']), FILTER_SANITIZE_STRING );
+			$first_name = filter_var( trim( sanitize_text_field( $_POST['first_name'] ) ), FILTER_SANITIZE_STRING );
 		} else {
 			$first_name = '';
 		}
 
 		if ( isset( $_POST['last_name'] ) && !empty( $_POST['last_name'] ) ){
-			$last_name = filter_var( trim( $_POST['last_name'] ), FILTER_SANITIZE_STRING ) ;
+			$last_name = filter_var( trim( sanitize_text_field( $_POST['last_name'] ) ), FILTER_SANITIZE_STRING ) ;
 		} else {
 			$last_name = '';
 		}

@@ -433,7 +433,7 @@ class Sailthru_Subscribe_Fields {
 
 				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
 				if ( $expiry_time ) {
-					$expiry_date = date( 'Y-m-d', $expiry_time );
+					$expiry_date = gmdate( 'Y-m-d', $expiry_time );
 
 					// Save the date. hehe.
 					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
@@ -468,7 +468,7 @@ class Sailthru_Subscribe_Fields {
 
 		$is_autosave    = wp_is_post_autosave( $post_id );
 		$is_revision    = wp_is_post_revision( $post_id );
-		$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], plugin_basename( __FILE__ ) ) );
+		$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( sanitize_text_field( $_POST[ $nonce ] ), plugin_basename( __FILE__ ) ) );
 
 		// Return true if the user is able to save; otherwise, false.
 		return ! ( $is_autosave || $is_revision ) && $is_valid_nonce;
