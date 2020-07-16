@@ -246,7 +246,7 @@ function sailthru_account_settings() {
  */
 function sailthru_status() {
 
-	// default to false
+	// this will default to false
 	$status = array(
 		'setup' => false,
 		'api'   => false,

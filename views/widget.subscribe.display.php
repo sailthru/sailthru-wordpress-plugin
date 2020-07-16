@@ -130,7 +130,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 					// widget is rendered using Appearance > Widget
 				if ( isset( $order_list ) ) {
 
-					//for ($j = 0; $j < count($order_list); $j++){
 					for ( $i = 0; $i < count( $order_list ); $i++ ) {
 						$field_key = (int) $order_list[ $i ];
 

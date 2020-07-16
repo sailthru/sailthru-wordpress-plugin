@@ -166,7 +166,7 @@ function wp_mail( $to, $subject, $message, $headers = '', $attachments = array()
 		 * https://core.trac.wordpress.org/ticket/5007.
 		 */
 
-	if ( ! isset( $from_email ) ) {
+	if ( ! isset( $from_email ) && isset( $_SERVER['SERVER_NAME'] ) ) {
 		// Get the site domain and get rid of www.
 		$sitename = strtolower( sanitize_text_field( $_SERVER['SERVER_NAME'] ) );
 		if ( substr( $sitename, 0, 4 ) === 'www.' ) {

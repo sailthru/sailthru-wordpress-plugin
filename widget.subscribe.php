@@ -297,7 +297,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function add_subscriber() {
 
-		if ( ! wp_verify_nonce( $_POST['sailthru_nonce'], 'add_subscriber_nonce' ) ) {
+		if ( isset( $_POST['sailthru_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( $_POST['sailthru_nonce'] ), 'add_subscriber_nonce' ) ) {
 
 			$result = array(
 				'success' => false,
@@ -362,7 +362,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 
 			$subscribe_to_lists  = array();
-			$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
+			if ( isset($_POST['sailthru_email_list']) ){
+				$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
+			}
 			if ( ! empty( $sailthru_email_list ) ) {
 
 				// check for double opt in setting
@@ -412,12 +414,14 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
-			$recaptcha_token = sanitize_text_field( $_POST['captcha_token'] );
+			if (isset( $_POST['captcha_token'] )){
+				$recaptcha_token = sanitize_text_field( $_POST['captcha_token'] );
+			}
 
 			if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty( $sailthru['google_recaptcha_secret'] ) && ! empty( $recaptcha_token ) ) {
 				write_log( "reCaptcha enabled, verifying" );
 				try {
-					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $recaptcha_token );
+					$response = vip_safe_wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $recaptcha_token );
 					$body     = wp_remote_retrieve_body( $response );
 					$data     = json_decode( $body, true );
 					if ( false == $data['success'] ) {

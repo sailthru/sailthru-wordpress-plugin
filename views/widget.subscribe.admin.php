@@ -161,7 +161,7 @@
 						}
 						 echo '</tr>';
 					} //for loop
-				} // else (not ordered )
+				} // else not ordered
 
 				if ( isset( $order_list ) && is_array( $order_list ) ) {
 					$order_list = array_unique( $order_list );

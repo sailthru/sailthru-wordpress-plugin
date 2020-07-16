@@ -1139,8 +1139,8 @@ class Sailthru_Client {
         if (!isset($data['keys']['cookie'])) {
             return false;
         }
-        if (!$domain) {
-            $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
+        if (!$domain && isset($_SERVER['HTTP_HOST'])) {
+            $domain_parts = explode('.', sanitize_text_field( $_SERVER['HTTP_HOST'] ) );
             $domain = $domain_parts[sizeof($domain_parts) - 2] . '.' . $domain_parts[sizeof($domain_parts) - 1];
         }
         if ($duration === null) {
@@ -1587,7 +1587,7 @@ class Sailthru_Client {
         $payload = [
             'api_key' => $this->api_key,
             'format' => 'json',
-            'json' => json_encode($data)
+            'json' => wp_json_encode($data)
         ];
         $payload['sig'] = Sailthru_Util::getSignatureHash($payload, $this->secret);
         if (!empty($binary_data)) {
