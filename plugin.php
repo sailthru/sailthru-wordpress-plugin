@@ -286,18 +286,15 @@ function sailthru_user_login( $user_login, $user ) {
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 		$id      = $user->user_email;
-		if ( isset( $_SERVER['HTTP_USER_AGENT'] ) && isset( $_SERVER['SERVER_ADDR'] ) && isset( $_SERVER['HTTP_HOST'] ) )
-		{
-			$options = array(
-				'login'  => array(
-					'user_agent' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ),
-					'key'        => 'email',
-					'ip'         => sanitize_text_field( $_SERVER['SERVER_ADDR'] ),
-					'site'       => sanitize_text_field ($_SERVER['HTTP_HOST'] ) ,
-				),
-				'fields' => array( 'keys' => 1 ),
-			);
-		}
+		$options = array(
+			'login'  => array(
+				'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : '',
+				'key'        => 'email',
+				'ip'         => isset( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( $_SERVER['SERVER_ADDR'] ) : '',
+				'site'       => isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '',
+			),
+			'fields' => array( 'keys' => 1 ),
+		);
 
 		try {
 			if ( $client ) {

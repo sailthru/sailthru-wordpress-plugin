@@ -214,7 +214,7 @@ class Sailthru_Content_Settings {
 
 		// Field output.
 		echo '<input type="text" name="sailthru_content_settings[sailthru_content_vars]" class="regular-text sailthru_content_vars_field" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $value ) . '">';
-		echo '<p class="description">' . __( '<p>Please provide a comma-separated list of WordPress custom fields to include in the Sailthru Content Library.</p>', 'text_domain' ) . '</p>';
+		echo '<p class="description"><p>' . esc_attr__( 'Please provide a comma-separated list of WordPress custom fields to include in the Sailthru Content Library.', 'text_domain' ) . '</p></p>';
 		echo '<p class="description">' . esc_attr__( 'These fields will be usable within Sailthru messages and content feeds. If blank, all fields will be sent to Sailthru.', 'text_domain' ) . '</p>';
 
 	}

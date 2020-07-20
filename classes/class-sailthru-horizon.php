@@ -72,7 +72,7 @@ class Sailthru_Horizon {
 
 				update_option( 'sailthru_forms_options', $updatedcustomfields );
 
-			} // end if $customfields isset
+			}
 		}
 
 	}
@@ -111,7 +111,7 @@ class Sailthru_Horizon {
 
 		if ( in_array( $hook, $screens, true ) ) {
 
-			if ( isset( $_GET['action'] ) ) {
+			if ( wp_verify_nonce( $nonce ) && isset( $_GET['action'] ) ) {
 				if ( $_GET['action'] === 'edit' ) {
 					// datepicker for the meta box on post pages
 					wp_enqueue_style( 'jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
