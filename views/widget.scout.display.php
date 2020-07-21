@@ -22,18 +22,19 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
 ?>
 <?php if ( $use_spm ) : ?>
 	<div class="sailthru-spm-widget">
-		 <div id="<?php echo esc_attr( $this->id ); ?>-container"></div>
-		  <script type="text/javascript">
-              window.addEventListener('load', function() {
-                  Sailthru.personalize({
-                      sections: [
-                          {
-                              id: "<?php echo esc_js( $section );?>",
-                              selector: "#<?php echo esc_js( $this->id );?>-container",
-                          }]
-                  });
-		 });
-	</script>
+		<div id="<?php echo esc_attr( $this->id ); ?>-container"></div>
+			<script type="text/javascript">
+				window.addEventListener('load', function() {
+					Sailthru.personalize({
+						sections: [
+							{
+								id: "<?php echo esc_js( $section );?>",
+								selector: "#<?php echo esc_js( $this->id );?>-container",
+							}
+						]
+					});
+				});
+			</script>
 
 	</div>
  <div class="sailthru-recommends-widget">
@@ -46,11 +47,11 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
 			$before_title = '';
 		}
 		if ( ! isset( $after_title ) ) {
-			$after_title = '';
+			$after_title  = '';
 		}
 		echo esc_html( $before_title ) . wp_kses_post( trim( $title ) ) . esc_html( $after_title );
 	}
 	?>
 
-    <div id="sailthru-scout"><div class="loading"></div></div>
+	<div id="sailthru-scout"><div class="loading"></div></div>
 <?php endif; ?>

@@ -434,7 +434,7 @@ class Sailthru_Subscribe_Fields {
 
 				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
 				if ( $expiry_time ) {
-					$expiry_date = gmdate( 'Y-m-d', $expiry_time );
+					$expiry_date = date( 'Y-m-d', $expiry_time );
 
 					// Save the date. hehe.
 					update_post_meta( $post_id, 'sailthru_post_expiration', $expiry_date );
