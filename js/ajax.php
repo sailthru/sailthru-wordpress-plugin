@@ -36,8 +36,7 @@ if( isset( $_POST['sailthru_action'] ) ) {
 	{
 
 		case "add_subscriber":
-			if ( isset( $_POST['email'] ) ){
-				$email = trim( sanitize_email( $_POST['email'] ) );
+			$email = isset( $_POST['email'] ) ? trim( sanitize_email( $_POST['email'] ) ) : '';
 				if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) || empty( $email ) ) {
 					$return['error']   = true;
 					$return['message'] = 'Please enter a valid email address.';
