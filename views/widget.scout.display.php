@@ -3,20 +3,19 @@
 	$sailthru = get_option( 'sailthru_setup_options' );
 
 	// check if this is an SPM widget or a Scout Widget
-if ( sailthru_spm_ready() ) {
-	$use_spm = true;
-	$section = empty( $instance['sailthru_spm_section'] ) ? ' ' :  $instance['sailthru_spm_section'];
-} else {
-	$use_spm = false;
-	$title   = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
-}
+	if ( sailthru_spm_ready() ) {
+		$use_spm = true;
+		$section = empty( $instance['sailthru_spm_section'] ) ? ' ' :  $instance['sailthru_spm_section'];
+	} else {
+		$use_spm = false;
+		$title   = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
+	}
 
 	/** This filter is documented in class-sailthru-scout.php */
-if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on'] || ! apply_filters( 'sailthru_scout_on', true ) ) {
-	// do nothing, get outta here
-	return;
-}
-	// Grab the settings from $instance and fill out default values as needed.
+	if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on'] || ! apply_filters( 'sailthru_scout_on', true ) ) {
+		return;
+	}
+
 	$title = empty( $instance['title'] ) ? ' ' : apply_filters( 'widget_title', $instance['title'] );
 
 ?>
@@ -37,20 +36,19 @@ if ( ! isset( $scout['sailthru_scout_is_on'] ) || ! $scout['sailthru_scout_is_on
 			</script>
 
 	</div>
- <div class="sailthru-recommends-widget">
+	<div class="sailthru-recommends-widget">
 	</div>
 <?php else : ?>
 	<?php
-	// title
-	if ( ! empty( $title ) ) {
-		if ( ! isset( $before_title ) ) {
-			$before_title = '';
+		if ( ! empty( $title ) ) {
+			if ( ! isset( $before_title ) ) {
+				$before_title = '';
+			}
+			if ( ! isset( $after_title ) ) {
+				$after_title  = '';
+			}
+			echo esc_html( $before_title ) . wp_kses_post( trim( $title ) ) . esc_html( $after_title );
 		}
-		if ( ! isset( $after_title ) ) {
-			$after_title  = '';
-		}
-		echo esc_html( $before_title ) . wp_kses_post( trim( $title ) ) . esc_html( $after_title );
-	}
 	?>
 
 	<div id="sailthru-scout"><div class="loading"></div></div>
