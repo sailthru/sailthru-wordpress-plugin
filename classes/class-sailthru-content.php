@@ -332,7 +332,7 @@ class Sailthru_Content_Settings {
 			$data['expire_date'] = esc_attr( $post_expiration );
 		} else {
 			// set the expiry date in the future as you can't unset the value via the API
-			$data['expire_date'] = gmdate( 'Y-m-d', strtotime( '+5 years' ) );
+			$data['expire_date'] = date( 'Y-m-d', strtotime( '+5 years' ) );
 		}
 
 		// Add the vars
