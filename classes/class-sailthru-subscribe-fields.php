@@ -426,7 +426,7 @@ class Sailthru_Subscribe_Fields {
 
 		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( sanitize_text_field( $_POST[ $this->nonce ] ), plugin_basename( __FILE__ ) ) );
 		// First, make sure the user can save the post
-		if ( $this->user_can_save( $post_id ) ) {
+		if ( $is_valid_nonce && $this->user_can_save( $post_id ) ) {
 
 			// Did the user set an expiry date, or are they clearing an old one?
 			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) 
