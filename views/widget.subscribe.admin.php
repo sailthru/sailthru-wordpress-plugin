@@ -230,7 +230,6 @@
 			}
 
 
-				//echo '<p id="field_order"></p>';
 				echo '<input type="hidden" class="sailthru_field_order" value="' . esc_attr( $order )  . '" name="' . esc_attr( $this->get_field_name( 'field_order' ) ) . '" id="' . esc_attr( $this->get_field_id( 'field_order' ) ) . '"></input>';
 			echo '</div>';
 			echo '</div>';
