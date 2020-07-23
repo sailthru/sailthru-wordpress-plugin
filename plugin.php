@@ -60,7 +60,6 @@ require_once SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php';
  * Get Sailthru for WordPress plugin classes
  */
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php';
-require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-content.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-meta-box.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php';
