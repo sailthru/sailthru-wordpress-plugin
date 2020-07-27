@@ -10,6 +10,7 @@
 	$source        = empty( $instance['source'] ) ? get_bloginfo( 'url' ) : esc_attr( $instance['source'] );
 	$lo_event_name = empty( $instance['lo_event_name'] ) ? '' : esc_attr( $instance['lo_event_name'] );
 	$reset_optout_status = empty( $instance['reset_optout_status'] ) ? '' : esc_attr( $instance['reset_optout_status'] );
+	$hide_title_status = empty( $instance['hide_title_status'] ) ? '' : esc_attr( $instance['hide_title_status'] );
 
 if ( ! empty( $instance['sailthru_list'] ) ) {
 	if ( is_array( $instance['sailthru_list'] ) ) {
@@ -366,6 +367,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
 				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
+				<input type="hidden" name="hide_title_status" value="<?php echo esc_attr( $hide_title_status ) ?>" />
 				<input type="hidden" name="site_key" value="<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>" id="siteKey" />
 				<input type="hidden" name="captcha_token" value="" id="sailthruToken" />
 

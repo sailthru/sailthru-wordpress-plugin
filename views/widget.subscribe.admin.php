@@ -43,7 +43,13 @@
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 				</label>
 			</p>
-			 <p>
+			<p>
+				<span>
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'hide_title_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_title_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'hide_title_status' ] ) ? 'checked' : '' ?> />
+					Hide title after submission
+				</span>
+			</p>
+			<p>
 				<label for="<?php echo esc_attr( $this->get_field_id( 'source' ) ); ?>">
 					<?php esc_html_e( 'Acquisition Source' ); ?>
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'source' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'source' ) ); ?>" type="text" value="<?php echo esc_attr( $source ); ?>" />
@@ -51,7 +57,7 @@
 			</p>
 			<p>
 				<span>
-					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'reset_optout_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'reset_optout_status' ] ) ? 'checked' : '' ?> />
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( '' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'reset_optout_status' ] ) ? 'checked' : '' ?> />
 					Set previously opted-out customers to valid
 				</span>
 			</p>
