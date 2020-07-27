@@ -56,25 +56,21 @@ if( isset( $_POST['sailthru_action'] ) ) {
 			}
 
 			if ( $first_name || $last_name ) {
-
-				$options = array(
-					'vars' => array(
+				$options = [
+					'vars' => [
 						'first_name'	=> $first_name,
-						'last_name'		=> $last_name,
-					)
-				);
-
+						'last_name'		=> $last_name
+					]
+				];
 			}
 
-			$subscribe_to_lists = array();
+			$subscribe_to_lists = [];
 				if ( !empty($_POST['sailthru_email_list'] ) ) {
 
 					$lists = explode(',', sanitize_text_field( $_POST['sailthru_email_list'] ) );
 
 					foreach( $lists as $key => $list ) {
-
 						$subscribe_to_lists[ $list ] = 1;
-
 					}
 
 					$options['lists'] = $subscribe_to_lists;
@@ -85,17 +81,14 @@ if( isset( $_POST['sailthru_action'] ) ) {
 
 				}
 
-
 			$options['vars']['source'] = get_bloginfo('url');
 
-
-			$return['data'] = array(
+			$return['data'] = [
 				'email'	=> $email,
 				'options' => $options
-			);
+			];
 
 			if ( false === $return['error'] ) {
-
 				$sailthru = get_option('sailthru_setup_options');
 				$api_key = $sailthru['sailthru_api_key'];
 				$api_secret = $sailthru['sailthru_api_secret'];
@@ -103,14 +96,12 @@ if( isset( $_POST['sailthru_action'] ) ) {
 				$client = new WP_Sailthru_Client( $api_key, $api_secret );
 				$res = $client->saveUser($email, $options);
 
-
 				if( $res['ok'] !== 'true' ) {
 					$result['error'] = true;
 					$result['message'] = "There was an error subscribing you. Please try again later.";
 				}
 
 				$return['result'] = $res;
-
 			}
 
 			break;
@@ -123,7 +114,6 @@ if( isset( $_POST['sailthru_action'] ) ) {
 	}
 
 }
-
 
 echo wp_json_encode( $return );
 die();
