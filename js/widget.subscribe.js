@@ -46,8 +46,10 @@
                     } else {
                         $('#sailthru-modal .sailthru-signup-widget-close').fadeIn();
                         $(form).html('');
-                        $(form).parent().find(".success").show();
-                    }
+						$(form).parent().find(".success").show();
+						$(form).parent().find(".hide_toggle").hide();
+					}
+					
                 }
             } );
 

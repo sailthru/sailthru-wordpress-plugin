@@ -43,6 +43,10 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 					$after_title = '';
 				}
 
+				if ( isset( $hide_title_status ) && $hide_title_status=="on") {
+					$before_title= substr($before_title, 0, -2) . " hide_toggle" . '">';
+				}
+
 				echo  wp_kses_post( $before_title . trim( $title ) . $after_title );
 			}
 

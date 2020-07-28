@@ -116,7 +116,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			'source'              => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
 			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
 			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING ),
-			'hide_title_status' => filter_var ( $new_instance[ 'hide_title_status' ], FILTER_SANITIZE_STRING )
+			'hide_title_status'   => filter_var ( $new_instance[ 'hide_title_status' ], FILTER_SANITIZE_STRING ),
 		);
 
 		$customfields = get_option( 'sailthru_forms_options' );
@@ -153,7 +153,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				'source'              => '',
 				'lo_event_name'       => '',
 				'reset_optout_status' => '',
-				'hide_title_status' => '',
+				'hide_title_status'   => '',
 				'sailthru_list'       => array( '' ),
 				'field_order'         => '',
 			)
@@ -163,7 +163,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$source              = $instance['source'];
 		$lo_event_name       = $instance['lo_event_name'];
 		$reset_optout_status = $instance['reset_optout_status'];
-		$hide_title_status = $instance['hide_title_status'];
+		$hide_title_status   = $instance['hide_title_status'];
 		$sailthru_list       = $instance['sailthru_list'];
 		$order               = $field_order = $instance['field_order'];
 		$widget_id           = $this->id;
