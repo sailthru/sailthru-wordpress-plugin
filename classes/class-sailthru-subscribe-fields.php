@@ -424,11 +424,12 @@ class Sailthru_Subscribe_Fields {
 	 */
 	public function save_custom_meta_data( $post_id ) {
 
+		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( sanitize_text_field( $_POST[ $this->nonce ] ), plugin_basename( __FILE__ ) ) );
 		// First, make sure the user can save the post
-		if ( $this->user_can_save( $post_id, $this->nonce ) ) {
+		if ( $is_valid_nonce && $this->user_can_save( $post_id ) ) {
 
 			// Did the user set an expiry date, or are they clearing an old one?
-			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] )
+			if ( ! empty( $_POST['sailthru_post_expiration'] ) && isset( $_POST['sailthru_post_expiration'] ) 
 				|| get_post_meta( $post_id, 'sailthru_post_expiration', true ) ) {
 
 				$expiry_time = strtotime( sanitize_text_field( $_POST['sailthru_post_expiration'] ) );
@@ -464,14 +465,13 @@ class Sailthru_Subscribe_Fields {
 	 * @param int     $post_id The ID of the post being save
 	 * @param bool    Whether or not the user has the ability to save this post.
 	 */
-	function user_can_save( $post_id, $nonce ) {
+	function user_can_save( $post_id ) {
 
 		$is_autosave    = wp_is_post_autosave( $post_id );
 		$is_revision    = wp_is_post_revision( $post_id );
-		$is_valid_nonce = ( isset( $_POST[ $nonce ] ) && wp_verify_nonce( $_POST[ $nonce ], plugin_basename( __FILE__ ) ) );
 
 		// Return true if the user is able to save; otherwise, false.
-		return ! ( $is_autosave || $is_revision ) && $is_valid_nonce;
+		return ! ( $is_autosave || $is_revision );
 
 	} // end user_can_save
 }

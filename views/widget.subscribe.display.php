@@ -1,5 +1,4 @@
 <?php
-
 	/*
 	* Grab the settings from $instance and fill out default
 	* values as needed.
@@ -10,49 +9,51 @@
 	$source        = empty( $instance['source'] ) ? get_bloginfo( 'url' ) : esc_attr( $instance['source'] );
 	$lo_event_name = empty( $instance['lo_event_name'] ) ? '' : esc_attr( $instance['lo_event_name'] );
 	$reset_optout_status = empty( $instance['reset_optout_status'] ) ? '' : esc_attr( $instance['reset_optout_status'] );
+	$hide_title_status = empty( $instance['hide_title_status'] ) ? '' : esc_attr( $instance['hide_title_status'] );
 
-if ( ! empty( $instance['sailthru_list'] ) ) {
-	if ( is_array( $instance['sailthru_list'] ) ) {
-		$sailthru_list = implode( ',', $instance['sailthru_list'] );
+	if ( ! empty( $instance['sailthru_list'] ) ) {
+		if ( is_array( $instance['sailthru_list'] ) ) {
+			$sailthru_list = implode( ',', $instance['sailthru_list'] );
+		} else {
+			$sailthru_list = $instance['sailthru_list'];
+		}
 	} else {
-		$sailthru_list = $instance['sailthru_list'];
+		$sailthru_list = '';
 	}
-} else {
-	$sailthru_list = '';
-}
 
 	// display options
 	$customfields = get_option( 'sailthru_forms_options' );
 	$sailthru     = get_option( 'sailthru_setup_options' );
 	// nonce
 	$nonce = wp_create_nonce( 'add_subscriber_nonce' );
-
-	?>
+?>
 	<div class="sailthru-signup-widget">
 		<span class="sailthru-signup-widget-close"><a href="#sailthru-signup-widget">Close</a></span>
 		<div class="sailthru_form">
 
 			<?php
 				// title
-			if ( ! empty( $title ) ) {
-				if ( ! isset( $before_title ) ) {
-					$before_title = '';
+				if ( ! empty( $title ) ) {
+					if ( ! isset( $before_title ) ) {
+						$before_title = '';
+					}
+					if ( ! isset( $after_title ) ) {
+						$after_title = '';
+					}
+
+					if ( isset( $hide_title_status ) && $hide_title_status=="on") {
+						$before_title= substr($before_title, 0, -2) . " hide_toggle" . '">';
+					}
+
+					echo  wp_kses_post( $before_title . trim( $title ) . $after_title );
 				}
-				if ( ! isset( $after_title ) ) {
-					$after_title = '';
+
+					// success message
+				if ( empty( $customfields['sailthru_customfield_success'] ) ) {
+					$success = 'Thank you for subscribing!';
+				} else {
+					$success = $customfields['sailthru_customfield_success'];
 				}
-
-				echo  wp_kses_post( $before_title . trim( $title ) . $after_title );
-			}
-
-				// success message
-			if ( empty( $customfields['sailthru_customfield_success'] ) ) {
-				$success = 'Thank you for subscribing!';
-			} else {
-				$success = $customfields['sailthru_customfield_success'];
-			}
-
-
 			?>
 
 			<div class="success" hidden="hidden"><?php echo esc_html( $success ); ?></div>
@@ -73,64 +74,61 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 
 
 					// figure out display needs and order when using short code
-				if ( isset( $instance['using_shortcode'] ) && $instance['using_shortcode'] ) {
+					if ( isset( $instance['using_shortcode'] ) && $instance['using_shortcode'] ) {
 
-					if ( ! empty( $instance['fields'] ) ) {
-						$order  = '';
-						$fields = explode( ',', $instance['fields'] );
-						foreach ( $fields as $field ) {
-							$field         = trim( $field );
-							$name_stripped = preg_replace( '/[^\da-z]/i', '_', $field );
-							$instance[ 'show_' . $name_stripped . '_name' ]     = true;
-							$instance[ 'show_' . $name_stripped . '_required' ] = false;
-							for ( $i = 1; $i <= $key; $i++ ) {
-								if ( isset( $customfields[ $i ] ) ) {
-									$db_name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $i ]['sailthru_customfield_name'] );
+						if ( ! empty( $instance['fields'] ) ) {
+							$order  = '';
+							$fields = explode( ',', $instance['fields'] );
+							foreach ( $fields as $field ) {
+								$field         = trim( $field );
+								$name_stripped = preg_replace( '/[^\da-z]/i', '_', $field );
+								$instance[ 'show_' . $name_stripped . '_name' ]     = true;
+								$instance[ 'show_' . $name_stripped . '_required' ] = false;
+								for ( $i = 1; $i <= $key; $i++ ) {
+									if ( isset( $customfields[ $i ] ) ) {
+										$db_name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $i ]['sailthru_customfield_name'] );
 
-									if ( $name_stripped === $db_name_stripped ) {
-										$order .= $i . ',';
-										break;
+										if ( $name_stripped === $db_name_stripped ) {
+											$order .= $i . ',';
+											break;
+										}
 									}
 								}
 							}
+							$order_list = explode( ',', $order );
 						}
-						$order_list = explode( ',', $order );
-					}
-				} else {
-					// figure out which fields we need to show when NOT using shortcodde
-					foreach ( $instance as $field ) {
+					} else {
+						// figure out which fields we need to show when NOT using shortcodde
+						foreach ( $instance as $field ) {
 
-						if ( is_array( $field ) ) {
-							continue;
+							if ( is_array( $field ) ) {
+								continue;
+							}
+
+							$name_stripped                                      = preg_replace( '/[^\da-z]/i', '_', $field );
+							$instance[ 'show_' . $name_stripped . '_name' ]     = true;
+							$instance[ 'show_' . $name_stripped . '_required' ] = false;
+
+						} // end foreach
+
+						// determine order of fields.
+						if ( empty( $order ) && isset( $instance['field_order'] ) ) {
+							$order = $instance['field_order'];
 						}
 
-						$name_stripped                                      = preg_replace( '/[^\da-z]/i', '_', $field );
-						$instance[ 'show_' . $name_stripped . '_name' ]     = true;
-						$instance[ 'show_' . $name_stripped . '_required' ] = false;
-
-					} // end foreach
+						if ( empty( $order ) ) {
+							$order = get_option( 'sailthru_customfield_order' );
+						}
 
 
-					// determine order of fields.
-					if ( empty( $order ) && isset( $instance['field_order'] ) ) {
-						$order = $instance['field_order'];
+						if ( isset( $order ) && '' !== $order ) {
+							$order_list = explode( ',', $order );
+						}
 					}
-
-					if ( empty( $order ) ) {
-						$order = get_option( 'sailthru_customfield_order' );
-					}
-
-
-					if ( isset( $order ) && '' !== $order ) {
-						$order_list = explode( ',', $order );
-					}
-				}
-
 
 					// widget is rendered using Appearance > Widget
 				if ( isset( $order_list ) ) {
 
-					//for ($j = 0; $j < count($order_list); $j++){
 					for ( $i = 0; $i < count( $order_list ); $i++ ) {
 						$field_key = (int) $order_list[ $i ];
 
@@ -352,7 +350,6 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				} // end if there are fields
 				?>
 
-
 				<?php
 					if ( ! empty( $sailthru['google_recaptcha_site_key'] ) && ! empty ( $sailthru['google_recaptcha_secret'] ) ) {
 						echo '<p class="captcha-disclaimer">
@@ -367,6 +364,7 @@ if ( ! empty( $instance['sailthru_list'] ) ) {
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
 				<input type="hidden" name="reset_optout_status" value="<?php echo esc_attr( $reset_optout_status ) ?>" />
+				<input type="hidden" name="hide_title_status" value="<?php echo esc_attr( $hide_title_status ) ?>" />
 				<input type="hidden" name="site_key" value="<?php echo esc_attr( $sailthru['google_recaptcha_site_key'] ) ?>" id="siteKey" />
 				<input type="hidden" name="captcha_token" value="" id="sailthruToken" />
 

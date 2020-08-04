@@ -3,7 +3,7 @@
 Plugin Name: Sailthru for WordPress
 Plugin URI: http://sailthru.com/
 Description: Add the power of Sailthru to your WordPress set up.
-Version: 3.5.0
+Version: 3.6.0
 Author: Sailthru
 Author URI: http://sailthru.com
 Author Email: integrations@sailthru.com
@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * @var   const    $version    The current version of the plugin.
  */
 if ( ! defined( 'SAILTHRU_PLUGIN_VERSION' ) ) {
-	define( 'SAILTHRU_PLUGIN_VERSION', '3.5.0' );
+	define( 'SAILTHRU_PLUGIN_VERSION', '3.6.0' );
 }
 
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) ) {
@@ -60,7 +60,6 @@ require_once SAILTHRU_PLUGIN_PATH . 'classes/class-wp-sailthru-client.php';
  * Get Sailthru for WordPress plugin classes
  */
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-horizon.php';
-require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-concierge.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-content.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-meta-box.php';
 require_once SAILTHRU_PLUGIN_PATH . 'classes/class-sailthru-scout.php';
@@ -286,15 +285,17 @@ function sailthru_user_login( $user_login, $user ) {
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
 
 		$id      = $user->user_email;
-		$options = array(
-			'login'  => array(
-				'user_agent' => sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ),
+		$options = [
+			'login'  => [
+				'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( $_SERVER['HTTP_USER_AGENT'] ) : '',
 				'key'        => 'email',
-				'ip'         => sanitize_text_field( $_SERVER['SERVER_ADDR'] ),
-				'site'       => sanitize_text_field ($_SERVER['HTTP_HOST'] ) ,
-			),
-			'fields' => array( 'keys' => 1 ),
-		);
+				'ip'         => isset( $_SERVER['SERVER_ADDR'] ) ? sanitize_text_field( $_SERVER['SERVER_ADDR'] ) : '',
+				'site'       => isset( $_SERVER['HTTP_HOST'] ) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '',
+			],
+			'fields' => [
+				'keys' => 1
+			],
+		];
 
 		try {
 			if ( $client ) {

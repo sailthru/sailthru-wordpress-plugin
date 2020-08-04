@@ -5,35 +5,31 @@
 		$sailthru     = get_option( 'sailthru_setup_options' );
 		$customfields = get_option( 'sailthru_forms_options' );
 
-	if ( empty( $order ) ) {
-		$order = get_option( 'sailthru_customfields_order' );
-	}
-
-
+		if ( empty( $order ) ) {
+			$order = get_option( 'sailthru_customfields_order' );
+		}
 
 		$key = get_option( 'sailthru_forms_key' );
 
-	if ( ! is_array( $sailthru ) ) {
+		if ( ! is_array( $sailthru ) ) {
+			echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
+			return;
+		}
 
-		echo '<p>Please return to the <a href="' . esc_url( menu_page_url( 'sailthru_configuration_menu', false ) ) . '">Sailthru Settings screen</a> and set up your API key and secret before setting up this widget.</p>';
-		return;
-
-	}
 		$api_key    = $sailthru['sailthru_api_key'];
 		$api_secret = $sailthru['sailthru_api_secret'];
 
 		$client = new WP_Sailthru_Client( $api_key, $api_secret );
-	try {
-		if ( $client ) {
-			$res = $client->getLists();
+		try {
+			if ( $client ) {
+				$res = $client->getLists();
+			}
+		} catch ( Sailthru_Client_Exception $e ) {
+			//silently fail
+			return;
 		}
-	} catch ( Sailthru_Client_Exception $e ) {
-		//silently fail
-		return;
-	}
 
-
-			$lists = $res['lists'];
+		$lists = $res['lists'];
 
 	?>
 		<div id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>_div" style="display: block;">
@@ -43,7 +39,13 @@
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'title' ) ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" />
 				</label>
 			</p>
-			 <p>
+			<p>
+				<span>
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'hide_title_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_title_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'hide_title_status' ] ) ? 'checked' : '' ?> />
+					Hide title after submission
+				</span>
+			</p>
+			<p>
 				<label for="<?php echo esc_attr( $this->get_field_id( 'source' ) ); ?>">
 					<?php esc_html_e( 'Acquisition Source' ); ?>
 					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'source' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'source' ) ); ?>" type="text" value="<?php echo esc_attr( $source ); ?>" />
@@ -94,7 +96,6 @@
 				// if they are in order
 				if ( isset( $order_list ) ) {
 
-
 					for ( $j = 0; $j < count( $order_list ); $j++ ) {
 						
 						// capturing any issues with offsets 
@@ -123,6 +124,7 @@
 											echo '<td><input id="' . esc_attr(  $this->get_field_id( 'show_' . $name_stripped . '_name' ) ) . '" name="' .  esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox" /></td>';
 											echo  '<td><input id="' .  esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ) . '" name="' .  esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox" /></td>';
 										}
+
 										echo '</tr>';
 										$last_listed = $i;
 									} //if field name exists
@@ -161,12 +163,11 @@
 						}
 						 echo '</tr>';
 					} //for loop
-				} // else (not ordered )
+				} // else not ordered
 
 				if ( isset( $order_list ) && is_array( $order_list ) ) {
 					$order_list = array_unique( $order_list );
 				}
-
 
 				// show custom fields that were added after this
 				// widget was created.
@@ -205,13 +206,9 @@
 				}
 			} // end if there are custom fields
 
-
-
 			echo '</tbody>';
 			echo '</table>';
-
 			echo '<div>';
-
 
 			if ( empty( $order ) && ! empty( $order_as_listed ) ) {
 				$order = rtrim( $order_as_listed, ',' );
@@ -224,17 +221,14 @@
 			}
 
 			if ( is_array( $order ) ) {
-
 				$order = array_unique( $order );
 				$order = implode( ',', $order );
 			}
 
 
-				//echo '<p id="field_order"></p>';
 				echo '<input type="hidden" class="sailthru_field_order" value="' . esc_attr( $order )  . '" name="' . esc_attr( $this->get_field_name( 'field_order' ) ) . '" id="' . esc_attr( $this->get_field_id( 'field_order' ) ) . '"></input>';
 			echo '</div>';
 			echo '</div>';
-
 
 					?>
 
@@ -272,7 +266,6 @@
 						<label for=""><?php echo esc_html( $list['name'] ); ?></label>
 						<?php endif; ?>
 
-
 					<?php
 				}
 				?>
@@ -288,14 +281,12 @@
 					axis: 'y',
 					stop: function (event, ui) {
 						var data = jQuery( this ).sortable("serialize");
-
 						var id = ui.item.parents('.sortable_widget').find('.sailthru_field_order').attr('id');
 						//retrieves the numbered position of the field
 						data = data.match(/\d(\d?)*/g);
 						jQuery(function () {
 							jQuery( "#" + id ).val( data );
 						});
-
 					}
 				});
 			});
