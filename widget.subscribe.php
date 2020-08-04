@@ -111,12 +111,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function update( $new_instance, $old_instance ) {
 
-		$instance = array(
+		$instance = [
 			'title'               => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
 			'source'              => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
 			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
-			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING )
-		);
+			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING ),
+			'hide_title_status'   => filter_var ( $new_instance[ 'hide_title_status' ], FILTER_SANITIZE_STRING ),
+		];
 
 		$customfields = get_option( 'sailthru_forms_options' );
 		$key          = get_option( 'sailthru_forms_key' );
@@ -152,6 +153,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				'source'              => '',
 				'lo_event_name'       => '',
 				'reset_optout_status' => '',
+				'hide_title_status'   => '',
 				'sailthru_list'       => array( '' ),
 				'field_order'         => '',
 			)
@@ -161,6 +163,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		$source              = $instance['source'];
 		$lo_event_name       = $instance['lo_event_name'];
 		$reset_optout_status = $instance['reset_optout_status'];
+		$hide_title_status   = $instance['hide_title_status'];
 		$sailthru_list       = $instance['sailthru_list'];
 		$order               = $field_order = $instance['field_order'];
 		$widget_id           = $this->id;
@@ -204,10 +207,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			$nickname = $email;
 		}
 
-		$params = array(
+		$params = [
 			'options'  => $options,
 			'template' => $template,
-		);
+		];
 
 		if ( false === email_exists( $email ) ) {
 			$random_password = wp_generate_password( $length = 12, $include_standard_special_chars = false );
@@ -320,7 +323,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		if ( $client ) {
 
-			$options = array();
+			$options = [];
 
 			// set the source
 			if ( isset( $_POST['source'] ) && ! empty( $_POST['source'] ) ) {
@@ -357,7 +360,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			} //end for loop
 
 
-			$subscribe_to_lists  = array();
+			$subscribe_to_lists  = [];
 			if ( isset($_POST['sailthru_email_list']) ){
 				$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
 			}
@@ -391,13 +394,13 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			$options['vars'] = $vars;
 
-			$data = array(
+			$data = [
 				'id'     => $email,
-				'fields' => array(
+				'fields' => [
 					'lists' => 1,
 					'keys'  => 1,
-				),
-			);
+				],
+			];
 
 			$profile = false;
 
@@ -434,12 +437,12 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
-			$profile_data = array(
+			$profile_data = [
 				'id'    => $email,
 				'key'   => 'email',
 				'vars'  => $options['vars'],
 				'lists' => $options['lists'],
-			);
+			];
 
 			$should_update_optout = isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ? 'none': '';
 			if ($should_update_optout) {
@@ -505,11 +508,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			if ( $event ) {
 
-				$event_data = array(
+				$event_data = [
 					'id'    => $email,
 					'event' => $event,
 					'vars'  => $options['vars'],
-				);
+				];
 
 				try {
 					$client->apiPost( 'event', $event_data );
@@ -528,10 +531,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			}
 
 			// format response.
-			$result = array(
+			$result = [
 				'success' => true,
 				'message' => 'User Subscribed',
-			);
+			];
 
 			$this->return_response( $result );
 
@@ -604,12 +607,12 @@ function sailthru_widget_shortcode( $atts ) {
 		$after_widget  = '</div>';
 	}
 
-	$args = array(
+	$args = [
 		'before_widget' => $before_widget,
 		'after_widget'  => '</div>',
 		'before_title'  => '<div class="widget-title">',
 		'after_title'   => $after_widget,
-	);
+	];
 
 	ob_start();
 	the_widget( 'Sailthru_Subscribe_Widget', $atts, $args );
