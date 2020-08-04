@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.6.0 (2020-08-04)
+Added option for users to have Sailthru Subscription widget title to disappear after user sign-up
+Changed code which produced some errors and warnings in Wordpress PHP Codesniffer
+
 ## v3.5.0 (2020-07-15)
 Added option for users to change Spider value in Content API calls (defaults to enabled)
 Renamed Global Vars to Custom Fields and updated helper text on Content Settings page
