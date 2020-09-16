@@ -1,7 +1,9 @@
 <?php
 
-require_once ABSPATH . WPINC . '/class-phpmailer.php';
-require_once ABSPATH . WPINC . '/class-smtp.php';
+use PHPMailer\PHPMailer\PHPMailer;
+
+require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
 
 
 class SailthruMailer extends PHPMailer {
