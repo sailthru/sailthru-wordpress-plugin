@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.0.0 (2020-10-08)
+Supports Wordpress version 5.5.
+This version isn't backwards compatible with older Wordpress versions.
+
 ## v3.6.0 (2020-08-04)
 Added option for users to have Sailthru Subscription widget title to disappear after user sign-up
 Changed code which produced some errors and warnings in Wordpress PHP Codesniffer
