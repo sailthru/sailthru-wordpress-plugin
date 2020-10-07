@@ -23,8 +23,6 @@ http://docs.sailthru.com/integrations/wordpress
 4. Configure Scout in the WordPress admin.
 5. Add customizable fields to the Signup widget
 
-== Changelog ==
-See [here](changelog.md)
 
 == Upgrade Notice ==
 
