@@ -359,33 +359,8 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			} //end for loop
 
-
-			$subscribe_to_lists  = [];
-			if ( isset($_POST['sailthru_email_list']) ){
-				$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
-			}
-			if ( ! empty( $sailthru_email_list ) ) {
-
-				// check for double opt in setting
-				if ( isset( $customfields['sailthru_double_opt_in'] ) && true === $customfields['sailthru_double_opt_in'] ) {
-					$double_opt_in = true;
-				} else {
-					$double_opt_in = false;
-				}
-
-				$lists = explode( ',', $sailthru_email_list );
-
-				foreach ( $lists as $key => $list ) {
-					$subscribe_to_lists[ $list ] = 1;
-				}
-
-				$options['lists'] = $subscribe_to_lists;
-
-			} else {
-
-				$options['lists'] = array( 'Sailthru Subscribe Widget' => 1 ); // subscriber is an orphan
-
-			}
+            $double_opt_in = !empty( $customfields['sailthru_double_opt_in'] );
+            $subscribe_to_lists = $this->extract_subscribe_to_list();
 
 			// clean up vars
 			unset( $vars['email'] );
@@ -441,7 +416,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				'id'    => $email,
 				'key'   => 'email',
 				'vars'  => $options['vars'],
-				'lists' => $options['lists'],
+				'lists' => $double_opt_in ? '' : $subscribe_to_lists,
 			];
 
 			$should_update_optout = isset( $_POST['reset_optout_status'] ) && ! empty( $_POST['reset_optout_status'] ) ? 'none': '';
@@ -449,54 +424,15 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				$profile_data['optout_email'] = 'none';
 			}
 
-			if ( ! empty( $profile ) ) {
+			$this->post_user_profile( $client, $profile_data );
 
-				if ( isset( $profile['lists'] ) && count( $profile['lists'] ) > 0 ) {
+			$new_lists = empty( $profile )
+				? array_keys( $subscribe_to_lists )
+				: $this->filter_out_existing_lists( $profile, $subscribe_to_lists );
 
-					// now we need to check which lists they are being subscribed to which they are not a member of.
-					foreach ( $options['lists'] as $list_name => $list_val ) {
-
-						if ( ! array_key_exists( $list_name, $profile['lists'] ) ) {
-							$new_lists[] = $list_name;
-						}
-					}
-				} else {
-					// all of the lists are new lists
-					$new_lists = $options['lists'];
-				}
-
-				try {
-					$client->apiPost( 'user', $profile_data );
-					$new_lists = $options['lists'];
-
-				} catch ( Sailthru_Client_Exception $e ) {
-					write_log( $e );
-				}
-
-			} else {
-
-				try {
-					$client->apiPost( 'user', $profile_data );
-					$new_lists = $options['lists'];
-
-				} catch ( Sailthru_Client_Exception $e ) {
-					write_log( $e );
-				}
-			}
-
-			// check if the user is a new subscriber to any lists.
-			$new_subscriber = count( $new_lists ) > 0 ? true : false;
-
-			if ( isset( $customfields['sailthru_welcome_template'] ) && ! empty( $customfields['sailthru_welcome_template'] ) ) {
-
-				if ( $new_subscriber ) {
-
-					try {
-						$client->send( $customfields['sailthru_welcome_template'], $email, $vars );
-					} catch ( Sailthru_Client_Exception $e ) {
-						write_log( $e );
-					}
-				}
+			if ( $this->should_send_welcome_template( $customfields, $new_lists ) ) {
+				$vars['signup_lists'] = $new_lists;
+				$this->send_welcome_template( $client, $customfields, $email, $vars );
 			}
 
 			// Handle the Event If it's been set to fire.
@@ -548,8 +484,61 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	}
 
+	private function extract_subscribe_to_list(): array
+	{
+		if ( isset($_POST['sailthru_email_list']) ) {
+			$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
+		}
 
+		if ( empty($sailthru_email_list) ) {
+			return array('Sailthru Subscribe Widget' => 1); // subscriber is an orphan
+		}
 
+		return $this->create_subscribe_to_list( $sailthru_email_list );
+	}
+
+	private function create_subscribe_to_list( $sailthru_email_list ): array {
+		$lists = explode(',', $sailthru_email_list);
+
+		$subscribe_to_lists = [];
+		foreach (array_values($lists) as $list_name) {
+			$subscribe_to_lists[$list_name] = 1;
+		}
+
+		return $subscribe_to_lists;
+	}
+
+    private function post_user_profile( $client, $profile_data ): void
+    {
+        try {
+            $client->apiPost( 'user', $profile_data );
+        } catch ( Sailthru_Client_Exception $e ) {
+            write_log( $e );
+        }
+    }
+
+	private function should_send_welcome_template( array $custom_fields, array $new_lists ): bool
+	{
+		return ! empty( $custom_fields['sailthru_welcome_template'] ) && !empty( $new_lists );
+	}
+
+	private function send_welcome_template( $client, $custom_fields, $email, $vars ): void
+    {
+        try {
+            $client->send( $custom_fields['sailthru_welcome_template'], $email, $vars );
+        } catch ( Sailthru_Client_Exception $e ) {
+            write_log( $e );
+        }
+    }
+
+	private function filter_out_existing_lists( array $profile, array $subscribe_to_lists ): array
+	{
+		$new_list_diff = empty( $profile['lists'] )
+			? $subscribe_to_lists
+			: array_diff_key( $subscribe_to_lists, $profile['lists'] );
+
+		return array_keys( $new_list_diff );
+	}
 
 } // end class
 
