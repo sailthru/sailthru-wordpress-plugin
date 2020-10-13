@@ -491,10 +491,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			return array('Sailthru Subscribe Widget' => 1); // subscriber is an orphan
 		}
 
-		return $this->create_email_list_array( $sailthru_email_list );
+		return $this->create_user_api_list_update( $sailthru_email_list );
 	}
 
-	private function create_email_list_array( $email_list ): array {
+	private function create_user_api_list_update( $email_list ): array {
 		$lists = explode(',', $email_list);
 
 		$subscribe_to_lists = [];
