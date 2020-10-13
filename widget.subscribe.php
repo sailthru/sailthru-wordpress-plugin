@@ -359,9 +359,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			} //end for loop
 
-            $double_opt_in = !empty( $customfields['sailthru_double_opt_in'] );
-            $subscribe_to_lists = $this->extract_subscribe_to_list();
-
 			// clean up vars
 			unset( $vars['email'] );
 			unset( $vars['sailthru_nonce'] );
@@ -412,6 +409,9 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				}
 			}
 
+			$double_opt_in = !empty( $customfields['sailthru_double_opt_in'] );
+			$subscribe_to_lists = $this->extract_subscribe_to_list();
+
 			$profile_data = [
 				'id'    => $email,
 				'key'   => 'email',
@@ -426,13 +426,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 			$this->post_user_profile( $client, $profile_data );
 
-			$new_lists = empty( $profile )
-				? array_keys( $subscribe_to_lists )
-				: $this->filter_out_existing_lists( $profile, $subscribe_to_lists );
+			$new_lists = $this->filter_out_existing_lists( $profile, $subscribe_to_lists );
 
 			if ( $this->should_send_welcome_template( $customfields, $new_lists ) ) {
 				$vars['signup_lists'] = $new_lists;
-				$this->send_welcome_template( $client, $customfields, $email, $vars );
+				$this->send_template( $client, $customfields['sailthru_welcome_template'], $email, $vars );
 			}
 
 			// Handle the Event If it's been set to fire.
@@ -484,8 +482,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	}
 
-	private function extract_subscribe_to_list(): array
-	{
+	private function extract_subscribe_to_list(): array {
 		if ( isset($_POST['sailthru_email_list']) ) {
 			$sailthru_email_list = sanitize_text_field( $_POST['sailthru_email_list'] );
 		}
@@ -494,11 +491,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			return array('Sailthru Subscribe Widget' => 1); // subscriber is an orphan
 		}
 
-		return $this->create_subscribe_to_list( $sailthru_email_list );
+		return $this->create_email_list_array( $sailthru_email_list );
 	}
 
-	private function create_subscribe_to_list( $sailthru_email_list ): array {
-		$lists = explode(',', $sailthru_email_list);
+	private function create_email_list_array( $email_list ): array {
+		$lists = explode(',', $email_list);
 
 		$subscribe_to_lists = [];
 		foreach (array_values($lists) as $list_name) {
@@ -508,8 +505,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		return $subscribe_to_lists;
 	}
 
-    private function post_user_profile( $client, $profile_data ): void
-    {
+    private function post_user_profile( $client, $profile_data ): void {
         try {
             $client->apiPost( 'user', $profile_data );
         } catch ( Sailthru_Client_Exception $e ) {
@@ -517,22 +513,23 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
         }
     }
 
-	private function should_send_welcome_template( array $custom_fields, array $new_lists ): bool
-	{
-		return ! empty( $custom_fields['sailthru_welcome_template'] ) && !empty( $new_lists );
+	private function should_send_welcome_template( array $custom_fields, array $new_lists ): bool {
+		return ! empty($custom_fields['sailthru_welcome_template']) && ! empty($new_lists);
 	}
 
-	private function send_welcome_template( $client, $custom_fields, $email, $vars ): void
-    {
+	private function send_template( $client, string $template, string $email, array $vars ): void {
         try {
-            $client->send( $custom_fields['sailthru_welcome_template'], $email, $vars );
+            $client->send( $template, $email, $vars );
         } catch ( Sailthru_Client_Exception $e ) {
             write_log( $e );
         }
     }
 
-	private function filter_out_existing_lists( array $profile, array $subscribe_to_lists ): array
-	{
+	private function filter_out_existing_lists( array $profile, array $subscribe_to_lists ): array {
+		if (empty($profile)) {
+			return array_keys( $subscribe_to_lists );
+		}
+
 		$new_list_diff = empty( $profile['lists'] )
 			? $subscribe_to_lists
 			: array_diff_key( $subscribe_to_lists, $profile['lists'] );

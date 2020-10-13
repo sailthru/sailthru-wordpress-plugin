@@ -16,7 +16,7 @@ function sailthru_initialize_forms_options() {
 		echo '
 <p>
 	<strong>Optional. </strong> Choose a template to send after a user signs up using the Sailthru Subscribe Widget. 
-	The email will only be sent when a user to at least one of the lists selected in the subscribe widget. 
+	The email will only be sent when a user does not belong to at least one of the lists selected in the subscribe widget.
 </p>
 <p>
 	If using double opt-in, customers can be added to the appropriate list via 
