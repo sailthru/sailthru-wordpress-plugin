@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.6.1 (2020-10-14)
+Fixed bug where double opt-in option adds users to list immediately
+
 ## v3.6.0 (2020-08-04)
 Added option for users to have Sailthru Subscription widget title to disappear after user sign-up
 Changed code which produced some errors and warnings in Wordpress PHP Codesniffer
