@@ -243,7 +243,7 @@
 				// if no lists are checked, show a warning.
 			if ( empty( $instance['sailthru_list'] ) ) {
 				echo '<p>&nbsp;</p>';
-				echo '<div style="border-left: 4px solid #dd3d36;padding-left:4px;"><p>If you do not select as least one list to subscribe to, this widget will not display to the user.</p></div>';
+				echo '<div style="border-left: 4px solid #dd3d36;padding-left:4px;"><p>If you do not select at least one list to subscribe to, this widget will not display to the user.</p></div>';
 			}
 
 			?>
