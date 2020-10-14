@@ -20,9 +20,7 @@ function sailthru_initialize_forms_options() {
 </p>
 <p>
 	If using double opt-in, customers can be added to the appropriate list via 
-	<code>
-		<a href="https://getstarted.sailthru.com/developers/zephyr-functions-library/signup_confirm/">signup_confirm</a>
-	</code>. 
+	<code><a href="https://getstarted.sailthru.com/developers/zephyr-functions-library/signup_confirm/">signup_confirm</a></code>. 
 	For more information visit the 
 	<a href="https://getstarted.sailthru.com/integrations/wordpress/wordpress-plugin/">
 		Wordpress Integration Documentation
