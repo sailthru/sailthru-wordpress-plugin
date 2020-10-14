@@ -1,8 +1,11 @@
 # Changelog
 
-## v4.0.0 (2020-10-08)
+## v4.0.0 (2020-10-14)
 Supports Wordpress version 5.5.
 This version isn't backwards compatible with older Wordpress versions.
+
+## v3.6.1 (2020-10-14)
+Fixed bug where double opt-in option adds users to list immediately
 
 ## v3.6.0 (2020-08-04)
 Added option for users to have Sailthru Subscription widget title to disappear after user sign-up

@@ -12,8 +12,20 @@ function sailthru_initialize_forms_options() {
 		echo '<div class="postbox">';
 		echo '<div class="inside">';
 
-		echo '<h3>Welcome Template</h3>';
-		echo '<p>Choose a template to send after a user signs up using the Sailthru Subscribe Widget or shortcode.';
+		echo '<h3>Welcome Email</h3>';
+		echo '
+<p>
+	<strong>Optional. </strong> Choose a template to send after a user signs up using the Sailthru Subscribe Widget. 
+	The email will only be sent when a user does not belong to at least one of the lists selected in the subscribe widget.
+</p>
+<p>
+	If using double opt-in, customers can be added to the appropriate list via 
+	<code><a href="https://getstarted.sailthru.com/developers/zephyr-functions-library/signup_confirm/">signup_confirm</a></code>. 
+	For more information visit the 
+	<a href="https://getstarted.sailthru.com/integrations/wordpress/wordpress-plugin/">
+		Wordpress Integration Documentation
+	</a>.
+</p>';
 	}
 
 	function welcome_template( $args ) {
@@ -62,7 +74,6 @@ function sailthru_initialize_forms_options() {
 		$options                = get_option( 'sailthru_forms_options' );
 		$sailthru_double_opt_in = isset( $options['sailthru_double_opt_in'] ) ? $options['sailthru_double_opt_in'] : '';
 		echo '<input type="checkbox" id="sailthru_double_opt_in" name="sailthru_forms_options[sailthru_double_opt_in]" value="1"' . checked( 1, esc_attr( $sailthru_double_opt_in ), false ) . '/>';
-		echo '<small><strong>Important:</strong> Ensure the template uses <code><a href="https://getstarted.sailthru.com/developers/zephyr-functions-library/signup_confirm/">signup_confirm</a></code> or the user will not be added to a list </small><p><small>The welcome email will only be sent when a user does not belong to a list selected in the subscribe widget. </small></p>';
 	}
 
 	function sailthru_forms_callback( $args ) {
