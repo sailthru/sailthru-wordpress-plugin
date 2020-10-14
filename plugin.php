@@ -8,7 +8,6 @@ Requires at least:  5.5
 Author:             Sailthru
 Author URI:         http://sailthru.com
 Author Email:       integrations@sailthru.com
-=======
 License:
 
 Copyright 2013 (Sailthru)
@@ -37,11 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * @var   const    $version    The current version of the plugin.
  */
 if ( ! defined( 'SAILTHRU_PLUGIN_VERSION' ) ) {
-<<<<<<< HEAD
 	define( 'SAILTHRU_PLUGIN_VERSION', '4.0.0' );
-=======
-	define( 'SAILTHRU_PLUGIN_VERSION', '3.6.1' );
->>>>>>> 8dcbe63b0bedb0ccb8ac8f3d09aaef7a905ad2a0
 }
 
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) ) {
