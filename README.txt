@@ -14,7 +14,7 @@ This plugin provides fast and easy integration of the core Sailthru features int
 == Installation ==
 
 For full installation instructions, documentation, and examples please visit:
-http://docs.sailthru.com/integrations/wordpress
+https://getstarted.sailthru.com/integrations/wordpress/wordpress-plugin/
 
 == Screenshots ==
 1. Welcome Screen with quick links to Sailthru support
