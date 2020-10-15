@@ -1,12 +1,13 @@
 <?php
 /**
-Plugin Name: Sailthru for WordPress
-Plugin URI: http://sailthru.com/
-Description: Add the power of Sailthru to your WordPress set up.
-Version: 3.6.1
-Author: Sailthru
-Author URI: http://sailthru.com
-Author Email: integrations@sailthru.com
+Plugin Name:        Sailthru for WordPress
+Plugin URI:         http://sailthru.com/
+Description:        Add the power of Sailthru to your WordPress set up.
+Version:            4.0.0
+Requires at least:  5.5
+Author:             Sailthru
+Author URI:         http://sailthru.com
+Author Email:       integrations@sailthru.com
 License:
 
 Copyright 2013 (Sailthru)
@@ -35,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * @var   const    $version    The current version of the plugin.
  */
 if ( ! defined( 'SAILTHRU_PLUGIN_VERSION' ) ) {
-	define( 'SAILTHRU_PLUGIN_VERSION', '3.6.1' );
+	define( 'SAILTHRU_PLUGIN_VERSION', '4.0.0' );
 }
 
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) ) {

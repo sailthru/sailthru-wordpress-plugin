@@ -1,15 +1,15 @@
 === Sailthru for WordPress ===
-Contributors: brownac, lcooper, asilverman, nickgundry, sailthru-wp, automattic, irms, zackify, natebot
+Contributors: sailthru-wp
 Tags: personalization, email,
-Requires at least: 3.6
-Tested up to: 5.4
-Stable tag: 3.6.1
+Requires at least: 5.5
+Tested up to: 5.5.1
+Stable tag: 4.0.0
 
-This plugin  provides fast and easy integration of the core Sailthru features into your Wordpress site.
+Provides an integration with Sailthru
 
 == Description ==
 
-Provides an integration with Sailthru
+This plugin provides fast and easy integration of the core Sailthru features into your Wordpress site.
 
 == Installation ==
 
@@ -22,3 +22,10 @@ http://docs.sailthru.com/integrations/wordpress
 3. Configure Sailthru's Concierge widget in the WordPress admin. No JavaScript knowledge needed.
 4. Configure Scout in the WordPress admin.
 5. Add customizable fields to the Signup widget
+
+
+== Upgrade Notice ==
+
+= v4.0.0 =
+This version supports Wordpress version 5.5 and isn't backwards compatible with older Wordpress versions.
+Only upgrade if using Wordpress version 5.5 or greater.
