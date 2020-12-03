@@ -291,15 +291,18 @@ class Sailthru_Content_Settings {
 		$url = get_permalink( $post->ID );
 		$url_with_correct_protocol = set_url_scheme( $url );
 
-		$data = [
-			'url' => $url_with_correct_protocol,
-			'title' => $post->post_title,
-			'author' => get_the_author_meta( 'display_name', $post->post_author ),
-			'date' => $post->post_date,
-			'vars'['post_type'] => $post->post_type,
-			'spider' => $spider_value == "false" ? 0 : 1,
-			'description' => $post->post_excerpt
-		];
+		$data = array(
+			'url'         => $url_with_correct_protocol,
+			'title'       => $post->post_title,
+			'author'      => get_the_author_meta( 'display_name', $post->post_author ),
+			'date'        => $post->post_date,
+			'vars'        => array(
+				'post_type' => $post->post_type,
+			),
+			'spider'      => "false" == $spider_value ? 0 : 1,
+			'description' => $post->post_excerpt,
+		);
+
 		if ( empty( $post->post_excerpt ) ) {
 			$data['description'] = wp_trim_words( $post->post_content, 250, '' );
 		}

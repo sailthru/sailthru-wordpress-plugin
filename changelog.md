@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.6.2 (2020-12-03)
+Fixed bug where post_type not set properly
+
 ## v3.6.1 (2020-10-14)
 Fixed bug where double opt-in option adds users to list immediately
 
