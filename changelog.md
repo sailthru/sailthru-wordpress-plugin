@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0.2 (2020-12-17)
+Updated Wordpress version tested through value
+
 ## v4.0.1 (2020-12-03)
 Fixed warning where post_type not set properly
 
