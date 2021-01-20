@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.0.3 (2021-01-20)
+Fixed bug where an unset Welcome Template breaks the signup widget
+
 ## v4.0.2 (2020-12-17)
 Updated Wordpress version tested through value
 
