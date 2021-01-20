@@ -1,5 +1,8 @@
 # Changelog
 
+## v3.6.3 (2021-01-20)
+Fixed bug where an unset Welcome Template breaks the signup widget
+
 ## v3.6.2 (2020-12-03)
 Fixed bug where post_type not set properly
 
