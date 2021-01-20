@@ -1,10 +1,20 @@
 # Changelog
 
+## v4.0.2 (2020-12-17)
+Updated Wordpress version tested through value
+
+## v4.0.1 (2020-12-03)
+Fixed warning where post_type not set properly
+
+## v4.0.0 (2020-10-14)
+Supports Wordpress version 5.5.
+This version isn't backwards compatible with older Wordpress versions.
+
 ## v3.6.3 (2021-01-20)
 Fixed bug where an unset Welcome Template breaks the signup widget
 
 ## v3.6.2 (2020-12-03)
-Fixed bug where post_type not set properly
+Fixed warning where post_type not set properly
 
 ## v3.6.1 (2020-10-14)
 Fixed bug where double opt-in option adds users to list immediately
