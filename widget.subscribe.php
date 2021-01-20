@@ -505,25 +505,25 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		return $subscribe_to_lists;
 	}
 
-    private function post_user_profile( $client, $profile_data ): void {
-        try {
-            $client->apiPost( 'user', $profile_data );
-        } catch ( Sailthru_Client_Exception $e ) {
-            write_log( $e );
-        }
-    }
+	private function post_user_profile( $client, $profile_data ): void {
+		try {
+			$client->apiPost( 'user', $profile_data );
+		} catch ( Sailthru_Client_Exception $e ) {
+			write_log( $e );
+		}
+	}
 
 	private function should_send_welcome_template( $custom_fields, array $new_lists ): bool {
 		return ! empty($custom_fields['sailthru_welcome_template']) && ! empty($new_lists);
 	}
 
 	private function send_template( $client, string $template, string $email, array $vars ): void {
-        try {
-            $client->send( $template, $email, $vars );
-        } catch ( Sailthru_Client_Exception $e ) {
-            write_log( $e );
-        }
-    }
+		try {
+			$client->send( $template, $email, $vars );
+		} catch ( Sailthru_Client_Exception $e ) {
+			write_log( $e );
+		}
+	}
 
 	private function filter_out_existing_lists( $profile, array $subscribe_to_lists ): array {
 		if (empty($profile)) {
