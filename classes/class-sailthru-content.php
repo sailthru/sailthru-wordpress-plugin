@@ -4,7 +4,7 @@ class Sailthru_Content_Settings {
 
 	public function __construct() {
 
-		// make sure the priority is above the default of 10, the meta boxes are saved first. 
+		// make sure the priority is above the default of 10, the meta boxes are saved first.
 		add_action( 'admin_menu', array( $this, 'add_admin_menu' ), 11 );
 		add_action( 'admin_init', array( $this, 'init_settings'  ), 11 );
 		add_action( 'save_post', array( $this, 'sailthru_save_post' ), 11, 3 );
@@ -51,7 +51,7 @@ class Sailthru_Content_Settings {
 
 		// Only show these fields if the status has been enabled
 		if ( isset ( $options['sailthru_content_api_status'] ) && 'true' === $options['sailthru_content_api_status'] ) {
-			
+
 			add_settings_field(
 				'sailthru_spider_status',
 				__( 'Spider', 'text_domain' ),
@@ -116,7 +116,7 @@ class Sailthru_Content_Settings {
 		}
 
 		// Admin Page Layout
-		echo '<div class="wrap">' . "\n";
+		echo '<div class="wrap sailthru-wrap">' . "\n";
 		echo '	<h1>Sailthru for WordPress</h1>' . "\n";
 		echo '	<form action="options.php" method="post">' . "\n";
 
@@ -182,11 +182,11 @@ class Sailthru_Content_Settings {
 		$value = isset( $options['sailthru_content_post_types'] ) ? $options['sailthru_content_post_types'] : '';
 
 		if ( false != $options ) {
-			
+
 			$post_type_args = ['public' => true];
         	$post_types = get_post_types( $post_type_args, 'names');
-        	
-        	// Always remove the attachment post type, we never need this. 
+
+        	// Always remove the attachment post type, we never need this.
         	unset ($post_types['attachment']);
 
         	echo '<p class="description">' . esc_attr__( 'Choose which type of post types should be synced to Sailthru', 'text_domain' ) . '</p>';
@@ -197,7 +197,7 @@ class Sailthru_Content_Settings {
         		echo '<input type="checkbox" name="sailthru_content_settings[sailthru_content_post_types][]" class="sailthru_content_post_types_field" value="' . esc_attr( $type ) . '" ' . esc_attr( $selected ) . '> ' . esc_attr__( ucwords ( $type ) , 'text_domain' ) . '<br>';
         	}
 
-		}        
+		}
 
 	}
 
@@ -252,10 +252,10 @@ class Sailthru_Content_Settings {
         $value = isset( $options['sailthru_taxonomy_tag_options'] ) ? $options['sailthru_taxonomy_tag_options'] : array();
 
 		foreach ($taxonomies as $tag) {
-			
+
 			echo '<input type="checkbox" name="sailthru_content_settings[sailthru_taxonomy_tag_options][]" class="sailthru_taxonomy_tag_options_field" value="' . esc_attr( $tag ) . '" ' . ( in_array( $tag, $value, true ) ? 'checked="checked"' : '' ) . '" /> ' . esc_attr__( $tag, 'text_domain' ) . '<br>';
 		}
-		
+
 	}
 
 
@@ -317,17 +317,17 @@ class Sailthru_Content_Settings {
 			$data['images']['thumb']['url'] = $post_thumbnail;
 		}
 
-		// Add any galleries from the post to the images. 
+		// Add any galleries from the post to the images.
 		$data['images']['galleries'] = get_post_galleries_images( $post );
 
 		$data['tags'] = $this->generate_tags( $post->ID);
 
-		// Apply any filters to the tags. 
-		$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'] ] ) ; 
+		// Apply any filters to the tags.
+		$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'] ] ) ;
 
-		// Check if the filter has returned sailthru.tags and convert to string. 
+		// Check if the filter has returned sailthru.tags and convert to string.
 		if ( is_array( $data['tags'] ) && isset ( $data['tags']['sailthru.tags'] ) ) {
-			$data['tags'] =  $data['tags']['sailthru.tags']; 
+			$data['tags'] =  $data['tags']['sailthru.tags'];
 		}
 
 		$post_expiration = get_post_meta( $post->ID, 'sailthru_post_expiration', true );
@@ -341,7 +341,7 @@ class Sailthru_Content_Settings {
 		// Add the vars
 		$data['vars'] = $this->generate_vars( $post->ID, $post );
 
-	
+
 		return $data;
 	}
 
@@ -387,7 +387,7 @@ class Sailthru_Content_Settings {
 		$post_title                     = get_the_title();
 		$horizon_tags['sailthru.title'] = esc_attr( $post_title );
 
-		// Get the tags. 
+		// Get the tags.
 		$content = new Sailthru_Content_Settings;
 		$post_tags = $content->generate_tags( $post->ID);
 
@@ -450,26 +450,26 @@ class Sailthru_Content_Settings {
 	}
 
 	 /**
-	 * Generates the output of the interest tags for both the Content API and the meta tags. 
+	 * Generates the output of the interest tags for both the Content API and the meta tags.
 	 *
 	 * @param integer $post_id
 	 */
 
 	function generate_tags( $post_id ) {
-		
+
 		$options = get_option( 'sailthru_content_settings' );
 		$post_tags = get_post_meta( $post_id, 'sailthru_meta_tags', true );
 
-		// Add WordPress tags if option set. 
+		// Add WordPress tags if option set.
 		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_tags',$options['sailthru_interest_tag_options'] ) ) {
-			
+
 			$wp_tags = get_the_tags();
 			if ( $wp_tags ) {
 				$post_tags .= ',' .esc_attr( implode( ',', wp_list_pluck( $wp_tags, 'name' ) ) );
 			}
 		}
 
-		// Add WordPress categories if option set. 
+		// Add WordPress categories if option set.
 		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'] ) ) {
 			$post_categories = get_the_category( $post->ID );
 			foreach ( $post_categories as $post_category ) {
@@ -477,14 +477,14 @@ class Sailthru_Content_Settings {
 			}
 		}
 
-		// Add WordPress taxonomies if option set. 
+		// Add WordPress taxonomies if option set.
 		if ( !empty( $options['sailthru_taxonomy_tag_options'] ) ) {
 			$terms = wp_get_post_terms( $post_id, $options['sailthru_taxonomy_tag_options'] );
 			$post_tags .= ',' .esc_attr( implode( ',', wp_list_pluck( $terms, 'name' ) ) );
 		}
 
 
-		// check if there's any global tags needing added. 
+		// check if there's any global tags needing added.
 		if ( ! empty($options['sailthru_content_interest_tags'] ) ) {
 			$post_tags .= ',' . $options['sailthru_content_interest_tags'];
 		}
@@ -493,13 +493,13 @@ class Sailthru_Content_Settings {
 	}
 
 	/**
-	 * Generates the output of the interest tags for both the Content API and the meta tags. 
+	 * Generates the output of the interest tags for both the Content API and the meta tags.
 	 *
 	 * @param integer $post_id
 	 */
 
 	function generate_vars( $post_id, $post ) {
-		
+
 		$vars = [
 					'post_type' => $post->post_type,
 					'id' => $post->ID,
@@ -511,16 +511,16 @@ class Sailthru_Content_Settings {
 		$field_names = array_keys( array_merge( $custom_fields, $vars ) );
 
 		// always exclude these vars
-		$exclude_fields = array( '_edit_lock', 
-								 '_edit_last', 
-								 '_encloseme', 
-								 '_pingme', 
-								 'sailthru_meta_tags', 
-								 'sailthru_post_expiration', 
-								 'sailthru_sailthru_tags_extra_data' 
+		$exclude_fields = array( '_edit_lock',
+								 '_edit_last',
+								 '_encloseme',
+								 '_pingme',
+								 'sailthru_meta_tags',
+								 'sailthru_post_expiration',
+								 'sailthru_sailthru_tags_extra_data'
 							);
 
-		// Set vars from the custom fields. 
+		// Set vars from the custom fields.
 		foreach ( $custom_fields as $key => $val ) {
 
 			if ( ! in_array( $key, $exclude_fields, true ) ) {
@@ -535,7 +535,7 @@ class Sailthru_Content_Settings {
 	}
 
 	/**
-	 * Generates vars from the whitelisted vars and filters 
+	 * Generates vars from the whitelisted vars and filters
 	 *
 	 * @param array $vars
 	 */
@@ -544,13 +544,13 @@ class Sailthru_Content_Settings {
 		$options = get_option( 'sailthru_content_settings' );
 
 		if (! empty($options['sailthru_content_vars'] ) ) {
-			
-			// Get the Whitelisted vars from the settings screen. 
+
+			// Get the Whitelisted vars from the settings screen.
 			$whitelist = explode(', ', $options['sailthru_content_vars']);
 			$whitelist = apply_filters( 'sailthru_content_whitelist_vars', $whitelist);
 
 			foreach ($vars as $key => $val) {
-				
+
 				if ( !in_array($key, $whitelist) ) {
 					unset( $vars[$key] );
 				}
@@ -573,7 +573,7 @@ class Sailthru_Content_Settings {
 
 	function sailthru_save_post( $post_id, $post, $update ) {
 
-		// Get the content options to see if we want to fire the API. 
+		// Get the content options to see if we want to fire the API.
 		$options = get_option( 'sailthru_content_settings' );
 
 		// Check to see if Content API is disabled in the UI
@@ -581,7 +581,7 @@ class Sailthru_Content_Settings {
 			return;
 		}
 
-		// See if a filter has disabled the content API, this may be done to override a specific use case. 
+		// See if a filter has disabled the content API, this may be done to override a specific use case.
 		if ( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
 			return;
 		}
@@ -597,7 +597,7 @@ class Sailthru_Content_Settings {
 					$api_secret = $sailthru['sailthru_api_secret'];
 					$client     = new WP_Sailthru_Client( $api_key, $api_secret );
 					try {
-						
+
 						if ( $client ) {
 							$data = $this->generate_payload($post, $post_id);
 							// Make the API call to Sailthru

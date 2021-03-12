@@ -38,8 +38,8 @@
         // datepicker for meta box
         // but since Datepicker causes a jQuery conflict, wrap it
         // and prevent from initializing unless necessary
-        if ($('.datepicker').length) {
-            $('.datepicker').datepicker({
+        if ($('.datepicker', 'sailthru-wrap').length) {
+            $('.datepicker', 'sailthru-wrap').datepicker({
                 dateFormat: 'yy-mm-dd'
             });
         }
@@ -47,7 +47,7 @@
 
         // custom form fields
 
-        $('.selection').parent().parent().hide();
+        $('.selection', '.sailthru-wrap').parent().parent().hide();
         $('#type').closest('table').find("tr").last().hide();
         // hide hidden field
         $("#sailthru_customfield_hidden_value").closest('tr').hide();
@@ -70,14 +70,14 @@
 
             if ($(this).attr('value') == 'select' || $(this).attr('value') == 'radio' || $(this).attr('value') == 'checkbox') {
                 $(this).closest('table').find("tr").last().show();
-                $('#add_value').show();
+                $('#add_value', 'sailthru-wrap').show();
                 $("input[name*=sailthru_customfield_value1]").show();
-                $('.selection').parent().parent().show();
-                $('#add_value').show();
+                $('.selection', 'sailthru-wrap').parent().parent().show();
+                $('#add_value', 'sailthru-wrap').show();
                 $("input[name*=sailthru_customfield_value1]").show();
 
                 if ($(this).attr('value') == 'hidden') {
-                    $('#add_value').hide();
+                    $('#add_value', 'sailthru-wrap').hide();
                     $("input[name*=sailthru_customfield_value1]").hide();
                     $("input[name*=sailthru_customfield_value1]").parent().parent().find('th').html('Field Value');
                 }
@@ -87,11 +87,10 @@
             }
         }));
 
-        $('#add_value').on("click", (function(e) {
+        $('#add_value', 'sailthru-wrap').on("click", (function(e) {
             e.preventDefault();
             var new_val = parseInt($('#value_amount').attr('value'), 10);
             new_val = new_val + 1;
-            var second_val = new_val + 1;
             $('#sailthru_value_fields_block').append('<div><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][value]" type="text"  placeholder="display value"/><input class="selection" name="sailthru_forms_options[sailthru_customfield_value][' + new_val + '][label]" type="text"  placeholder="value"/></div>');
             $('#value_amount').attr('value', parseInt(new_val, 10));
         }));
@@ -118,12 +117,12 @@
         $("#sailthru_setup_email_template").parents('tr').addClass('grayBorder');
 
         // datepickerfor meta box
-        $('.datepicker').datepicker({
+        $('.datepicker', 'sailthru-wrap').datepicker({
             dateFormat: 'yy-mm-dd'
         });
 
-        $("#sortable").disableSelection();
-        var sort = $("#sortable").sortable({
+        $("#sortable", 'sailthru-wrap').disableSelection();
+        var sort = $("#sortable", 'sailthru-wrap').sortable({
             axis: 'y',
             stop: function(event, ui) {
                 var data = sort.sortable("serialize");
