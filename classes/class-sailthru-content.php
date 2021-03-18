@@ -9,7 +9,7 @@ class Sailthru_Content_Settings {
 		add_action( 'admin_init', array( $this, 'init_settings'  ), 11 );
 		add_action( 'save_post', array( $this, 'sailthru_save_post' ), 11, 3 );
 		add_action( 'wp_head', array( $this, 'generate_meta_tags' ) );
-
+		add_action( 'wp_trash_post', array( $this, 'sailthru_delete_post'), 11, 2);
 	}
 
 	public function add_admin_menu() {
@@ -345,6 +345,13 @@ class Sailthru_Content_Settings {
 		return $data;
 	}
 
+	private function generate_content_delete_payload( WP_Post $post ): array {
+
+		$url = get_permalink( $post->ID );
+		$url_with_correct_protocol = set_url_scheme( $url );
+
+		return array( 'url' => $url_with_correct_protocol );
+	}
 
 	/*-------------------------------------------
 	 * Utility Functions
@@ -604,6 +611,52 @@ class Sailthru_Content_Settings {
 							$api = $client->apiPost( 'content', $data );
 						}
 
+					} catch ( Sailthru_Client_Exception $e ) {
+						write_log($e);
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	function sailthru_delete_post( int $post_id ) {
+
+		$post = get_post( $post_id );
+
+		if ( !isset($post) ) {
+			return;
+		}
+
+		// Get the content options to see if we want to fire the API.
+		$options = get_option( 'sailthru_content_settings' );
+
+		// Check to see if Content API is disabled in the UI
+		if( !isset ($options['sailthru_content_api_status'] ) || "false" === $options['sailthru_content_api_status'] ) {
+			return;
+		}
+
+		// See if a filter has disabled the content API, this may be done to override a specific use case.
+		if ( false === apply_filters( 'sailthru_content_api_enable', true ) ) {
+			return;
+		}
+
+		if ( in_array( $post->post_type, $options['sailthru_content_post_types'], true ) ) {
+
+			if ( 'publish' === $post->post_status ) {
+				// Make sure Sailthru is setup
+				if ( get_option( 'sailthru_setup_complete' ) ) {
+					$sailthru   = get_option( 'sailthru_setup_options' );
+					$api_key    = $sailthru['sailthru_api_key'];
+					$api_secret = $sailthru['sailthru_api_secret'];
+					$client     = new WP_Sailthru_Client( $api_key, $api_secret );
+
+					try {
+						if ( $client ) {
+							$data = $this->generate_content_delete_payload( $post );
+							// Make the API call to Sailthru
+							$api = $client->apiDelete( 'content', $data );
+						}
 					} catch ( Sailthru_Client_Exception $e ) {
 						write_log($e);
 						return;
