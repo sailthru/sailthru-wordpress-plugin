@@ -86,7 +86,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 
 		$url = $this->api_uri . '/' . $action;
 
-		if ( 'GET' === $method ) {
+		if ( $method === 'GET' || $method === 'DELETE' ) {
 			$url_with_params = $url;
 			if ( count( $data ) > 0 ) {
 				$url_with_params .= '?' . http_build_query( $data );
@@ -122,6 +122,8 @@ class WP_Sailthru_Client extends Sailthru_Client {
 			} else {
 				$reply = wp_remote_get( $url, $data );
 			}
+		} else if ( $method === 'DELETE' ) {
+			$reply = wp_remote_request( $url, [ 'method' => 'DELETE' ] );
 		} else {
 			$reply = wp_remote_post( $url, $data );
 		}

@@ -5,3 +5,5 @@ img/.DS_Store
 *.sublime-workspace
 .vscode/launch.json
 .vscode/settings.json
+.idea/shelf
+.idea/sonarlint

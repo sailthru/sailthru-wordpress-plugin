@@ -1,5 +1,5 @@
 <!-- Create a header in the default WordPress 'wrap' container -->
-<div class="wrap" id="sailthru-admin">
+<div class="wrap sailthru-wrap" id="sailthru-admin">
 	<div id="icon-sailthru" class="icon32"></div>
 	<h2><?php esc_html_e( 'Sailthru for WordPress', 'sailthru-for-wordpress' ); ?></h2>
 	<?php

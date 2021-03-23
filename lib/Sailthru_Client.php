@@ -1498,6 +1498,8 @@ class Sailthru_Client {
 
     /**
      * Perform an HTTP request, checking for curl extension support
+	 *
+	 * @see WP_Sailthru_Client::httpRequestCurl() for override of httpRequestCurl
      *
      * @param $action
      * @param array $data
@@ -1507,6 +1509,7 @@ class Sailthru_Client {
      * @throws Sailthru_Client_Exception
      */
     protected function httpRequest($action, $data, $method = 'POST', $options = [ ]) {
+		// See WP_Sailthru_Client::httpRequestCurl() for this override
         $response = $this->{$this->http_request_type}($action, $data, $method, $options);
         $json = json_decode($response, true);
         if ($json === NULL) {
