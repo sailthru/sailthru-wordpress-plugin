@@ -82,7 +82,7 @@ function sailthru_initialize_forms_options() {
 		** Custom and Extra Sections should be in a first column.
 		** Begin the column here. It ends in delete_field()
 		*/
-		echo '<div class="wrap">';
+		echo '<div class="wrap sailthru-wrap">';
 
 		$customfields = get_option( 'sailthru_forms_options' );
 		$key          = get_option( 'sailthru_forms_key' );
@@ -202,7 +202,7 @@ function sailthru_initialize_forms_options() {
 		echo '<p><textarea name="' . esc_attr( $collection ) . '[sailthru_customfield_success]" placeholder="" rows="5" cols="80">' . esc_textarea( $message ) . '</textarea></p>';
 		echo '<p>Use the field above to update the message that the user sees after subscribing</p>';
 
-		/* ends the wrapper */ 
+		/* ends the wrapper */
 		echo '</div>';
 		echo '</div>';
 
@@ -607,7 +607,7 @@ function sailthru_forms_handler( $input ) {
 			$values = rtrim( $values, ',' );
 			$output[ $new_key ]['sailthru_customfield_value'] = $values;
 		}
-		
+
 		if ( 'hidden' === $input['sailthru_customfield_type'] ) {
 			$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field( $input['sailthru_customfield_hidden_value'] );
 		}
