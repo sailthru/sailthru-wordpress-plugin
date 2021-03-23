@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.1.0 (2021-03-23)
+Fixed JQUery queries without scope hidding non-Sailthru elements
+Added delete from Sailthru when item is sent to trash in Wordpress
+
 ## v4.0.3 (2021-01-20)
 Fixed bug where an unset Welcome Template breaks the signup widget
 
