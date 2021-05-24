@@ -470,7 +470,7 @@ class Sailthru_Content_Settings {
 		// Add WordPress tags if option set.
 		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_tags',$options['sailthru_interest_tag_options'] ) ) {
 
-			$wp_tags = get_the_tags();
+			$wp_tags = get_the_tags( $post_id );
 			if ( $wp_tags ) {
 				$post_tags .= ',' .esc_attr( implode( ',', wp_list_pluck( $wp_tags, 'name' ) ) );
 			}
@@ -478,7 +478,7 @@ class Sailthru_Content_Settings {
 
 		// Add WordPress categories if option set.
 		if ( isset( $options['sailthru_interest_tag_options'] ) && in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'] ) ) {
-			$post_categories = get_the_category( $post->ID );
+			$post_categories = get_the_category( $post_id );
 			foreach ( $post_categories as $post_category ) {
 				$post_tags .= ','. $post_category->name;
 			}
