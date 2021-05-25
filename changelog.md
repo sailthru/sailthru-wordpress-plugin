@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.1.1 (2021-05-25)
+Fixed Bulk Edit not propagating category and Wordpress tags properly
+
 ## v4.1.0 (2021-03-23)
 Fixed JQUery queries without scope hidding non-Sailthru elements
 Added delete from Sailthru when item is sent to trash in Wordpress
