@@ -323,7 +323,7 @@ class Sailthru_Content_Settings {
 		$data['tags'] = $this->generate_tags( $post->ID);
 
 		// Apply any filters to the tags.
-		$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'] ] ) ;
+		$data['tags'] = apply_filters( 'sailthru_horizon_meta_tags', ['sailthru.tags' => $data['tags'], 'post' => $post] ) ;
 
 		// Check if the filter has returned sailthru.tags and convert to string.
 		if ( is_array( $data['tags'] ) && isset ( $data['tags']['sailthru.tags'] ) ) {
