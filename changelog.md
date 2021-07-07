@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.2.0 (2021-07-06)
+Added post object to sailthru_horizon_meta_tags filter
+
 ## v4.1.1 (2021-05-25)
 Fixed Bulk Edit not propagating category and Wordpress tags properly
 
