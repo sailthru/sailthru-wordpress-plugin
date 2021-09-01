@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.3.0 (2021-09-01)
+Added filter for content vars
+
 ## v4.2.0 (2021-07-06)
 Added post object to sailthru_horizon_meta_tags filter
 
