@@ -33,17 +33,20 @@ class Sailthru_Meta_Box {
 
 	public function render_metabox( $post ) {
 
-		// Retrieves the global content options. 
+		// Retrieves the global content options.
 		$options = get_option( 'sailthru_content_settings' );
+
+		$tags_checked = false;
+		$cat_checked  = false;
 
 		if ( isset( $options['sailthru_interest_tag_options'] )  && !empty( $options['sailthru_interest_tag_options'] ) ) {
 			$tags_checked = in_array( 'wordpress_tags', $options['sailthru_interest_tag_options'], true ) ? true : false;
 			$cat_checked = in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'], true ) ? true : false;
-		}	
+		}
 
-		// Do we send this content type? Warn the user if not. 
+		// Do we send this content type? Warn the user if not.
 		if ( isset( $options['sailthru_content_post_types'] )  && !empty( $options['sailthru_content_post_types'] ) ) {
-			
+
 			if ( ! in_array($post->post_type, $options['sailthru_content_post_types'] ) ) {
 				echo '<p>This content type is not enabled for Sailthru recommendations.</p><p><a href=" ' . esc_url( admin_url( 'admin.php?page=sailthru_content_settings') ) .' ">Enable this content type</a>.</p>';
 				return;
@@ -58,7 +61,7 @@ class Sailthru_Meta_Box {
 		if( empty( $sailthru_meta_tags ) ) $sailthru_meta_tags = '';
 		if( empty( $sailthru_post_expiration ) ) $sailthru_post_expiration = '';
 
-		/* tags */ 
+		/* tags */
 		echo '<table class="form-table">';
 
 		echo '<tr>';
@@ -67,7 +70,7 @@ class Sailthru_Meta_Box {
 		echo '<input type="text" id="sailthru_meta_tags" name="sailthru_meta_tags" class="sailthru_meta_tags_field widefat" placeholder="' . esc_attr__( '', 'text_domain' ) . '" value="' . esc_attr( $sailthru_meta_tags ) . '">';
 		echo '<p class="description">' . esc_attr__( 'Comma separated list of tags', 'text_domain' ) . '</p>';
 		echo '</td>';
-		echo '</tr>';		
+		echo '</tr>';
 
 		if ($tags_checked || $cat_checked) {
 			echo '<tr>';
@@ -75,7 +78,7 @@ class Sailthru_Meta_Box {
 			echo '<small>' . esc_attr__( 'Your settings include', 'text_domain' ) . '';
 
 			if ($cat_checked) {
-				
+
 				if (true === $cat_checked) {
 					echo  esc_attr__( 'WordPress categories', 'text_domain' ) ;
 				}
@@ -94,7 +97,7 @@ class Sailthru_Meta_Box {
 			echo '</tr>';
 		}
 
-		/* post expiration */ 
+		/* post expiration */
 		echo '<tr class="line">';
 		echo '<td>';
 		echo '<label for="sailthru_post_expiration" class="sailthru_post_expiration_label" style="padding-bottom:8px; display:block; font-weight:bold">' . esc_attr__( 'Content Expires', 'text_domain' ) . '</label>';
