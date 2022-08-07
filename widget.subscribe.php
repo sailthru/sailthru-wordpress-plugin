@@ -57,7 +57,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			__( 'Sailthru Subscribe Widget', 'sailthru-for-wordpress' ),
 			array(
 				'classname'   => 'Sailthru_Subscribe',
-				'description' => __( 'A widget to allow your visitors to subscirbe to your Sailthru lists.', 'sailthru-for-wordpress' ),
+				'description' => __( 'A widget to allow your visitors to subscribe to your Sailthru lists.', 'sailthru-for-wordpress' ),
 			)
 		);
 
