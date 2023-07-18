@@ -1,5 +1,5 @@
 === Sailthru for WordPress ===
-Contributors: sailthru-wp
+Contributors: sailthru-wp, chinsail
 Tags: personalization, email,
 Requires at least: 5.5
 Tested up to: 5.7
