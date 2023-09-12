@@ -1,0 +1,6 @@
+{
+  "name": "sailthru/sailthru-wordpress-plugin",
+  "description": "Add the power of Sailthru to your WordPress set up.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later"
+}
