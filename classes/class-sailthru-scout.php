@@ -62,9 +62,9 @@ class Sailthru_Scout_Widget extends WP_Widget {
 
 			// Check first, otherwise js could throw errors.
 			if ( "1" ===  get_option( 'sailthru_setup_complete' ) ) {
-				
+
 				$post_id = $this->create_scout_page();
-			
+
 				// If conceirge is on, we want noPageView to be set to true
 				$conceirge = get_option( 'sailthru_concierge_options' );
 				/** This filter is documented in class-sailthru-horizon.php */
@@ -239,8 +239,8 @@ class Sailthru_Scout_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance                         = array();
-		$instance['title']                = filter_var( $new_instance['title'], FILTER_SANITIZE_STRING );
-		$instance['sailthru_spm_section'] = filter_var( $new_instance['sailthru_spm_section'], FILTER_SANITIZE_STRING );
+		$instance['title']                = filter_var( $new_instance['title'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
+		$instance['sailthru_spm_section'] = filter_var( $new_instance['sailthru_spm_section'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 
 		return $instance;
 

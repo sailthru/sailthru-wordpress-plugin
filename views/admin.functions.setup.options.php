@@ -3,9 +3,9 @@
 function validate_api_setup() {
 
 	$validate = true;
-	
+
 	if ( isset( $_GET['verify'] ) || isset ( $_POST['sailthru_skip_validation']) ) {
-		
+
 		if ( isset ( $_GET['verify'] ) ) {
 			$v = sanitize_text_field( $_GET['verify'] ) === 'false' ? false : true;
 		}
@@ -13,7 +13,7 @@ function validate_api_setup() {
 		if ( isset ( $_POST['sailthru_skip_validation']) ) {
 			$v = sanitize_text_field( $_POST['sailthru_skip_validation'] ) === '1' ? false : true;
 		}
-		
+
 		if (false === $v)  {
 			add_filter('sailthru_api_verification', '__return_true');
 			$validate = false === apply_filters( 'sailthru_api_verification', true );
@@ -105,7 +105,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		if ( ! $validate_api ) { 
+		if ( ! $validate_api ) {
 
 			add_settings_section(
 				'sailthru_support_section',   // ID used to identify this section and with which to register options
@@ -248,7 +248,7 @@ function sailthru_initialize_setup_options() {
 			'recaptcha_setup_callback',   // Callback used to render the description of the section
 			'sailthru_setup_options'   // Page on which to add this section of options
 		);
-	
+
 		add_settings_field(
 			'google_recaptcha_site_key',
 			__( 'reCaptcha Site Key', 'sailthru-for-wordpress' ),
@@ -262,7 +262,7 @@ function sailthru_initialize_setup_options() {
 				'google_recaptcha_site_key',
 			)
 		);
-	
+
 		add_settings_field(
 			'google_recaptcha_secret',
 			__( 'reCaptcha Secret Key', 'sailthru-for-wordpress' ),
@@ -340,7 +340,7 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
  */
 
 function sailthru_setup_callback() {
-	
+
 	// render the admin tabs
 	// sailthru_admin_tabs('sailthru_configuration_page');
 	echo '<div id="icon-options-general"><h3>API Keys</h3></div>';
@@ -616,21 +616,21 @@ function sailthru_setup_handler( $input ) {
 	$output = array();
 	// api key
 	if ( isset( $input['sailthru_api_key'] ) ) {
-		$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_SANITIZE_STRING );
+		$output['sailthru_api_key'] = filter_var( $input['sailthru_api_key'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_api_key'] = false;
 	}
 
 	// api secret
 	if ( isset( $input['sailthru_api_secret'] ) ) {
-		$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_SANITIZE_STRING );
+		$output['sailthru_api_secret'] = filter_var( $input['sailthru_api_secret'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_api_secret'] = false;
 	}
 
 	// customer Id
 	if ( isset( $input['sailthru_customer_id'] ) ) {
-		$output['sailthru_customer_id'] = filter_var( $input['sailthru_customer_id'], FILTER_SANITIZE_STRING );
+		$output['sailthru_customer_id'] = filter_var( $input['sailthru_customer_id'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_customer_id'] = '';
 	}
@@ -646,21 +646,21 @@ function sailthru_setup_handler( $input ) {
 
 	if ( ! $validate_api ) {
 
-		// If the customer is overriding verification store the SPM value in the settings. 
+		// If the customer is overriding verification store the SPM value in the settings.
 		if ( isset( $input['features']['spm_enabled'] ) ) {
-			
-			$output['features']['spm_enabled'] = filter_var( $input['features']['spm_enabled'], FILTER_SANITIZE_STRING );
+
+			$output['features']['spm_enabled'] = filter_var( $input['features']['spm_enabled'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 
 			if ( '1' === $output['features']['spm_enabled'] ) {
 				$st_settings['features']['spm_enabled'] = '1';
 			}
 
 			$st_settings['customer_id'] = $output['sailthru_customer_id'];
-			
-			update_option( 'sailthru_settings', $st_settings );
-		} 
 
-		// if API verification has been overriden assume the API is good and allow error to surface in template call. 
+			update_option( 'sailthru_settings', $st_settings );
+		}
+
+		// if API verification has been overriden assume the API is good and allow error to surface in template call.
 		update_option( 'sailthru_api_validated', true );
 
 	} else {
@@ -670,7 +670,7 @@ function sailthru_setup_handler( $input ) {
 
 			if ( $settings ) {
 				// Get the Customer ID from Sailthru.
-				$output['sailthru_customer_id'] = filter_var( $settings['customer_id'], FILTER_SANITIZE_STRING );
+				$output['sailthru_customer_id'] = filter_var( $settings['customer_id'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 
 				$st_settings = array(
 					'customer_id' => $settings['customer_id'],
@@ -696,45 +696,45 @@ function sailthru_setup_handler( $input ) {
 	// recaptcha settings
     $output['google_recaptcha_site_key'] = '';
     if ( isset( $input['google_recaptcha_site_key'] ) ) {
-        $output['google_recaptcha_site_key'] = filter_var( $input['google_recaptcha_site_key'], FILTER_SANITIZE_STRING );
+	    $output['google_recaptcha_site_key'] = filter_var( $input['google_recaptcha_site_key'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
     }
 
     $output['google_recaptcha_secret'] = '';
     if ( isset( $input['google_recaptcha_secret'] ) ) {
-        $output['google_recaptcha_secret'] = filter_var( $input['google_recaptcha_secret'], FILTER_SANITIZE_STRING );
+	    $output['google_recaptcha_secret'] = filter_var( $input['google_recaptcha_secret'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
     }
 
 	// javascript type
 	if ( isset( $input['sailthru_js_type'] ) ) {
-		$output['sailthru_js_type'] = filter_var( $input['sailthru_js_type'], FILTER_SANITIZE_STRING );
+		$output['sailthru_js_type'] = filter_var( $input['sailthru_js_type'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_js_type'] = '';
 	}
 
 	// auto pageviews
 	if ( isset( $input['sailthru_js_auto_track_pageview'] ) ) {
-		$output['sailthru_js_auto_track_pageview'] = filter_var( $input['sailthru_js_auto_track_pageview'], FILTER_SANITIZE_STRING );
+		$output['sailthru_js_auto_track_pageview'] = filter_var( $input['sailthru_js_auto_track_pageview'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_js_auto_track_pageview'] = false;
 	}
 
 	// ignore stored tags
 	if ( isset( $input['sailthru_ignore_personalize_stored_tags'] ) ) {
-		$output['sailthru_ignore_personalize_stored_tags'] = filter_var( $input['sailthru_ignore_personalize_stored_tags'], FILTER_SANITIZE_STRING );
+		$output['sailthru_ignore_personalize_stored_tags'] = filter_var( $input['sailthru_ignore_personalize_stored_tags'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_ignore_personalize_stored_tags'] = false;
 	}
 
 	// exclude content
 	if ( isset( $input['sailthru_js_exclude_content'] ) ) {
-		$output['sailthru_js_exclude_content'] = filter_var( $input['sailthru_js_exclude_content'], FILTER_SANITIZE_STRING );
+		$output['sailthru_js_exclude_content'] = filter_var( $input['sailthru_js_exclude_content'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_js_exclude_content'] = false;
 	}
 
 	// // horizon domain
 	if ( isset( $input['sailthru_horizon_domain'] ) ) {
-		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_SANITIZE_STRING );
+		$output['sailthru_horizon_domain'] = filter_var( $input['sailthru_horizon_domain'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['sailthru_horizon_domain'] = '';
 	}
@@ -775,7 +775,7 @@ function sailthru_setup_handler( $input ) {
 	if ( $api_validated ) {
 
 		// creates an email template if one does not already exist
-		// don't try and setup the template if validation is disabled. 
+		// don't try and setup the template if validation is disabled.
 		if ( $validate_api ) {
 			sailthru_create_wordpress_template();
 		}
@@ -796,7 +796,7 @@ function sailthru_setup_handler( $input ) {
 
 	// Content Vars
 	if ( isset( $input['content_vars'] ) ) {
-		$output['content_vars'] = filter_var( $input['content_vars'], FILTER_SANITIZE_STRING );
+		$output['content_vars'] = filter_var( $input['content_vars'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 	} else {
 		$output['content_vars'] = '';
 	}
