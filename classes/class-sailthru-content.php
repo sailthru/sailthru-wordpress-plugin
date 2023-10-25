@@ -286,7 +286,7 @@ class Sailthru_Content_Settings {
 	function generate_payload( $post, $post_id ) {
 
 		$options = get_option( 'sailthru_content_settings' );
-		$spider_value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : false;
+		$spider_value = isset( $options['sailthru_spider_status'] ) ? $options['sailthru_spider_status'] : "true";
 
 		$url = get_permalink( $post->ID );
 		$url_with_correct_protocol = set_url_scheme( $url );
