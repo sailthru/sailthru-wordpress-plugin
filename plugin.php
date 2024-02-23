@@ -180,7 +180,7 @@ function sailthru_deactivate( $network_wide ) {
  */
 function sailthru_uninstall( $network_wide ) {
 	remove_options();
-} 
+}
 
 
 function remove_options() {
