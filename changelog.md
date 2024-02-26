@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.3.2 (2024-02-23)
+Added for in label and id in input field
+
 ## v4.3.1 (2023-07-07)
 Added fix for ad-blocker
 

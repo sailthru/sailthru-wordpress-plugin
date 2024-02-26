@@ -63,8 +63,8 @@
 				<div class="sailthru-add-subscriber-errors"></div>
 
 				<div class="sailthru_form_input form-group">
-					<label class="sailthru-widget-label">Email</label>
-					<input type="text" name="email" value="" class="form-control sailthru_email" />
+					<label class="sailthru-widget-label" for="st_wp_email">Email</label>
+					<input type="text" name="email" value="" class="form-control sailthru_email" id="st_wp_email" />
 				</div>
 
 				<?php
@@ -183,12 +183,12 @@
 									echo '</div>';
 								} elseif ( 'checkbox' === $customfields[ $field_key ]['sailthru_customfield_type'] ) {
 									$items = explode( ',', $customfields[ $field_key ]['sailthru_customfield_value'] );
-									
+
 									echo '<div class="checkbox">';
 									echo '<label for="custom_' . esc_attr( $name_stripped ) . '">' . esc_html( $customfields[ $field_key ]['sailthru_customfield_label'] ) . '</label>';
-									
+
 									foreach ( $items as $item ) {
-										
+
 										if ( ! empty( $item ) ) {
 											$vals = explode( ':', $item );
 
@@ -199,7 +199,7 @@
 											}
 
 
-											
+
 											echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"  ' . ( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . esc_attr( sailthru_attributes( $attributes ) ) . '> ' . esc_html( $vals[0] ) . '';
 										}
 									}

@@ -3,7 +3,7 @@
 Plugin Name:        Sailthru for WordPress
 Plugin URI:         http://sailthru.com/
 Description:        Add the power of Sailthru to your WordPress set up.
-Version:            4.3.1
+Version:            4.3.2
 Requires at least:  5.5
 Author:             Sailthru
 Author URI:         http://sailthru.com
@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * @var   const    $version    The current version of the plugin.
  */
 if ( ! defined( 'SAILTHRU_PLUGIN_VERSION' ) ) {
-	define( 'SAILTHRU_PLUGIN_VERSION', '4.3.1' );
+	define( 'SAILTHRU_PLUGIN_VERSION', '4.3.2' );
 }
 
 if ( ! defined( 'SAILTHRU_PLUGIN_PATH' ) ) {
@@ -180,7 +180,7 @@ function sailthru_deactivate( $network_wide ) {
  */
 function sailthru_uninstall( $network_wide ) {
 	remove_options();
-} 
+}
 
 
 function remove_options() {
