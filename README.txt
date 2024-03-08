@@ -3,7 +3,7 @@ Contributors: sailthru-wp
 Tags: personalization, email,
 Requires at least: 5.5
 Tested up to: 5.7
-Stable tag: 4.3.2
+Stable tag: 4.3.3
 
 Provides an integration with Sailthru
 

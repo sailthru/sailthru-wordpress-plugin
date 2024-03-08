@@ -311,10 +311,16 @@ class Sailthru_Content_Settings {
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 			$thumb                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-			$post_image                     = $image[0];
-			$data['images']['full']['url']  = esc_attr( $post_image );
-			$post_thumbnail                 = $thumb[0];
-			$data['images']['thumb']['url'] = $post_thumbnail;
+            $post_image = $image[0];
+            $filename =  basename($post_image);
+            $encfilename = urlencode($filename);
+            $post_image = str_replace($filename, $encfilename, $post_image);
+            $data['images']['full']['url']  =  $post_image ;
+            $post_thumbnail                 = $thumb[0];
+            $filename =  basename($post_thumbnail);
+            $encfilename = urlencode($filename);
+            $post_thumbnail = str_replace($filename, $encfilename, $post_thumbnail);
+            $data['images']['thumb']['url'] = $post_thumbnail;
 		}
 
 		// Add any galleries from the post to the images.
