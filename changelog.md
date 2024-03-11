@@ -1,5 +1,8 @@
 # Changelog
 
+## v4.3.3 (2024-03-08)
+Fixed em dash character in image file name
+
 ## v4.3.2 (2024-02-23)
 Added for in label and id in input field
 
