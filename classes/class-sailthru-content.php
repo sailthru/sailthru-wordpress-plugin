@@ -309,18 +309,15 @@ class Sailthru_Content_Settings {
 
 		// image & thumbnail
 		if ( has_post_thumbnail( $post->ID ) ) {
-			$image                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-			$thumb                          = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-                        $post_image                     = $image[0];
-                        $filename                       =  basename($post_image);
-                        $encfilename                    = urlencode($filename);
-                        $post_image                     = str_replace($filename, $encfilename,$post_image);
-                        $data['images']['full']['url']  =  $post_image ;
-                        $post_thumbnail                 = $thumb[0];
-                        $filename                       =  basename($post_thumbnail);
-                        $encfilename                    = urlencode($filename);
-                        $post_thumbnail                 = str_replace($filename, $encfilename, $post_thumbnail);
-                        $data['images']['thumb']['url'] = $post_thumbnail;
+			$image  = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
+			$thumb  = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
+			
+			$post_image = $this->encodeimagepath($image[0]);
+			$data['images']['full']['url']  =  $post_image ? $post_image : "";
+
+			$post_thumbnail = $this->encodeimagepath($thumb[0]);
+			//$post_thumbbnail = $this->encodeimagepath("https://publish.purewow.net/wp-content/uploads/sites/2/2024/04/best-swimsuits-for-curvy-women-editors-pick.png?fit=2050%2C1100");
+			$data['images']['thumb']['url'] =  $post_thumbnail ? $post_thumbnail : "";
         }
 
 		// Add any galleries from the post to the images.
@@ -350,6 +347,16 @@ class Sailthru_Content_Settings {
 
 		return $data;
 	}
+
+	public function encodeimagepath($post_image) {
+        $basename = basename($post_image);
+        $filename   =  preg_replace("/(\\.[a-zA-Z]+)\\?(.*?)$/", "$1", $basename ) ;
+        $imgparam = preg_split("/(\\.[a-zA-Z]+)\\?(.*?)$/", $basename);
+        $encfilename = urlencode($filename) .
+            (sizeof($imgparam) > 1 ?  $imgparam[1] : "");
+        $post_image = str_replace($filename, $encfilename,$post_image);
+        return $post_image ;
+    }
 
 	private function generate_content_delete_payload( WP_Post $post ): array {
 
