@@ -351,6 +351,16 @@ class Sailthru_Content_Settings {
 		return $data;
 	}
 
+	public function encodeimagepath($post_image) {
+        $basename = basename($post_image);
+        $filename   =  preg_replace("/(\\.[a-zA-Z]+)\\?(.*?)$/", "$1", $basename ) ;
+        $imgparam = preg_split("/(\\.[a-zA-Z]+)\\?(.*?)$/", $basename);
+        $encfilename = urlencode($filename) .
+            (sizeof($imgparam) > 1 ?  $imgparam[1] : "");
+        $post_image = str_replace($filename, $encfilename,$post_image);
+        return $post_image ;
+    }
+
 	private function generate_content_delete_payload( WP_Post $post ): array {
 
 		$url = get_permalink( $post->ID );
