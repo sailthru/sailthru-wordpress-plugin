@@ -433,15 +433,14 @@ class Sailthru_Content_Settings {
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 			$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-			
-            $post_image = $this->encodeimagepath($image[0]);
-            $data['images']['full']['url']  =  $post_image ? $post_image : "";
-		
-            $post_thumbnail = $this->encodeimagepath($thumb[0]);
-            //$post_thumbbnail = $this->encodeimagepath("https://publish.purewow.net/wp-content/uploads/sites/2/2024/04/best-swimsuits-for-curvy-women-editors-pick.png?fit=2050%2C1100");
+
+			$post_image = $this->encodeimagepath($image[0]);
+			$data['images']['full']['url']  =  $post_image ? $post_image : "";
+
+			$post_thumbnail = $this->encodeimagepath($thumb[0]);
+			//$post_thumbbnail = $this->encodeimagepath("https://publish.purewow.net/wp-content/uploads/sites/2/2024/04/best-swimsuits-for-curvy-women-editors-pick.png?fit=2050%2C1100");
 			$data['images']['thumb']['url'] =  $post_thumbnail ? $post_thumbnail : "";
-			
-        }
+		}
 
 		// expiration date
 		$post_expiration = get_post_meta( $post_object->ID, 'sailthru_post_expiration', true );
