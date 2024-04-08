@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.5 (2024-04-08)
+Removed commented code inside the if condition
+
 ## v4.3.4 (2024-04-08)
 Image URL encoding issue fixed 
 
