@@ -1,4 +1,6 @@
 # Changelog
+## v4.3.4 (2024-04-08)
+Image URL encoding issue fixed
 
 ## v4.3.3 (2024-03-08)
 Fixed em dash character in image file name
