@@ -342,7 +342,6 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 				if ( ! empty( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
 					$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
-                                        $name_stripped = stripslashes( $name_stripped );
 					if ( ! empty( $_POST[ 'custom_' . $name_stripped ] ) ) {
 						// check to see if this is an array or a string
 						if ( is_array( $_POST[ 'custom_' . $name_stripped ] ) ) {
