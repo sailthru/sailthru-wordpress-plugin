@@ -353,7 +353,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 							}
 						} else {
 							$var_name          = str_replace( 'custom_', '', $name_stripped );
-                                                        $vars[ $var_name ] = sanitize_text_field( $_POST[ 'custom_' . $name_stripped ] ); 
+                                                        $vars[ $var_name ] = sanitize_text_field( $_POST[ 'custom_' . $name_stripped ] );
 						}
 					}
 				}
