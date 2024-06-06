@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.6 (2024-06-06)
+Quotes encoding issue fixed
+
 ## v4.3.5 (2024-04-08)
 Removed commented code inside the if condition
 
