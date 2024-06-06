@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.7 (2024-06-06)
+Resolved issue with quotes not encoding properly
+
 ## v4.3.6 (2024-06-06)
 Quotes encoding issue fixed
 
