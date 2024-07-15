@@ -345,12 +345,12 @@ class Sailthru_Content_Settings {
 		$data['vars'] = apply_filters( 'sailthru_content_vars', $data['vars'], $post);
 
 		/**
-         * Allowing 3rd party plugins to modify the playload.
-         *
-         * @param array   $data Payload data
-         * @param WP_Post $post Current post object
-         */
-		return apply_filters( 'sailthru_payload_data', data, $post );
+		 * Allowing 3rd party plugins to modify the playload.
+		 *
+		 * @param array $data Payload data
+		 * @param WP_Post $post Current post object
+		 */
+		return apply_filters( 'sailthru_payload_data', $data, $post );
 	}
 
 	public function encodeimagepath($post_image) {
