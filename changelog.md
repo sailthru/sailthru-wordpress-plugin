@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.8 (2024-07-26)
+Custom fields: Radio buttons, checkboxes, hidden fields, and select options not working so removed from dropdown.
+
 ## v4.3.7 (2024-06-06)
 Resolved issue with quotes not encoding properly
 

@@ -163,10 +163,6 @@ function sailthru_initialize_forms_options() {
 				  <option value="text"' . selected( esc_attr( $value ), 'text' ) . '>Text Field</option>
 				  <option value="tel"' . selected( esc_attr( $value ), 'tel' ) . '>Telephone</option>
 				  <option value="date"' . selected( esc_attr( $value ), 'date' ) . '>Date</option>
-				  <option value="hidden"' . selected( esc_attr( $value ), 'hidden' ) . '>Hidden</option>
-				  <option value="select"' . selected( esc_attr( $value ), 'select' ) . '>Select</option>
-				  <option value="radio"' . selected( esc_attr( $value ), 'radio' ) . '>Radio</option>
-				  <option value="checkbox"' . selected( esc_attr( $value ), 'radio' ) . '>Checkbox</option>
 			  </select>';
 		echo  '<div class="instructions">The type of html form field displayed.</div>';
 
