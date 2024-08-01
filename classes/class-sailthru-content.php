@@ -440,10 +440,13 @@ class Sailthru_Content_Settings {
 			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 			$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
 
-			$post_image                           = $image[0];
-			$horizon_tags['sailthru.image.full']  = esc_attr( $post_image );
-			$post_thumbnail                       = $thumb[0];
-			$horizon_tags['sailthru.image.thumb'] = $post_thumbnail;
+			if ( ! empty( $image ) ) {
+				$horizon_tags['sailthru.image.full']  = esc_attr( $image[0] );
+			}
+
+			if ( ! empty( $thumb ) ) {
+				$horizon_tags['sailthru.image.thumb'] = $thumb[0];
+			}
 		}
 
 		// expiration date
