@@ -112,11 +112,11 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	public function update( $new_instance, $old_instance ) {
 
 		$instance = [
-			'title'               => filter_var( $new_instance['title'], FILTER_SANITIZE_STRING ),
-			'source'              => filter_var( $new_instance['source'], FILTER_SANITIZE_STRING ),
-			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_SANITIZE_STRING ),
-			'reset_optout_status' => filter_var ( $new_instance[ 'reset_optout_status' ], FILTER_SANITIZE_STRING ),
-			'hide_title_status'   => filter_var ( $new_instance[ 'hide_title_status' ], FILTER_SANITIZE_STRING ),
+			'title'               => filter_var( $new_instance['title'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) ),
+			'source'              => filter_var( $new_instance['source'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) ),
+			'lo_event_name'       => filter_var( $new_instance['lo_event_name'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) ),
+			'reset_optout_status' => filter_var( $new_instance['reset_optout_status'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) ),
+			'hide_title_status'   => filter_var( $new_instance['hide_title_status'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) ),
 		];
 
 		$customfields = get_option( 'sailthru_forms_options' );

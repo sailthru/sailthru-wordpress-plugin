@@ -43,17 +43,20 @@ if( isset( $_POST['sailthru_action'] ) ) {
 				$email = filter_var( $email, FILTER_VALIDATE_EMAIL );
 			}
 
-			if ( isset( $_POST['first_name'] ) && !empty( $_POST['first_name'] ) ){
-				$first_name = filter_var( trim( sanitize_text_field( $_POST['first_name'] ) ), FILTER_SANITIZE_STRING );
+			if ( ! empty( $_POST['first_name'] ) ) {
+				$first_name = filter_var( $_POST['first_name'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 			} else {
 				$first_name = '';
 			}
 
-			if ( isset( $_POST['last_name'] ) && !empty( $_POST['last_name'] ) ){
-				$last_name = filter_var( trim( sanitize_text_field( $_POST['last_name'] ) ), FILTER_SANITIZE_STRING ) ;
+			if ( ! empty( $_POST['last_name'] ) ) {
+				$last_name = filter_var( $_POST['last_name'], FILTER_CALLBACK, array( 'options' => 'sanitize_text_field' ) );
 			} else {
 				$last_name = '';
 			}
+
+			$first_name = trim( $first_name );
+			$last_name  = trim( $last_name );
 
 			if ( $first_name || $last_name ) {
 				$options = [
