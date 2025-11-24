@@ -125,7 +125,7 @@ function sailthru_scout_items_callback( $args ) {
 
 	$i = 0;
 	while ( $i <= 40 ) {
-		echo  '<option value="' . esc_attr( $i ) . '" ' . esc_attr( selected( $saved_value, $i, false ) ) . '>' . esc_attr( $i ) . '</option>';
+		echo  '<option value="' . esc_attr( $i ) . '" ' . selected( $saved_value, $i, false ) . '>' . esc_attr( $i ) . '</option>';
 		$i++;
 	}
 	echo  '</select>';
@@ -141,8 +141,8 @@ function sailthru_scout_includeConsumed_callback( $args ) {
 	$saved_value = isset( $scout['sailthru_scout_includeConsumed'] ) ? $scout['sailthru_scout_includeConsumed'] : '';
 
 	echo  '<select name="sailthru_scout_options[sailthru_scout_includeConsumed]">';
-	echo  '<option value="false" ' . esc_attr( selected( $saved_value, 'false', false ) ) . '>No</option>';
-	echo  '<option value="true" ' . esc_attr( selected( $saved_value, 'true', false ) ) . '>Yes</option>';
+	echo  '<option value="false" ' . selected( $saved_value, 'false', false ) . '>No</option>';
+	echo  '<option value="true" ' . selected( $saved_value, 'true', false ) . '>Yes</option>';
 	echo  '</select>';
 
 }

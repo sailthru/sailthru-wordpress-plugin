@@ -161,9 +161,9 @@ function sailthru_concierge_from_callback( $args ) {
 	$saved_value = isset( $scout['sailthru_concierge_from'] ) ? $scout['sailthru_concierge_from'] : '';
 
 	echo  '<select name="sailthru_concierge_options[sailthru_concierge_from]">';
-	echo  '<option value="top" ' . esc_attr( selected( $saved_value, 'top', false ) ) . '>Top</option>';
-	echo  '<option value="bottom" ' . esc_attr( selected( $saved_value, 'bottom', false ) ) . '>Bottom</option>';
-	echo '</select>';
+	echo  '<option value="top" ' . selected( $saved_value, 'top', false ) . '>Top</option>';
+	echo  '<option value="bottom" ' . selected( $saved_value, 'bottom', false ) . '>Bottom</option>';
+	echo  '</select>';
 
 }
 
@@ -176,16 +176,16 @@ function sailthru_concierge_delay_callback( $args ) {
 	$saved_value = isset( $scout['sailthru_concierge_delay'] ) ? $scout['sailthru_concierge_delay'] : '';
 
 	echo '<select name="sailthru_concierge_options[sailthru_concierge_delay]">';
-	echo '<option value="100" ' . esc_attr( selected( $saved_value, '100', false ) ) . '>1 sec</option>';
-	echo '<option value="200" ' . esc_attr( selected( $saved_value, '200', false ) ) . '>2 secs</option>';
-	echo '<option value="300" ' . esc_attr( selected( $saved_value, '300', false ) ) . '>3 secs</option>';
-	echo '<option value="400" ' . esc_attr( selected( $saved_value, '400', false ) ) . '>4 secs</option>';
-	echo '<option value="500" ' . esc_attr( selected( $saved_value, '500', false ) ) . '>5 secs</option>';
-	echo '<option value="600" ' . esc_attr( selected( $saved_value, '600', false ) ) . '>6 secs</option>';
-	echo '<option value="700" ' . esc_attr( selected( $saved_value, '700', false ) ) . '>7 secs</option>';
-	echo '<option value="800" ' . esc_attr( selected( $saved_value, '800', false ) ) . '>8 secs</option>';
-	echo '<option value="900" ' . esc_attr( selected( $saved_value, '900', false ) ) . '>9 secs</option>';
-	echo '<option value="1000" ' . esc_attr( selected( $saved_value, '1000', false ) ) . '>10 secs</option>';
+	echo '<option value="100" ' . selected( $saved_value, '100', false ) . '>1 sec</option>';
+	echo '<option value="200" ' . selected( $saved_value, '200', false ) . '>2 secs</option>';
+	echo '<option value="300" ' . selected( $saved_value, '300', false ) . '>3 secs</option>';
+	echo '<option value="400" ' . selected( $saved_value, '400', false ) . '>4 secs</option>';
+	echo '<option value="500" ' . selected( $saved_value, '500', false ) . '>5 secs</option>';
+	echo '<option value="600" ' . selected( $saved_value, '600', false ) . '>6 secs</option>';
+	echo '<option value="700" ' . selected( $saved_value, '700', false ) . '>7 secs</option>';
+	echo '<option value="800" ' . selected( $saved_value, '800', false ) . '>8 secs</option>';
+	echo '<option value="900" ' . selected( $saved_value, '900', false ) . '>9 secs</option>';
+	echo '<option value="1000" ' . selected( $saved_value, '1000', false ) . '>10 secs</option>';
 	echo '</select>';
 }
 
