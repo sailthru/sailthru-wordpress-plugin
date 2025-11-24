@@ -32,6 +32,15 @@ $return['message'] = '';
 
 if( isset( $_POST['sailthru_action'] ) ) {
 
+	// Verify nonce for security
+	if ( ! isset( $_POST['sailthru_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['sailthru_nonce'] ), 'add_subscriber_nonce' ) ) {
+		$return['error']   = true;
+		$return['message'] = 'This form could not be validated, please refresh the page and try again.';
+		header('Content-Type: application/json');
+		echo json_encode( $return );
+		exit();
+	}
+
 	$sailthru_action = sanitize_text_field( $_POST['sailthru_action'] );
 	switch( $sailthru_action ) {
 
@@ -76,11 +85,11 @@ if( isset( $_POST['sailthru_action'] ) ) {
 
 					$options['lists'] = $subscribe_to_lists;
 
-				} else {
+		} else {
 
-					$options['lists'] = array('Sailthru Subscribe Widget' => 1);	// subscriber is an orphan
+			$options['lists'] = array('Sailthru Subscribe Widget' => 1);	// subscriber is an orphan
 
-				}
+		}
 
 			$options['vars']['source'] = get_bloginfo('url');
 

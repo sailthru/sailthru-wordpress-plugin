@@ -296,7 +296,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 	function add_subscriber() {
 
-		if ( isset( $_POST['sailthru_nonce'] ) && ! wp_verify_nonce( sanitize_text_field( $_POST['sailthru_nonce'] ), 'add_subscriber_nonce' ) ) {
+		if ( ! isset( $_POST['sailthru_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( $_POST['sailthru_nonce'] ), 'add_subscriber_nonce' ) ) {
 
 			$result = array(
 				'success' => false,
