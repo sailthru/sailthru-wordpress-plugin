@@ -112,7 +112,8 @@ class Sailthru_Horizon {
 		if ( in_array( $hook, $screens, true ) ) {
 
 			if ( isset( $_GET['action'] ) ) {
-				if ( $_GET['action'] === 'edit' ) {
+				$action = sanitize_text_field( $_GET['action'] );
+				if ( $action === 'edit' ) {
 					// datepicker for the meta box on post pages
 					wp_enqueue_style( 'jquery-style', '//ajax.googleapis.com/ajax/libs/jqueryui/1.8.2/themes/smoothness/jquery-ui.css' );
 					// our own magic

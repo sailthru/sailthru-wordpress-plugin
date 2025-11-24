@@ -340,23 +340,23 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 			for ( $i = 0; $i < $key; $i++ ) {
 				$field_key = $i + 1;
 
-				if ( ! empty( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
-					$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
+			if ( ! empty( $customfields[ $field_key ]['sailthru_customfield_name'] ) ) {
+				$name_stripped = preg_replace( '/[^\da-z]/i', '_', $customfields[ $field_key ]['sailthru_customfield_name'] );
 
-					if ( ! empty( $_POST[ 'custom_' . $name_stripped ] ) ) {
-						// check to see if this is an array or a string
-						if ( is_array( $_POST[ 'custom_' . $name_stripped ] ) ) {
+				if ( isset( $_POST[ 'custom_' . $name_stripped ] ) && ! empty( $_POST[ 'custom_' . $name_stripped ] ) ) {
+					// check to see if this is an array or a string
+					if ( is_array( $_POST[ 'custom_' . $name_stripped ] ) ) {
 
-							foreach ( $_POST[ 'custom_' . $name_stripped ] as $val ) {
-								$var_name             = str_replace( 'custom_', '', $name_stripped );
-								$vars[ $var_name ] [] = sanitize_text_field( $val );
-							}
-						} else {
-							$var_name          = str_replace( 'custom_', '', $name_stripped );
-							$vars[ $var_name ] = sanitize_text_field( stripslashes ($_POST[ 'custom_' . $name_stripped ] ) );
+						foreach ( $_POST[ 'custom_' . $name_stripped ] as $val ) {
+							$var_name             = str_replace( 'custom_', '', $name_stripped );
+							$vars[ $var_name ] [] = sanitize_text_field( $val );
 						}
+					} else {
+						$var_name          = str_replace( 'custom_', '', $name_stripped );
+						$vars[ $var_name ] = sanitize_text_field( stripslashes ($_POST[ 'custom_' . $name_stripped ] ) );
 					}
 				}
+			}
 			} //end for loop
 
 			// clean up vars

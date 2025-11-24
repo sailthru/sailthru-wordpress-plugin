@@ -32,7 +32,8 @@ $return['message'] = '';
 
 if( isset( $_POST['sailthru_action'] ) ) {
 
-	switch( $_POST['sailthru_action'] ) {
+	$sailthru_action = sanitize_text_field( $_POST['sailthru_action'] );
+	switch( $sailthru_action ) {
 
 		case "add_subscriber":
 			$email = isset( $_POST['email'] ) ? trim( sanitize_email( $_POST['email'] ) ) : '';

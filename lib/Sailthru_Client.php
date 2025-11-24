@@ -1140,7 +1140,8 @@ class Sailthru_Client {
             return false;
         }
         if (!$domain) {
-            $domain_parts = explode('.', $_SERVER['HTTP_HOST']);
+            $http_host = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field( $_SERVER['HTTP_HOST'] ) : '';
+            $domain_parts = explode('.', $http_host);
             $domain = $domain_parts[sizeof($domain_parts) - 2] . '.' . $domain_parts[sizeof($domain_parts) - 1];
         }
         if ($duration === null) {
