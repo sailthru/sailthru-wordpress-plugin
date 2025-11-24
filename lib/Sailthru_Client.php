@@ -1511,7 +1511,7 @@ class Sailthru_Client {
     protected function httpRequest($action, $data, $method = 'POST', $options = [ ]) {
 		// See WP_Sailthru_Client::httpRequestCurl() for this override
         $response = $this->{$this->http_request_type}($action, $data, $method, $options);
-        $json = json_decode($response, true);
+        $json = wp_json_decode($response, true);
         if ($json === NULL) {
             throw new Sailthru_Client_Exception(
                 "Response: {$response} is not a valid JSON",
@@ -1590,7 +1590,7 @@ class Sailthru_Client {
         $payload = [
             'api_key' => $this->api_key,
             'format' => 'json',
-            'json' => json_encode($data)
+            'json' => wp_json_encode($data)
         ];
         $payload['sig'] = Sailthru_Util::getSignatureHash($payload, $this->secret);
         if (!empty($binary_data)) {

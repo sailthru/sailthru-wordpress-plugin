@@ -77,9 +77,10 @@ class WP_Sailthru_Client extends Sailthru_Client {
 	 * Overload method to transparently intercept calls.
 	 * Perform an HTTP request using the WordPress HTTP API.
 	 *
-	 * @param string  $url
+	 * @param string  $action
 	 * @param array   $data
 	 * @param string  $method
+	 * @param array   $options
 	 * @return string
 	 */
 	function httpRequestCurl( $action, array $data, $method = 'POST', $options = [] ) {
@@ -143,7 +144,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 					return $reply['body'];
 				} else {
 
-					$resp = json_decode( $reply['body'] );
+					$resp = wp_json_decode( $reply['body'] );
 					if ( ! empty( $resp->errormsg ) ) {
 						return  $resp->errormsg;
 					} else {
