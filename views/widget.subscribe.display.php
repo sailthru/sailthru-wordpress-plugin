@@ -201,8 +201,8 @@
 
 
                                             echo 'type="checkbox" name="custom_' . esc_attr( $name_stripped ) .  (count( $items) > 1 ? '[]' : '') . '" value="' . esc_attr( $vals[1] ) . '"  ' . ( sailthru_field_class( $customfields[ $field_key ]['sailthru_customfield_class'], $customfields[ $field_key ]['sailthru_customfield_type'] ) ) . ' ' . sailthru_attributes( $attributes ) . '> ' . esc_html( $vals[0] ) . '';
-									    }
-								    }
+										}
+									}
 									echo '</div>';
 
 								} else {
