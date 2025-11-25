@@ -115,7 +115,7 @@ class Sailthru_Meta_Box {
 
 	public function save_metabox( $post_id, $post ) {
 
-		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( sanitize_text_field( $_POST[ $this->nonce ] ), plugin_basename( __FILE__ ) ) );
+		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( $_POST[ $this->nonce ], plugin_basename( __FILE__ ) ) );
 
 		// First, make sure the user can save the post
 		if ( $is_valid_nonce && $this->user_can_save( $post_id ) && current_user_can( 'edit_post', $post_id ) ) {

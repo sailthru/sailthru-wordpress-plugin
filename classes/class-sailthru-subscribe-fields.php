@@ -424,7 +424,7 @@ class Sailthru_Subscribe_Fields {
 	 */
 	public function save_custom_meta_data( $post_id ) {
 
-		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( sanitize_text_field( $_POST[ $this->nonce ] ), plugin_basename( __FILE__ ) ) );
+		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( $_POST[ $this->nonce ], plugin_basename( __FILE__ ) ) );
 		// First, make sure the user can save the post
 		if ( $is_valid_nonce && $this->user_can_save( $post_id ) ) {
 
