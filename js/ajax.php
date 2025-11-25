@@ -37,7 +37,7 @@ if( isset( $_POST['sailthru_action'] ) ) {
 		$return['error']   = true;
 		$return['message'] = 'This form could not be validated, please refresh the page and try again.';
 		header('Content-Type: application/json');
-		echo json_encode( $return );
+		echo wp_json_encode( $return );
 		exit();
 	}
 
