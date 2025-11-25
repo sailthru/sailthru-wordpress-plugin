@@ -144,7 +144,7 @@ class WP_Sailthru_Client extends Sailthru_Client {
 					return $reply['body'];
 				} else {
 
-					$resp = wp_json_decode( $reply['body'] );
+					$resp = json_decode( $reply['body'] );
 					if ( ! empty( $resp->errormsg ) ) {
 						return  $resp->errormsg;
 					} else {

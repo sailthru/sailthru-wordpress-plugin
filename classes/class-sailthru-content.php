@@ -227,12 +227,12 @@ class Sailthru_Content_Settings {
 		// Retrieve data from the database.
 		$options = get_option( 'sailthru_content_settings' );
 
-	// Set default value.
+		// Set default value.
         $value = isset( $options['sailthru_interest_tag_options'] ) ? $options['sailthru_interest_tag_options'] : [];
 
-	// Field output.
-	echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_tags' ) . '" ' . checked( true, in_array( 'wordpress_tags', $value, true ), false ) . '> ' . esc_attr__( 'WordPress Tags', 'text_domain' ) . '<br>';
-	echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_categories' ) . '" ' . checked( true, in_array( 'wordpress_categories', $value, true ), false ) . '> ' . esc_attr__( 'WordPress Categories', 'text_domain' ) . '<br>';
+        // Field output.
+        echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_tags' ) . '" ' . checked( true, in_array( 'wordpress_tags', $value, true ), false ) . '> ' . esc_attr__( 'WordPress Tags', 'text_domain' ) . '<br>';
+        echo '<input type="checkbox" name="sailthru_content_settings[sailthru_interest_tag_options][]" class="sailthru_interest_tag_options_field" value="' . esc_attr( 'wordpress_categories' ) . '" ' . checked( true, in_array( 'wordpress_categories', $value, true ), false ) . '> ' . esc_attr__( 'WordPress Categories', 'text_domain' ) . '<br>';
 
 	}
 
@@ -311,7 +311,7 @@ class Sailthru_Content_Settings {
 		if ( has_post_thumbnail( $post->ID ) ) {
 			$image  = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
 			$thumb  = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
-			
+
 			$post_image = $this->encodeimagepath($image[0]);
 			$data['images']['full']['url']  =  $post_image ? $post_image : "";
 

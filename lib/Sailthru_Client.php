@@ -1512,7 +1512,7 @@ class Sailthru_Client {
     protected function httpRequest($action, $data, $method = 'POST', $options = [ ]) {
 		// See WP_Sailthru_Client::httpRequestCurl() for this override
         $response = $this->{$this->http_request_type}($action, $data, $method, $options);
-        $json = wp_json_decode($response, true);
+        $json = json_decode($response, true);
         if ($json === NULL) {
             throw new Sailthru_Client_Exception(
                 "Response: {$response} is not a valid JSON",

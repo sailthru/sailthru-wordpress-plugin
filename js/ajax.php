@@ -85,11 +85,11 @@ if( isset( $_POST['sailthru_action'] ) ) {
 
 					$options['lists'] = $subscribe_to_lists;
 
-		} else {
+				} else {
 
-			$options['lists'] = array('Sailthru Subscribe Widget' => 1);	// subscriber is an orphan
+					$options['lists'] = array('Sailthru Subscribe Widget' => 1);	// subscriber is an orphan
 
-		}
+				}
 
 			$options['vars']['source'] = get_bloginfo('url');
 

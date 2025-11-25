@@ -394,7 +394,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 				try {
 					$response = wp_remote_get( 'https://www.google.com/recaptcha/api/siteverify?secret=' . $sailthru['google_recaptcha_secret'] . '&response=' . $recaptcha_token );
 					$body     = wp_remote_retrieve_body( $response );
-					$data     = wp_json_decode( $body, true );
+					$data     = json_decode( $body, true );
 					if ( false == $data['success'] ) {
 						// failed, send an error message here, but keep it vague
 						$this->return_response(
