@@ -3,9 +3,9 @@
 function validate_api_setup() {
 
 	$validate = true;
-	
+
 	if ( isset( $_GET['verify'] ) || isset ( $_POST['sailthru_skip_validation']) ) {
-		
+
 		if ( isset ( $_GET['verify'] ) ) {
 			$v = sanitize_text_field( $_GET['verify'] ) === 'false' ? false : true;
 		}
@@ -13,7 +13,7 @@ function validate_api_setup() {
 		if ( isset ( $_POST['sailthru_skip_validation']) ) {
 			$v = sanitize_text_field( $_POST['sailthru_skip_validation'] ) === '1' ? false : true;
 		}
-		
+
 		if (false === $v)  {
 			add_filter('sailthru_api_verification', '__return_true');
 			$validate = false === apply_filters( 'sailthru_api_verification', true );
@@ -105,7 +105,7 @@ function sailthru_initialize_setup_options() {
 			)
 		);
 
-		if ( ! $validate_api ) { 
+		if ( ! $validate_api ) {
 
 			add_settings_section(
 				'sailthru_support_section',   // ID used to identify this section and with which to register options
@@ -248,7 +248,7 @@ function sailthru_initialize_setup_options() {
 			'recaptcha_setup_callback',   // Callback used to render the description of the section
 			'sailthru_setup_options'   // Page on which to add this section of options
 		);
-	
+
 		add_settings_field(
 			'google_recaptcha_site_key',
 			__( 'reCaptcha Site Key', 'sailthru-for-wordpress' ),
@@ -262,7 +262,7 @@ function sailthru_initialize_setup_options() {
 				'google_recaptcha_site_key',
 			)
 		);
-	
+
 		add_settings_field(
 			'google_recaptcha_secret',
 			__( 'reCaptcha Secret Key', 'sailthru-for-wordpress' ),
@@ -340,7 +340,7 @@ add_action( 'admin_init', 'sailthru_initialize_setup_options' );
  */
 
 function sailthru_setup_callback() {
-	
+
 	// render the admin tabs
 	// sailthru_admin_tabs('sailthru_configuration_page');
 	echo '<div id="icon-options-general"><h3>API Keys</h3></div>';
@@ -424,7 +424,7 @@ function sailthru_js_type_callback() {
 	echo '<select id="sailthru_js_type" name="sailthru_setup_options[sailthru_js_type]">';
 	foreach ( $html_options as $key => $val ) {
 
-		echo '<option value="' . esc_attr( $key ) . '"' . selected( $js_type, $key, false ) . '>' . esc_attr( $val ) . '</option>';
+		echo '<option value="' . esc_attr( $key ) . '"' . selected( $js_type, $key, false ) . '>' . esc_html( $val ) . '</option>';
 	}
 	echo '</select>';
 
@@ -641,9 +641,9 @@ function sailthru_setup_handler( $input ) {
 
 	if ( ! $validate_api ) {
 
-		// If the customer is overriding verification store the SPM value in the settings. 
+		// If the customer is overriding verification store the SPM value in the settings.
 		if ( isset( $input['features']['spm_enabled'] ) ) {
-			
+
 			$output['features']['spm_enabled'] = filter_var( $input['features']['spm_enabled'], FILTER_SANITIZE_STRING );
 
 			if ( '1' === $output['features']['spm_enabled'] ) {
@@ -651,11 +651,11 @@ function sailthru_setup_handler( $input ) {
 			}
 
 			$st_settings['customer_id'] = $output['sailthru_customer_id'];
-			
-			update_option( 'sailthru_settings', $st_settings );
-		} 
 
-		// if API verification has been overriden assume the API is good and allow error to surface in template call. 
+			update_option( 'sailthru_settings', $st_settings );
+		}
+
+		// if API verification has been overriden assume the API is good and allow error to surface in template call.
 		update_option( 'sailthru_api_validated', true );
 
 	} else {
@@ -770,7 +770,7 @@ function sailthru_setup_handler( $input ) {
 	if ( $api_validated ) {
 
 		// creates an email template if one does not already exist
-		// don't try and setup the template if validation is disabled. 
+		// don't try and setup the template if validation is disabled.
 		if ( $validate_api ) {
 			sailthru_create_wordpress_template();
 		}
