@@ -585,8 +585,9 @@ function sailthru_forms_handler( $input ) {
 			$output[ $new_key ]['sailthru_customfield_attr'] = sanitize_text_field( $input['sailthru_customfield_attr'] );
 		}
 
+		$field_type = isset( $input['sailthru_customfield_type'] ) ? sanitize_text_field( $input['sailthru_customfield_type'] ) : '';
 
-		if ( 'select' === $input['sailthru_customfield_type'] || 'radio' === $input['sailthru_customfield_type'] || 'checkbox' === $input['sailthru_customfield_type'] ) {
+		if ( 'select' === $field_type || 'radio' === $field_type || 'checkbox' === $field_type ) {
 
 			$amount = sanitize_text_field( $input['sailthru_customfield_value_val'] );
 			$values = '';
@@ -604,7 +605,7 @@ function sailthru_forms_handler( $input ) {
 			$output[ $new_key ]['sailthru_customfield_value'] = $values;
 		}
 
-		if ( 'hidden' === $input['sailthru_customfield_type'] ) {
+		if ( 'hidden' === $field_type ) {
 			$output[ $new_key ]['sailthru_customfield_value'] = sanitize_text_field( $input['sailthru_customfield_hidden_value'] );
 		}
 

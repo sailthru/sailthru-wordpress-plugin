@@ -1,4 +1,10 @@
 # Changelog
+## v4.3.9 (2025-12-04)
+Replace json_encode to use wp_json_encode for better compatibility with WordPress
+Added nonce verification for processing form data
+Applied sanitization to all form inputs
+Added proper escaping functions to all output data
+
 ## v4.3.8 (2024-07-26)
 Custom fields: Radio buttons, checkboxes, hidden fields, and select options not working so removed from dropdown.
 

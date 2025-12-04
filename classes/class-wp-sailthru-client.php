@@ -77,9 +77,10 @@ class WP_Sailthru_Client extends Sailthru_Client {
 	 * Overload method to transparently intercept calls.
 	 * Perform an HTTP request using the WordPress HTTP API.
 	 *
-	 * @param string  $url
+	 * @param string  $action
 	 * @param array   $data
 	 * @param string  $method
+	 * @param array   $options
 	 * @return string
 	 */
 	function httpRequestCurl( $action, array $data, $method = 'POST', $options = [] ) {
@@ -156,5 +157,23 @@ class WP_Sailthru_Client extends Sailthru_Client {
 		}
 
 	} // End httpRequestCurl().
+
+	/**
+	 * Overload method to handle non-cURL requests.
+	 * Unlike the base class which throws an exception for file uploads,
+	 * WordPress HTTP API can handle file uploads without cURL.
+	 *
+	 * @param string  $action
+	 * @param array   $data
+	 * @param string  $method
+	 * @param array   $options
+	 * @return string
+	 */
+	protected function httpRequestWithoutCurl( $action, $data, $method = 'POST', $options = [] ) {
+		// WordPress HTTP API works the same whether cURL is available or not.
+		// Unlike the base class that throws an exception for file uploads when cURL
+		// is not available, wp_remote_post() can handle files properly.
+		return $this->httpRequestCurl( $action, $data, $method, $options );
+	} // End httpRequestWithoutCurl().
 
 } // End of WP_Sailthru_Client.

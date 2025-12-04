@@ -41,7 +41,7 @@
 			</p>
 			<p>
 				<span>
-					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'hide_title_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_title_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'hide_title_status' ] ) ? 'checked' : '' ?> />
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'hide_title_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_title_status' ) ); ?>" type="checkbox" <?php checked( 1, $instance[ 'hide_title_status' ], true ); ?> />
 					Hide title after submission
 				</span>
 			</p>
@@ -53,7 +53,7 @@
 			</p>
 			<p>
 				<span>
-					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'reset_optout_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php echo ( $instance[ 'reset_optout_status' ] ) ? 'checked' : '' ?> />
+					<input class="widefat" id="<?php echo esc_attr( $this->get_field_id( 'reset_optout_status' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'reset_optout_status' ) ); ?>" type="checkbox" <?php checked( 1, $instance[ 'reset_optout_status' ], true ); ?> />
 					Set previously opted-out customers to valid
 				</span>
 			</p>
@@ -97,12 +97,12 @@
 				if ( isset( $order_list ) ) {
 
 					for ( $j = 0; $j < count( $order_list ); $j++ ) {
-						
-						// capturing any issues with offsets 
+
+						// capturing any issues with offsets
 						if (isset ( $order_list[ $j ] ) ) {
 							$field_key = (int) $order_list[ $j ];
 						}
-						
+
 						if ( isset ( $customfields[ $field_key ] ) ) {
 
 							$label =  !empty( $customfields[ $field_key ]['sailthru_customfield_label'] ) ? $customfields[ $field_key ]['sailthru_customfield_label'] : $customfields[ $field_key ]['sailthru_customfield_name'];
@@ -117,8 +117,8 @@
 
 										if ( ! empty( $instance[ 'show_' . $name_stripped . '_name' ] ) ) {
 											echo '<td>' . esc_html($label ) . '</td>';
-											echo'<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_name' ) ). '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox"' . esc_attr( ( ( $instance[ 'show_' . $name_stripped . '_name' ] ) ? ' checked' : '' ) )  . '/></td>' ;
-											echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ) . '" name="' . esc_attr ( $this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox"' .  esc_attr( ( ( $instance[ 'show_' . $name_stripped . '_required' ] ) ? ' checked' : '' ) ) . ' /> </td>';
+                                            echo'<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_name' ) ). '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_name' ], false )  . '/></td>' ;
+                                            echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ) . '" name="' . esc_attr ( $this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_required' ], false ) . ' /> </td>';
 										} else {
 											echo '<td>' . esc_html( $label ) . '</td>';
 											echo '<td><input id="' . esc_attr(  $this->get_field_id( 'show_' . $name_stripped . '_name' ) ) . '" name="' .  esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox" /></td>';
@@ -138,7 +138,7 @@
 
 					for ( $i = 0; $i <= $key; $i++ ) {
 
-						// check if the offset is present the first time the user creates the instance. 
+						// check if the offset is present the first time the user creates the instance.
 						if ( isset ( $customfields[ $i ] ) ) {
 							$label =  !empty( $customfields[ $i ]['sailthru_customfield_label'] ) ? $customfields[ $i ]['sailthru_customfield_label'] : $customfields[ $i ]['sailthru_customfield_name'];
 						}
@@ -151,8 +151,8 @@
 							$order_as_listed .= $i . ',';
 							if ( ! empty( $instance[ 'show_' . $name_stripped . '_name' ] ) ) {
 								echo '<td>' . esc_html( $label ) . '</td>';
-								echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_name' ) )  . '" name="'. esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox"' . esc_attr( ( $instance[ 'show_' . $name_stripped . '_name' ] ) ? ' checked' : '' ) . '/></td>' ;
-								echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ) . '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox"' . esc_attr( ( $instance[ 'show_' . $name_stripped . '_required' ] ) ? ' checked' : '' ) . ' /> </td>' ;
+                                echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_name' ) )  . '" name="'. esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_name' ], false ) . '/></td>' ;
+                                echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ) . '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_required' ], false ) . ' /> </td>' ;
 								$order_as_listed .= $i . ',';
 							} else {
 								echo '<td>' . esc_html( $label  ) . '</td>';
@@ -191,8 +191,8 @@
 
 							if ( ! empty( $instance[ 'show_' . $name_stripped . '_name' ] ) ) {
 								echo '<td>' . esc_html( $label ) . '</td>';
-								echo '<td><input id="' . esc_attr(  $this->get_field_id( 'show_' . $name_stripped . '_name' ) ) . '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox"' . esc_attr( ( $instance[ 'show_' . $name_stripped . '_name' ] ) ? ' checked' : '' ) . '/></td>';
-								echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ). '" name="' . esc_attr($this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox"' . esc_attr( ( $instance[ 'show_' . $name_stripped . '_required' ] ) ? ' checked' : '' ) . ' /> </td>';
+                                echo '<td><input id="' . esc_attr(  $this->get_field_id( 'show_' . $name_stripped . '_name' ) ) . '" name="' . esc_attr( $this->get_field_name( 'show_' . $name_stripped . '_name' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_name' ], false ) . '/></td>';
+                                echo '<td><input id="' . esc_attr( $this->get_field_id( 'show_' . $name_stripped . '_required' ) ). '" name="' . esc_attr($this->get_field_name( 'show_' . $name_stripped . '_required' ) ) . '" type="checkbox" ' . checked( 1, $instance[ 'show_' . $name_stripped . '_required' ], false ) . ' /> </td>';
 
 							} else {
 								echo '<td>' . esc_html( $label  ) . '</td>';
@@ -233,7 +233,7 @@
 					?>
 
 					</p>
-			
+
 			<p>
 				<h4>Lists</h4>
 			</p>

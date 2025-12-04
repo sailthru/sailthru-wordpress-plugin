@@ -32,7 +32,17 @@ $return['message'] = '';
 
 if( isset( $_POST['sailthru_action'] ) ) {
 
-	switch( $_POST['sailthru_action'] ) {
+	// Verify nonce for security
+	if ( ! isset( $_POST['sailthru_nonce'] ) || ! wp_verify_nonce( $_POST['sailthru_nonce'], 'add_subscriber_nonce' ) ) {
+		$return['error']   = true;
+		$return['message'] = 'This form could not be validated, please refresh the page and try again.';
+		header('Content-Type: application/json');
+		echo wp_json_encode( $return );
+		exit();
+	}
+
+	$sailthru_action = sanitize_text_field( $_POST['sailthru_action'] );
+	switch( $sailthru_action ) {
 
 		case "add_subscriber":
 			$email = isset( $_POST['email'] ) ? trim( sanitize_email( $_POST['email'] ) ) : '';

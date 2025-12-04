@@ -2,6 +2,9 @@
 
 class Sailthru_Meta_Box {
 
+	// Represents the nonce value used to save the post meta
+	private $nonce = 'sailthru_metabox_nonce';
+
 	public function __construct() {
 
 		if ( is_admin() ) {
@@ -32,6 +35,9 @@ class Sailthru_Meta_Box {
 	}
 
 	public function render_metabox( $post ) {
+
+		// Add nonce for security
+		wp_nonce_field( plugin_basename( __FILE__ ), $this->nonce );
 
 		// Retrieves the global content options. 
 		$options = get_option( 'sailthru_content_settings' );
@@ -109,13 +115,35 @@ class Sailthru_Meta_Box {
 
 	public function save_metabox( $post_id, $post ) {
 
-		// Sanitize user input.
-		$sailthru_new_meta_tags = isset( $_POST[ 'sailthru_meta_tags' ] ) ? sanitize_text_field( $_POST[ 'sailthru_meta_tags' ] ) : '';
-		$sailthru_new_post_expiration = isset( $_POST[ 'sailthru_post_expiration' ] ) ? sanitize_text_field( $_POST[ 'sailthru_post_expiration' ] ) : '';
+		$is_valid_nonce = ( isset( $_POST[ $this->nonce ] ) && wp_verify_nonce( $_POST[ $this->nonce ], plugin_basename( __FILE__ ) ) );
 
-		// Update the meta field in the database.
-		update_post_meta( $post_id, 'sailthru_meta_tags', $sailthru_new_meta_tags );
-		update_post_meta( $post_id, 'sailthru_post_expiration', $sailthru_new_post_expiration );
+		// First, make sure the user can save the post
+		if ( $is_valid_nonce && $this->user_can_save( $post_id ) && current_user_can( 'edit_post', $post_id ) ) {
+
+			// Sanitize user input.
+			$sailthru_new_meta_tags = isset( $_POST[ 'sailthru_meta_tags' ] ) ? sanitize_text_field( $_POST[ 'sailthru_meta_tags' ] ) : '';
+			$sailthru_new_post_expiration = isset( $_POST[ 'sailthru_post_expiration' ] ) ? sanitize_text_field( $_POST[ 'sailthru_post_expiration' ] ) : '';
+
+			// Update the meta field in the database.
+			update_post_meta( $post_id, 'sailthru_meta_tags', $sailthru_new_meta_tags );
+			update_post_meta( $post_id, 'sailthru_post_expiration', $sailthru_new_post_expiration );
+		}
+
+	}
+
+	/**
+	 * Determines whether or not the current user has the ability to save meta data associated with this post.
+	 *
+	 * @param int     $post_id The ID of the post being save
+	 * @param bool    Whether or not the user has the ability to save this post.
+	 */
+	function user_can_save( $post_id ) {
+
+		$is_autosave = wp_is_post_autosave( $post_id );
+		$is_revision = wp_is_post_revision( $post_id );
+
+		// Return true if the user is able to save; otherwise, false.
+		return ! ( $is_autosave || $is_revision );
 
 	}
 
