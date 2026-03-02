@@ -279,7 +279,7 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 	 */
 	public function register_widget_scripts() {
 
-		wp_enqueue_script( 'sailthru-subscribe-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.js', array( 'jquery' ) );
+		wp_enqueue_script( 'sailthru-subscribe-script', SAILTHRU_PLUGIN_URL . 'js/widget.subscribe.min.js', array( 'jquery' ) );
 
 	} // end register_widget_scripts
 
