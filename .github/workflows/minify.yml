@@ -1,0 +1,36 @@
+name: Minify JS Files
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'js/widget.js'
+      - 'js/widget.subscribe.js'
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install terser
+        run: npm install -g terser
+
+      - name: Minify widget.js
+        run: terser js/widget.js -o js/widget.min.js --compress --mangle
+
+      - name: Minify widget.subscribe.js
+        run: terser js/widget.subscribe.js -o js/widget.subscribe.min.js --compress --mangle
+
+      - name: Commit minified files
+        run: |
+          git config user.email "github-actions@github.com"
+          git config user.name "GitHub Actions"
+          git add js/widget.min.js js/widget.subscribe.min.js
+          git commit -m "Auto-minify JS files [skip ci]" || echo "No changes to commit"
+          git push
