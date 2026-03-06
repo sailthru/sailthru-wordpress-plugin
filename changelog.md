@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.10 (2026-03-06)
+Minify widget JS and widgetsubscribe JS files and serve .min.js versions to improve page load performance
+
 ## v4.3.9 (2025-12-04)
 Replace json_encode to use wp_json_encode for better compatibility with WordPress
 Added nonce verification for processing form data
