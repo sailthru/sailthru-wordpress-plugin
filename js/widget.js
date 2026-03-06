@@ -29,3 +29,4 @@
 
 	});
 }(jQuery));
+// test minify
