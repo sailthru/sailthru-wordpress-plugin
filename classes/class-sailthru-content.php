@@ -437,13 +437,16 @@ class Sailthru_Content_Settings {
 
 		// image & thumbnail
 		if ( has_post_thumbnail( $post_object->ID ) ) {
-			$image = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'full' );
-			$thumb = wp_get_attachment_image_src( get_post_thumbnail_id( $post->ID ), 'concierge-thumb' );
+			$thumbnail_id = get_post_thumbnail_id( $post_object->ID );
+			$image        = wp_get_attachment_image_src( $thumbnail_id, 'full' );
+			$thumb        = wp_get_attachment_image_src( $thumbnail_id, 'concierge-thumb' );
 
-			$post_image                           = $image[0];
-			$horizon_tags['sailthru.image.full']  = esc_attr( $post_image );
-			$post_thumbnail                       = $thumb[0];
-			$horizon_tags['sailthru.image.thumb'] = $post_thumbnail;
+			if ( is_array( $image ) ) {
+				$horizon_tags['sailthru.image.full'] = $image[0];
+			}
+			if ( is_array( $thumb ) ) {
+				$horizon_tags['sailthru.image.thumb'] = $thumb[0];
+			}
 		}
 
 		// expiration date
