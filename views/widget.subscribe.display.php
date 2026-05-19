@@ -360,6 +360,7 @@
 				?>
 				<input type="hidden" name="sailthru_nonce" value="<?php echo esc_attr( $nonce) ; ?>" />
 				<input type="hidden" name="sailthru_email_list" value="<?php echo esc_attr( $sailthru_list ); ?>" />
+				<input type="hidden" name="sailthru_list_sig" value="<?php echo esc_attr( Sailthru_Subscribe_Widget::generate_list_signature( $sailthru_list ) ); ?>" />
 				<input type="hidden" name="action" value="add_subscriber" />
 				<input type="hidden" name="source" value="<?php echo esc_attr( $source ); ?>" />
 				<input type="hidden" name="lo_event_name" value="<?php echo esc_attr( $lo_event_name ); ?>" />
