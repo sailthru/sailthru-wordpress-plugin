@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.11 (2026-05-20)
+Security fix: Added HMAC signature verification on the subscribe widget list field to prevent parameter tampering that allowed attackers to create arbitrary lists
+
 ## v4.3.10 (2026-03-06)
 Minify widget JS and widgetsubscribe JS files and serve .min.js versions to improve page load performance
 

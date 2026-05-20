@@ -488,10 +488,26 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 		}
 
 		if ( empty($sailthru_email_list) ) {
-			return array('Sailthru Subscribe Widget' => 1); // subscriber is an orphan
+			return array('Sailthru Subscribe Widget' => 1);
+		}
+
+		$submitted_sig = isset($_POST['sailthru_list_sig']) ? sanitize_text_field( $_POST['sailthru_list_sig'] ) : '';
+		$expected_sig = self::generate_list_signature( $sailthru_email_list );
+
+		if ( empty( $expected_sig ) || ! hash_equals( $expected_sig, $submitted_sig ) ) {
+			return array();
 		}
 
 		return $this->create_user_api_list_update( $sailthru_email_list );
+	}
+
+	public static function generate_list_signature( $list_value ): string {
+		$sailthru = get_option( 'sailthru_setup_options' );
+		$secret   = ! empty( $sailthru['sailthru_api_secret'] ) ? $sailthru['sailthru_api_secret'] : '';
+		if ( empty( $secret ) ) {
+			return '';
+		}
+		return hash_hmac( 'sha256', $list_value, $secret );
 	}
 
 	private function create_user_api_list_update( $email_list ): array {
@@ -499,6 +515,10 @@ class Sailthru_Subscribe_Widget extends WP_Widget {
 
 		$subscribe_to_lists = [];
 		foreach (array_values($lists) as $list_name) {
+			$list_name = trim( $list_name );
+			if ( empty( $list_name ) ) {
+				continue;
+			}
 			$subscribe_to_lists[$list_name] = 1;
 		}
 
