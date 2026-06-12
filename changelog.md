@@ -1,4 +1,7 @@
 # Changelog
+## v4.3.12 (2026-06-12)
+Compatibility: Bumped "Tested up to" to WordPress 7.0. Metadata only — no functional code change.
+
 ## v4.3.11 (2026-05-20)
 Security fix: Added HMAC signature verification on the subscribe widget list field to prevent parameter tampering that allowed attackers to create arbitrary lists
 
