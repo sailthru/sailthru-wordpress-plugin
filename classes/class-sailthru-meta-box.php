@@ -42,6 +42,9 @@ class Sailthru_Meta_Box {
 		// Retrieves the global content options. 
 		$options = get_option( 'sailthru_content_settings' );
 
+		$tags_checked = false;
+		$cat_checked = false;
+
 		if ( isset( $options['sailthru_interest_tag_options'] )  && !empty( $options['sailthru_interest_tag_options'] ) ) {
 			$tags_checked = in_array( 'wordpress_tags', $options['sailthru_interest_tag_options'], true ) ? true : false;
 			$cat_checked = in_array( 'wordpress_categories', $options['sailthru_interest_tag_options'], true ) ? true : false;
